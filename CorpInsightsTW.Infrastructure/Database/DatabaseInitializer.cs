@@ -8,16 +8,10 @@ using MySqlConnector;
 
 namespace CorpInsightsTW.Infrastructure.Database;
 
-public class DatabaseInitializer
+public class DatabaseInitializer(string connectionString, string scriptsPath)
 {
-    private readonly string _connectionString;
-    private readonly string _scriptsPath;
-
-    public DatabaseInitializer(string connectionString, string scriptsPath)
-    {
-        _connectionString = connectionString;
-        _scriptsPath = scriptsPath;
-    }
+    private readonly string _connectionString = connectionString;
+    private readonly string _scriptsPath = scriptsPath;
 
     /// <summary>
     /// 毀滅性重置：刪除舊資料庫並重建 (本機開發除錯常用)
