@@ -1,8 +1,8 @@
-CREATE TABLE IF NOT EXISTS t187ap06_basi_{COMPANY_CODE} (
+CREATE TABLE IF NOT EXISTS t187ap06_basi (
     -- 1. 核心識別與索引欄位
     year VARCHAR(4) NOT NULL COMMENT '年度 ( e.g., "2026" )',
-    quarter VARCHAR(2) NOT NULL COMMENT '季別 ( e.g., "01", "02", "Q1" )',
-    market_type VARCHAR(2) NOT NULL COMMENT '市場註記 ( L: 上市公司, X: 公發公司 )',
+    quarter TINYINT UNSIGNED NOT NULL COMMENT '季別 ( 1: 第一季, 2: 第二季, 3: 第三季, 4: 第四季 )',
+    market_type CHAR(1) NOT NULL COMMENT '市場註記 ( L: 上市公司, X: 公發公司 )',
     company_code VARCHAR(10) NOT NULL COMMENT '公司代號',
     company_name VARCHAR(100) NOT NULL COMMENT '公司名稱',
     
@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS t187ap06_basi_{COMPANY_CODE} (
     -- 8. 系統稽核欄位
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '資料最後更新時間',
     
-    -- 設定主鍵
-    PRIMARY KEY (year, quarter)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公發公司綜合損益表-金融業 (公司 {COMPANY_CODE})';
+    -- 設定主鍵與索引
+    PRIMARY KEY (company_code, year, quarter),
+    INDEX idx_year_quarter (year, quarter)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公發公司綜合損益表-金融業';

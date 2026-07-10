@@ -1,8 +1,8 @@
-CREATE TABLE IF NOT EXISTS t187ap06_ci_{COMPANY_CODE} (
+CREATE TABLE IF NOT EXISTS t187ap06_ci (
     -- 1. 核心識別與索引欄位
     year VARCHAR(4) NOT NULL COMMENT '年度 ( e.g., "2026" )',
-    quarter VARCHAR(2) NOT NULL COMMENT '季別 ( e.g., "01", "02", "Q1" )',
-    market_type VARCHAR(2) NOT NULL COMMENT '市場註記 ( L: 上市公司, X: 公發公司 )',
+    quarter TINYINT UNSIGNED NOT NULL COMMENT '季別 ( 1: 第一季, 2: 第二季, 3: 第三季, 4: 第四季 )',
+    market_type CHAR(1) NOT NULL COMMENT '市場註記 ( L: 上市公司, X: 公發公司 )',
     company_code VARCHAR(10) NOT NULL COMMENT '公司代號',
     company_name VARCHAR(100) NOT NULL COMMENT '公司名稱',
     
@@ -51,6 +51,22 @@ CREATE TABLE IF NOT EXISTS t187ap06_ci_{COMPANY_CODE} (
     -- 9. 系統稽核欄位
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '資料最後更新時間',
     
-    -- 設定主鍵
-    PRIMARY KEY (year, quarter)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公發公司綜合損益表-一般業 (公司 {COMPANY_CODE})';
+    -- 設定主鍵與索引
+    PRIMARY KEY (company_code, year, quarter),
+    INDEX idx_year_quarter (year, quarter)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公發公司綜合損益表-一般業';
+-- ----------------------------------------------------
+-- 💡 未來擴充備案：若未來加入日頻率大數據，再啟用年份分區
+-- PARTITION BY RANGE COLUMNS(year) (
+--     PARTITION p_old VALUES LESS THAN ('2020'),
+--     PARTITION p2020 VALUES LESS THAN ('2021'),
+--     PARTITION p2021 VALUES LESS THAN ('2022'),
+--     PARTITION p2022 VALUES LESS THAN ('2023'),
+--     PARTITION p2023 VALUES LESS THAN ('2024'),
+--     PARTITION p2024 VALUES LESS THAN ('2025'),
+--     PARTITION p2025 VALUES LESS THAN ('2026'),
+--     PARTITION p2026 VALUES LESS THAN ('2027'),
+--     PARTITION p2027 VALUES LESS THAN ('2028'),
+--     PARTITION p2028 VALUES LESS THAN ('2029'),
+--     PARTITION p_future VALUES LESS THAN (MAXVALUE) -- 💡 所有超過的通通先塞這裡，防止系統死當
+-- );
