@@ -5,22 +5,81 @@ using Microsoft.Extensions.Logging;
 
 namespace CorpInsightsTW.DataFetcher.Jobs;
 
-public class FinancialFetchJob(ILogger<FinancialFetchJob> logger)
+public class FinancialFetchJob(
+    ILogger<FinancialFetchJob> logger,
+    FetchRunConfig config)
 {
     private readonly ILogger<FinancialFetchJob> _logger = logger;
-
+    private readonly FetchRunConfig _config = config;
+    
     public async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("🚀 開始執行財報下載與大寬表盲刷作業流程...");
+        // 🎯 成功攔截！從 Worker 一路穿越過來的作戰指令
+        string targetIndustry = _config.Industry;
 
-        // 📝 這裡就是未來 6+6 大寬表資料落地與路由的黃金交叉點：
-        // 步驟 1. 呼叫 Infrastructure 的 OpenApiClient 抓取最新的原始 JSON
-        // 步驟 2. 將原始 JSON 丟給 Infrastructure 的 DataDispatcher (分流器)
-        // 步驟 3. 分流器內部會自動做兩件事：
-        //         A. 即時 Upsert 更新 company_industry_map 路由表
-        //         B. 依行業別將數值丟進對應的 Mappers，最後 Upsert 進 t187ap07_ci 等大寬表
+        _logger.LogInformation("🎬 FinancialFetchJob 開始發動。目標過濾產業為: [ {Industry} ]", targetIndustry);
 
-        _logger.LogInformation("🎉 本次排程財報盲刷作業已全數處理完畢！");
-        await Task.CompletedTask;
+        // 檢查系統中止訊號
+        stoppingToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            // ========================================================
+            // 🧭 核心分流調度邏輯
+            // ========================================================
+            switch (targetIndustry)
+            {
+                case "all":
+                    _logger.LogInformation("📊 [分流調度] 準備執行全量盲刷：一般產業(ci) + 金控產業(fh)...");
+                    await FetchGeneralIndustryAsync(stoppingToken);
+                    await FetchFinancialIndustryAsync(stoppingToken);
+                    break;
+
+                case "ci":
+                    _logger.LogInformation("🏭 [分流調度] 僅執行：一般產業(ci) 全量同步...");
+                    await FetchGeneralIndustryAsync(stoppingToken);
+                    break;
+
+                case "fh":
+                    _logger.LogInformation("🏦 [分流調度] 僅執行：金控產業(fh) 全量同步...");
+                    await FetchFinancialIndustryAsync(stoppingToken);
+                    break;
+
+                default:
+                    _logger.LogWarning("⚠️ 偵測到不合法的產業參數: '{Industry}'，本次作業放棄執行。", targetIndustry);
+                    break;
+            }
+
+            _logger.LogInformation("✨ FinancialFetchJob 本次批次同步調度安全結束。");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ FinancialFetchJob 在調度執行期間發生未預期崩潰");
+            throw; // 向上拋出，讓 Worker 的 try-catch 能夠捕捉並記錄日誌
+        }
+    }
+
+    /// <summary>
+    /// 🏭 抓取一般產業財報 (t187ap07_ci)
+    /// </summary>
+    private async Task FetchGeneralIndustryAsync(CancellationToken stoppingToken)
+    {
+        if (stoppingToken.IsCancellationRequested) return;
+        _logger.LogInformation("⏳ 正在呼叫證交所 OpenAPI 下載 [一般產業] 原始大寬表 JSON Array...");
+        
+        // TODO: 未來在此調度 OpenApiClient 抓取並洗入 DB
+        await Task.Delay(500, stoppingToken); // 模擬 I/O 延遲
+    }
+
+    /// <summary>
+    /// 🏦 抓取金控產業財報 (t187ap07_fh)
+    /// </summary>
+    private async Task FetchFinancialIndustryAsync(CancellationToken stoppingToken)
+    {
+        if (stoppingToken.IsCancellationRequested) return;
+        _logger.LogInformation("⏳ 正在呼叫證交所 OpenAPI 下載 [金控產業] 原始大寬表 JSON Array...");
+        
+        // TODO: 未來在此調度 OpenApiClient 抓取並洗入 DB
+        await Task.Delay(500, stoppingToken); // 模擬 I/O 延遲
     }
 }
