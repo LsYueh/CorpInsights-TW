@@ -1,0 +1,56 @@
+## ==========================================
+## 1. .NET / C# 核心編譯產出排除 (Dotnet Core)
+## ==========================================
+[Bb]in/
+[Oo]bj/
+[Log]s/
+*.suo
+*.user
+*.sln.docstates
+
+# .NET 10 Native AOT & 目的碼編譯產出
+*.exe
+*.dll
+*.pdb
+*.rsp
+_artifacts/
+
+## ==========================================
+## 2. VS Code 編輯器環境設定排除 (VS Code)
+## ==========================================
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+*.code-workspace
+
+## ==========================================
+## 3. 機密資料與本機設定排除 (Secrets & Local Settings)
+## ==========================================
+# 排除正式環境或包含密碼的設定檔
+appsettings.Production.json
+appsettings.Local.json
+
+# 排除本機開發者的使用者機密 (User Secrets)
+secrets.json
+.microsoft.dotnet.usersecrets/
+
+## ==========================================
+## 4. 資料庫與套件還原快取 (Databases & Packages)
+## ==========================================
+# NuGet 套件還原目錄
+*.nuget.props
+*.nuget.targets
+.nuget/
+
+# 如果你在本機有放測試用的 SQLite 或 Ef Core 移轉日誌
+*.db
+*.db-shm
+*.db-wal
+.ehdata/
+
+## ==========================================
+## 5. 作業系統垃圾檔案 (OS Junk)
+## ==========================================
+.DS_Store
+Thumbs.db
