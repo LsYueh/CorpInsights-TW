@@ -15,7 +15,7 @@ public class Worker(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("🚀 DataFetcher 服務核心初始化啟動 | 運行模式: {Mode} | 目標產業: {Industry}", _config.Mode, _config.Industry);
+        _logger.LogInformation("🚀 DataFetcher 服務核心初始化啟動 | 運行模式: {Mode} | 目標產業: {Industry}", _config.Mode, _config.TargetTaxonomy);
 
         try
         {
