@@ -13,7 +13,7 @@ public class TwseApiService(
 
     private const string TwseApiTemplate = "https://openapi.twse.com.tw/v1/opendata/{0}_{1}_{2}";
 
-    public async Task FetchFinancialDataAsync(T187ApCode apCode, ListingStatus status, Taxonomy taxonomy, CancellationToken stoppingToken)
+    public async Task FetchFinancialDataAsync(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, CancellationToken stoppingToken)
     {
         if (stoppingToken.IsCancellationRequested) return;
 

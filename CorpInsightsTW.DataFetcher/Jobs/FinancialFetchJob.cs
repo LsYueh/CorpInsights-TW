@@ -15,7 +15,7 @@ public class FinancialFetchJob(
 
     public async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Taxonomy      targetTaxonomy = _config.TargetTaxonomy;
+        XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         ListingStatus targetStatus   = _config.Status;
         T187ApCode    targetApCode   = _config.ApCode;
 
@@ -32,8 +32,8 @@ public class FinancialFetchJob(
                 ? Enum.GetValues<ListingStatus>().Where(m => m != ListingStatus.All)
                 : [targetStatus];
 
-            var taxonomiesToFetch = targetTaxonomy == Taxonomy.All
-                ? Enum.GetValues<Taxonomy>().Where(t => t != Taxonomy.All)
+            var taxonomiesToFetch = targetTaxonomy == XbrlTaxonomy.All
+                ? Enum.GetValues<XbrlTaxonomy>().Where(t => t != XbrlTaxonomy.All)
                 : [targetTaxonomy];
 
             var reportsToFetch = targetApCode == T187ApCode.All
@@ -43,7 +43,6 @@ public class FinancialFetchJob(
             _logger.LogInformation("📊 預計執行組合數: {Count} 組", 
                 statusToFetch.Count() * taxonomiesToFetch.Count() * reportsToFetch.Count());
 
-            // 3. 發動同步
             foreach (var taxonomy in taxonomiesToFetch)
             {
                 foreach (var status in statusToFetch)

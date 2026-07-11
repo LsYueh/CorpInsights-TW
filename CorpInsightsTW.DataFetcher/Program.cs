@@ -30,7 +30,7 @@ public class CliOptions
 /// <summary>
 /// HttpClient 的控制設定
 /// </summary>
-public record FetchRunConfig(string Mode, ListingStatus Status, Taxonomy TargetTaxonomy, T187ApCode ApCode);
+public record FetchRunConfig(string Mode, ListingStatus Status, XbrlTaxonomy Taxonomy, T187ApCode ApCode);
 
 public class Program
 {    
@@ -65,7 +65,7 @@ public class Program
             return null;
         }
 
-        if (!Enum.TryParse<Taxonomy>(options.Taxonomy, ignoreCase: true, out var taxonomy))
+        if (!Enum.TryParse<XbrlTaxonomy>(options.Taxonomy, ignoreCase: true, out var taxonomy))
         {
             Console.WriteLine($"❌ 不合法的申報分類法參數: '{options.Taxonomy}'");
             return null;

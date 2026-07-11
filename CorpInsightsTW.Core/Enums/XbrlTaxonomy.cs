@@ -4,10 +4,10 @@ using CorpInsightsTW.Core.Attributes;
 namespace CorpInsightsTW.Core.Enums;
 
 /// <summary>
-/// 財務報告分類 
+/// XBRL 的財務報告分類 
 /// (請參考：XBRL計畫暨IFRSs財務報告申報注意事項)
 /// </summary>
-public enum Taxonomy
+public enum XbrlTaxonomy
 {
     /// <summary> 全部財報分類 </summary>
     [Code("all"), Display("全部財報分類")]
