@@ -1,6 +1,7 @@
 using CommandLine;
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.DataFetcher.Jobs;
+using CorpInsightsTW.DataFetcher.Services;
 
 namespace CorpInsightsTW.DataFetcher;
 
@@ -20,12 +21,16 @@ public class CliOptions
     [Option('t', "taxonomy", Required = false, Default = "all", 
         HelpText = "目標申報分類法: 'all' (全部), 'general' (一般行業), 'banking' (金融業), 'securities' (證券期貨業), 'holding' (金控業), 'insurance' (保險業), 'crossindustry' (異業別合併)")]
     public string Taxonomy { get; set; } = "all";
+
+    [Option('r', "report", Required = false, Default = "all", 
+        HelpText = "目標報表代號: 'all' (全部), 't187ap06' (綜合損益表), 't187ap07' (資產負債表)")]
+    public string ApCode { get; set; } = "all";
 }
 
 /// <summary>
 /// HttpClient 的控制設定
 /// </summary>
-public record FetchRunConfig(string Mode, ListingStatus Status, Taxonomy TargetTaxonomy);
+public record FetchRunConfig(string Mode, ListingStatus Status, Taxonomy TargetTaxonomy, T187ApCode ApCode);
 
 public class Program
 {    
@@ -66,7 +71,13 @@ public class Program
             return null;
         }
 
-        return new FetchRunConfig(options.Mode.ToLower(), status, taxonomy);
+        if (!Enum.TryParse<T187ApCode>(options.ApCode, ignoreCase: true, out var apCode))
+        {
+            Console.WriteLine($"❌ 不合法的報表代號參數: '{options.ApCode}'");
+            return null;
+        }
+
+        return new FetchRunConfig(options.Mode.ToLower(), status, taxonomy, apCode);
     }
 
     /// <summary>
@@ -79,11 +90,14 @@ public class Program
         // 給 Worker 與 Job 使用
         builder.Services.AddSingleton(fetchConfig);
 
-        // 註冊核心背景 Worker 與實體作業 Job
+        // 核心背景 Worker 與實體作業 Job
         builder.Services.AddHostedService<Worker>();
         builder.Services.AddTransient<FinancialFetchJob>();
 
-        // 註冊標準 HttpClient 工廠
+        // 證交所 OpenAPI 服務
+        builder.Services.AddTransient<TwseApiService>();
+
+        // 標準 HttpClient 工廠
         builder.Services.AddHttpClient();
 
         return builder.Build();

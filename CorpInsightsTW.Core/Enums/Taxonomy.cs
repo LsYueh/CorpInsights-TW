@@ -1,4 +1,5 @@
-using System.ComponentModel;
+
+using CorpInsightsTW.Core.Attributes;
 
 namespace CorpInsightsTW.Core.Enums;
 
@@ -8,30 +9,31 @@ namespace CorpInsightsTW.Core.Enums;
 /// </summary>
 public enum Taxonomy
 {
-    /// <summary> 全行業 </summary>
+    /// <summary> 全部財報分類 </summary>
+    [Code("all"), Display("全部財報分類")]
     All = 0,
 
     /// <summary> 一般行業 </summary>
-    [Description("ci")]
+    [Code("ci"), Display("一般行業")]
     General = 1,
 
     /// <summary> 金融業 </summary>
-    [Description("basi")]
+    [Code("basi"), Display("金融業")]
     Banking = 2,
 
     /// <summary> 證券期貨業 </summary>
-    [Description("bd")]
+    [Code("bd"), Display("證券期貨業")]
     Securities = 3,
 
     /// <summary> 金控業 </summary>
-    [Description("fh")]
+    [Code("fh"), Display("金控業")]
     Holding = 4,
 
     /// <summary> 保險業 </summary>
-    [Description("ins")]
+    [Code("ins"), Display("保險業")]
     Insurance = 5,
 
     /// <summary> 異業別合併 </summary>
-    [Description("mim")]
-    CrossIndustry = 6
+    [Code("mim"), Display("異業別合併")]
+    CrossIndustry = 6,
 }

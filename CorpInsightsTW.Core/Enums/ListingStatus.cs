@@ -1,4 +1,4 @@
-using System.ComponentModel;
+using CorpInsightsTW.Core.Attributes;
 
 namespace CorpInsightsTW.Core.Enums;
 
@@ -8,21 +8,22 @@ namespace CorpInsightsTW.Core.Enums;
 public enum ListingStatus
 {
     /// <summary> 全狀態 </summary>
+    [Code("all"), Display("全上市狀態")]
     All = 0,
 
     /// <summary> 上市公司 </summary>
-    [Description("L")]
+    [Code("L"), Display("上市公司")]
     Listed = 1,
 
     /// <summary> 上櫃公司 </summary>
-    // [Description("")]
+    // [Code(""), Display("上櫃公司")]
     // OverTheCounter = 2,
 
     /// <summary> 興櫃公司 </summary>
-    // [Description("")]
+    // [Code(""), Display("興櫃公司")]
     // Emerging = 3,
 
     /// <summary> 公開發行公司 </summary>
-    [Description("X")]
-    PublicOffering = 4
+    [Code("X"), Display("公開發行公司")]
+    PublicOffering = 4,
 }

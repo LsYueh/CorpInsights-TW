@@ -15,7 +15,7 @@ public class Worker(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("🚀 DataFetcher 服務核心初始化啟動 | 運行模式: {Mode} | 目標產業: {Industry}", _config.Mode, _config.TargetTaxonomy);
+        _logger.LogInformation("🚀 DataFetcher 服務核心初始化啟動 | 運行模式: {Mode}", _config.Mode);
 
         try
         {
@@ -24,19 +24,19 @@ public class Worker(
                 // ========================================================
                 // 🎯 嚴謹的 Once (單次刺客) 模式處理
                 // ========================================================
-                _logger.LogInformation("⚡ [Once 模式] 開始執行單次全量同步作業...");
+                _logger.LogInformation("⚡ [Once 模式] 開始執行單次同步作業...");
                 
                 // 傳入完整的 stoppingToken，確保下載或寫入 MySQL 途中隨時可被作業系統安全中止
                 await ExecuteJobAsync(stoppingToken);
                 
-                _logger.LogInformation("📴 [Once 模式] 同步作業已順利完成，通知作業系統安全關閉進程...");
+                _logger.LogInformation("📴 [Once 模式] 同步作業已順利完成");
             }
             else
             {
                 // ========================================================
                 // 🎯 嚴謹的 Daemon (後台哨兵) 模式處理
                 // ========================================================
-                _logger.LogInformation("🕒 [Daemon 模式] 進入背景排程循環，每 12 小時自動起床執行...");
+                _logger.LogInformation("🕒 [Daemon 模式] 進入背景排程循環，每 12 小時自動執行...");
                 
                 // 建立精準的定時器，並綁定 stoppingToken
                 using var timer = new PeriodicTimer(TimeSpan.FromHours(12));
@@ -44,7 +44,7 @@ public class Worker(
                 // 精準等待下一次的 Tick，且隨時監聽停止訊號
                 while (await timer.WaitForNextTickAsync(stoppingToken))
                 {
-                    _logger.LogInformation("⏰ [Daemon 模式] 達預定時間，發動全量排程抓取任務...");
+                    _logger.LogInformation("⏰ [Daemon 模式] 達預定時間，發動排程抓取任務...");
                     await ExecuteJobAsync(stoppingToken);
                 }
             }
@@ -52,11 +52,11 @@ public class Worker(
         catch (OperationCanceledException)
         {
             // 當外部（Linux systemd 或 Windows Service）下達停止指令時，會丟出此異常，屬於正常優雅退場
-            _logger.LogWarning("👋 收到作業系統中止訊號 (Canceled)，正在確保當前連線完全安全釋放...");
+            _logger.LogWarning("👋 收到作業系統中止訊號，正在確保當前連線完全安全釋放...");
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, "❌ DataFetcher 核心發生未預期的致命崩潰！");
+            _logger.LogCritical(ex, "❌ DataFetcher 發生未預期的錯誤");
         }
         finally
         {
@@ -82,7 +82,7 @@ public class Worker(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "❌ 執行 FinancialFetchJob 時發生未預期異常");
+            _logger.LogError(ex, "❌ 執行 FinancialFetchJob 時發生未預期錯誤");
         }
     }
 }
