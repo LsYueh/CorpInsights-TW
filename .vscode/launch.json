@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "⚙️ 偵錯 - DataFetcher",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/CorpInsightsTW.DataFetcher/CorpInsightsTW.DataFetcher.csproj"
+        },
+        {
+            "name": "🚀 偵錯 - DbMigrator",
+            "type": "dotnet",
+            "request": "launch",
+            "preLaunchTask": "build-migrator",
+            "projectPath": "${workspaceFolder}/CorpInsightsTW.DbMigrator/CorpInsightsTW.DbMigrator.csproj"
+        }
+    ]
+}

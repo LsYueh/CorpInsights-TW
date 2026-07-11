@@ -18,7 +18,7 @@ _artifacts/
 ## ==========================================
 ## 2. VS Code 編輯器環境設定排除 (VS Code)
 ## ==========================================
-.vscode/
+.vscode/*
 !.vscode/extensions.json
 !.vscode/launch.json
 !.vscode/tasks.json

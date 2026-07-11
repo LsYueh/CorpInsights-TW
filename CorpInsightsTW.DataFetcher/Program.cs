@@ -27,11 +27,6 @@ public class CliOptions
     public string ApCode { get; set; } = "all";
 }
 
-/// <summary>
-/// HttpClient 的控制設定
-/// </summary>
-public record FetchRunConfig(string Mode, ListingStatus Status, XbrlTaxonomy Taxonomy, T187ApCode ApCode);
-
 public class Program
 {    
     public static async Task<int> Main(string[] args)
@@ -77,7 +72,7 @@ public class Program
             return null;
         }
 
-        return new FetchRunConfig(options.Mode.ToLower(), status, taxonomy, apCode);
+        return new FetchRunConfig(options.Mode.ToLower(), status, taxonomy, apCode, string.Empty);
     }
 
     /// <summary>
@@ -87,17 +82,17 @@ public class Program
     {
         var builder = Host.CreateApplicationBuilder(args);
 
-        // 給 Worker 與 Job 使用
-        builder.Services.AddSingleton(fetchConfig);
+        // 讀取設定檔的 RootUrl
+        string rootUrl = builder.Configuration["TwseApi:RootUrl"] ?? "https://openapi.twse.com.tw/v1";
+        var finalConfig = fetchConfig with { TwseRootUrl = rootUrl };
 
-        // 核心背景 Worker 與實體作業 Job
+        builder.Services.AddSingleton(finalConfig);
+
         builder.Services.AddHostedService<Worker>();
-        builder.Services.AddTransient<FinancialFetchJob>();
 
-        // 證交所 OpenAPI 服務
+        builder.Services.AddTransient<FinancialFetchJob>();
         builder.Services.AddTransient<TwseApiService>();
 
-        // 標準 HttpClient 工廠
         builder.Services.AddHttpClient();
 
         return builder.Build();

@@ -6,18 +6,19 @@ namespace CorpInsightsTW.DataFetcher.Services;
 
 public class TwseApiService(
     ILogger<TwseApiService> logger,
-    IHttpClientFactory httpClientFactory)
+    IHttpClientFactory httpClientFactory,
+    FetchRunConfig config)
 {
     private readonly ILogger<TwseApiService> _logger = logger;
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-
-    private const string TwseApiTemplate = "https://openapi.twse.com.tw/v1/opendata/{0}_{1}_{2}";
+    private readonly FetchRunConfig _config = config;
 
     public async Task FetchFinancialDataAsync(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, CancellationToken stoppingToken)
     {
         if (stoppingToken.IsCancellationRequested) return;
 
-        string targetUrl = string.Format(TwseApiTemplate, apCode.ToCode(), status.ToCode(), taxonomy.ToCode());
+        string baseUrl = _config.TwseRootUrl.TrimEnd('/'); // 確保 RootUrl 結尾乾淨
+        string targetUrl = $"{baseUrl}/opendata/{apCode.ToCode()}_{status.ToCode()}_{taxonomy.ToCode()}";
         
         _logger.LogInformation("🌐 抓取資料: {Status} {Taxonomy} - {Name} ({Code})",
             status.ToDisplay(), taxonomy.ToDisplay(), apCode.ToDisplay(), apCode.ToCode());
