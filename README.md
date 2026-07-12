@@ -8,14 +8,12 @@
 
 ```text
 CorpInsightsTW/                             # 專案總根目錄
-├── CorpInsightsTW.Core/                    # 🛡️ 核心領域層
-├── CorpInsightsTW.DataFetcher/             # 🔨 財報資料抓取工具
-├── CorpInsightsTW.DbMigrator/              # 🔨 資料庫初始化/維運專用微型工具
-├── CorpInsightsTW.Infrastructure/          # ⚙️ 基礎建設層
-│   ├── Database/                           # 💾 DDL 腳本區
-│   │   ├── 00_Master_Data/                 # 💾 主資料
-│   │   ├── 01_BalanceSheets/               # 📑 範本一：資產負債表 DDL 區 (t187ap07)
-│   │   └── 02_IncomeStatements/            # 📊 範本二：綜合損益表 DDL 區 (t186ap06)
+├── CorpInsightsTW.Core/                    # 核心領域層
+├── CorpInsightsTW.DataFetcher/             # 財報資料抓取工具
+├── CorpInsightsTW.DbMigrator/              # 資料庫初始化/維運專用微型工具
+├── CorpInsightsTW.Infrastructure/          # 基礎建設層
+│   ├── Database/                           # DDL 腳本區
+│   ├── Storage/                            # 實體資料管理
 │   └── ... (Data, OpenApiClients, Mappers)
 ├── CorpInsightsTW.Tests
 └── CorpInsightsTW.slnx                     # .NET 10 方案核心管理檔

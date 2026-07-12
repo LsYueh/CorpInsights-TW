@@ -1,7 +1,9 @@
 using CommandLine;
+
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.DataFetcher.Jobs;
 using CorpInsightsTW.DataFetcher.Services;
+using CorpInsightsTW.Infrastructure.Storage;
 
 namespace CorpInsightsTW.DataFetcher;
 
@@ -87,6 +89,7 @@ public class Program
         var finalConfig = fetchConfig with { TwseRootUrl = rootUrl };
 
         builder.Services.AddSingleton(finalConfig);
+        builder.Services.AddSingleton<LocalRawDataStorage>();
 
         builder.Services.AddHostedService<Worker>();
 
