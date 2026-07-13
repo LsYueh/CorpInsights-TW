@@ -1,6 +1,10 @@
 ﻿using CommandLine;
 
 using CorpInsightsTW.Core.Enums;
+using CorpInsightsTW.Etl.Extract;
+using CorpInsightsTW.Etl.Load;
+using CorpInsightsTW.Etl.Pipeline;
+using CorpInsightsTW.Etl.Transform;
 
 namespace CorpInsightsTW.Etl;
 
@@ -13,8 +17,8 @@ public class Program
 
         using var host = CreateHost(args, runConfig);
 
-        // var pipeline = host.Services.GetRequiredService<EtlPipeline>();
-        // await pipeline.RunAsync();
+        var pipeline = host.Services.GetRequiredService<EtlPipeline>();
+        await pipeline.RunAsync();
 
         return 0;
     }
@@ -67,10 +71,10 @@ public class Program
 
         builder.Services.AddSingleton(runConfig);
 
-        // builder.Services.AddSingleton<IDataExtractor, LocalRawDataExtractor>();
-        // builder.Services.AddSingleton<IDataTransformer, PassthroughDataTransformer>();
-        // builder.Services.AddSingleton<IDataLoader, ConsoleDataLoader>();
-        // builder.Services.AddSingleton<EtlPipeline>();
+        builder.Services.AddTransient<IDataExtractor, JsonFileDataExtractor>();
+        builder.Services.AddTransient<IDataTransformer, PassthroughDataTransformer>();
+        builder.Services.AddTransient<IDataLoader, ConsoleDataLoader>();
+        builder.Services.AddTransient<EtlPipeline>();
 
         return builder.Build();
     }
