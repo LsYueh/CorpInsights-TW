@@ -17,10 +17,40 @@ public class Program
 
         using var host = CreateHost(args, runConfig);
 
-        var pipeline = host.Services.GetRequiredService<EtlPipeline>();
-        await pipeline.RunAsync();
+        using var cts = new CancellationTokenSource();
 
-        return 0;
+        // 監聽控 Ctrl+C 事件
+        Console.CancelKeyPress += (sender, eventArgs) =>
+        {
+            Console.WriteLine("\n👋 偵測到使用者中斷指令 (Ctrl+C)，正在安全釋放網路連線...");
+            cts.Cancel();
+            eventArgs.Cancel = true; // 阻止作業系統立刻強行殺掉程式，給我們時間優雅退場
+        };
+
+        int exitCode;
+
+        try
+        {
+            var pipeline = host.Services.GetRequiredService<EtlPipeline>();
+            await pipeline.RunAsync(cts.Token);
+
+            exitCode = 0;
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine("🛑 同步作業已被使用者安全取消。");
+            exitCode = 130; // Linux Ctrl+C 標準結束代碼
+        }
+        catch (Exception)
+        {
+            exitCode = 1;
+        }
+        finally
+        {
+            await host.StopAsync();
+        }
+
+        return exitCode;
     }
 
     private static EtlRunConfig? TryParseConfig(string[] args)

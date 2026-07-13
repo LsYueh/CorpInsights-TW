@@ -15,9 +15,42 @@ public class Program
         if (fetchConfig == null) return 1;
 
         using var host = CreateHost(args, fetchConfig);
-        await host.RunAsync();
+        
+        using var cts = new CancellationTokenSource();
 
-        return Environment.ExitCode;
+        // 監聽控 Ctrl+C 事件
+        Console.CancelKeyPress += (sender, eventArgs) =>
+        {
+            Console.WriteLine("\n👋 偵測到使用者中斷指令 (Ctrl+C)，正在安全釋放網路連線...");
+            cts.Cancel();
+            eventArgs.Cancel = true; // 阻止作業系統立刻強行殺掉程式，給我們時間優雅退場
+        };
+
+        int exitCode;
+
+        try
+        {
+            var job = host.Services.GetRequiredService<FinancialFetchJob>();
+
+            await job.ExecuteAsync(cts.Token); 
+
+            exitCode = 0;
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine("🛑 同步作業已被使用者安全取消。");
+            exitCode = 130; // Linux Ctrl+C 標準結束代碼
+        }
+        catch (Exception)
+        {
+            exitCode = 1;
+        }
+        finally
+        {
+            await host.StopAsync();
+        }
+
+        return exitCode;
     }
 
     /// <summary>
@@ -68,8 +101,6 @@ public class Program
 
         builder.Services.AddSingleton(finalConfig);
         builder.Services.AddSingleton<LocalRawDataStorage>();
-
-        builder.Services.AddHostedService<Worker>();
 
         builder.Services.AddTransient<FinancialFetchJob>();
         builder.Services.AddTransient<TwseApiService>();

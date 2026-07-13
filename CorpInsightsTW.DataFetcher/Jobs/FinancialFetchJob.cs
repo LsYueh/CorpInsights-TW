@@ -19,6 +19,7 @@ public class FinancialFetchJob(
         ListingStatus targetStatus   = _config.Status;
         T187ApCode    targetApCode   = _config.ApCode;
 
+        _logger.LogInformation("⚡ 開始執行同步作業...");
         _logger.LogInformation("🎬 發動: {Status} {Taxonomy} - {Name}", 
             targetStatus.ToDisplay(), targetTaxonomy.ToDisplay(), targetApCode.ToDisplay());
 
@@ -65,5 +66,7 @@ public class FinancialFetchJob(
             _logger.LogError(ex, "❌ FinancialFetchJob 在執行期間發生未預期錯誤");
             throw; 
         }
+
+        _logger.LogInformation("📴 同步作業已順利完成");
     }
 }
