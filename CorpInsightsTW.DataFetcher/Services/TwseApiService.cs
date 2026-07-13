@@ -20,7 +20,7 @@ public class TwseApiService(
         if (stoppingToken.IsCancellationRequested) return;
 
         // 檔案檢查
-        if (LocalRawDataStorage.Exists(apCode, status, taxonomy))
+        if (_storage.Exists(apCode, status, taxonomy))
         {
             _logger.LogInformation("🚀 [Cache Hit] 落地檔案已存在，跳過網路請求。");
             return;

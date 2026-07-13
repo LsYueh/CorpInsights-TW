@@ -5,6 +5,7 @@ using CorpInsightsTW.Etl.Extract;
 using CorpInsightsTW.Etl.Load;
 using CorpInsightsTW.Etl.Pipeline;
 using CorpInsightsTW.Etl.Transform;
+using CorpInsightsTW.Infrastructure.Storage;
 
 namespace CorpInsightsTW.Etl;
 
@@ -99,7 +100,15 @@ public class Program
     {
         var builder = Host.CreateApplicationBuilder(args);
 
+        string? customStoragePath = builder.Configuration["Storage:RawDataPath"];
+
         builder.Services.AddSingleton(runConfig);
+
+        builder.Services.AddSingleton(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<LocalRawDataStorage>>();
+            return new LocalRawDataStorage(logger, customStoragePath);
+        });
 
         builder.Services.AddTransient<IDataExtractor, JsonFileDataExtractor>();
         builder.Services.AddTransient<IDataTransformer, PassthroughDataTransformer>();
