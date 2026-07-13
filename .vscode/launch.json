@@ -8,6 +8,12 @@
             "projectPath": "${workspaceFolder}/CorpInsightsTW.DataFetcher/CorpInsightsTW.DataFetcher.csproj"
         },
         {
+            "name": "🧰 偵錯 - ETL",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/CorpInsightsTW.Etl/CorpInsightsTW.Etl.csproj"
+        },
+        {
             "name": "🚀 偵錯 - DbMigrator",
             "type": "dotnet",
             "request": "launch",

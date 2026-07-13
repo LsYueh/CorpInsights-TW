@@ -7,28 +7,6 @@ using CorpInsightsTW.Infrastructure.Storage;
 
 namespace CorpInsightsTW.DataFetcher;
 
-/// <summary>
-/// CommandLineParser 專用宣告式設定類別
-/// </summary>
-public class CliOptions
-{
-    [Option('m', "mode", Required = false, Default = "once", 
-        HelpText = "執行模式: 'once' (單次抓取後關閉) 或 'daemon' (常駐背景排程)")]
-    public string Mode { get; set; } = "once";
-
-    [Option('s', "status", Required = false, Default = "all", 
-        HelpText = "目標上市狀態: 'all' (全部), 'listed' (上市公司), 'publicoffering' (公開發行公司)")]
-    public string Status { get; set; } = "all";
-
-    [Option('t', "taxonomy", Required = false, Default = "all", 
-        HelpText = "目標申報分類法: 'all' (全部), 'general' (一般行業), 'banking' (金融業), 'securities' (證券期貨業), 'holding' (金控業), 'insurance' (保險業), 'crossindustry' (異業別合併)")]
-    public string Taxonomy { get; set; } = "all";
-
-    [Option('r', "report", Required = false, Default = "all", 
-        HelpText = "目標報表代號: 'all' (全部), 't187ap06' (綜合損益表), 't187ap07' (資產負債表)")]
-    public string ApCode { get; set; } = "all";
-}
-
 public class Program
 {    
     public static async Task<int> Main(string[] args)
@@ -39,7 +17,7 @@ public class Program
         using var host = CreateHost(args, fetchConfig);
         await host.RunAsync();
 
-        return 0;
+        return Environment.ExitCode;
     }
 
     /// <summary>
@@ -74,7 +52,7 @@ public class Program
             return null;
         }
 
-        return new FetchRunConfig(options.Mode.ToLower(), status, taxonomy, apCode, string.Empty);
+        return new FetchRunConfig(status, taxonomy, apCode, string.Empty);
     }
 
     /// <summary>

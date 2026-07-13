@@ -2,6 +2,7 @@
   <Project Path="CorpInsightsTW.Core/CorpInsightsTW.Core.csproj" />
   <Project Path="CorpInsightsTW.DataFetcher/CorpInsightsTW.DataFetcher.csproj" />
   <Project Path="CorpInsightsTW.DbMigrator/CorpInsightsTW.DbMigrator.csproj" />
+  <Project Path="CorpInsightsTW.Etl/CorpInsightsTW.Etl.csproj" />
   <Project Path="CorpInsightsTW.Infrastructure/CorpInsightsTW.Infrastructure.csproj" />
   <Project Path="CorpInsightsTW.Tests/CorpInsightsTW.Tests.csproj" />
 </Solution>

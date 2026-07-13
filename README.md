@@ -11,6 +11,12 @@ CorpInsightsTW/                             # 專案總根目錄
 ├── CorpInsightsTW.Core/                    # 核心領域層
 ├── CorpInsightsTW.DataFetcher/             # 財報資料抓取工具
 ├── CorpInsightsTW.DbMigrator/              # 資料庫初始化/維運專用微型工具
+├── CorpInsightsTW.Etl/                     # ETL
+│   ├── Extract/
+│   ├── Transform/
+│   ├── Load/
+│   └── Pipeline/
+│       └── EtlPipeline.cs                  # 串接 Extract → Transform → Load
 ├── CorpInsightsTW.Infrastructure/          # 基礎建設層
 │   ├── Database/                           # DDL 腳本區
 │   ├── Storage/                            # 實體資料管理
