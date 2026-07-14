@@ -69,9 +69,9 @@ public class LocalRawDataStorage(
     }
 
     /// <summary>
-    /// 計算強型態的兩層式檔案路徑
+    /// 檔案路徑
     /// </summary>
-    private string GetStoragePath(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, DateOnly date)
+    public string GetStoragePath(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, DateOnly date)
     {
         string dateStr = date.ToString(pattern);
         string fileName = $"{apCode.ToCode()}_{status.ToCode()}_{taxonomy.ToCode()}.json";

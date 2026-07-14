@@ -100,10 +100,10 @@ public class Program
     {
         var builder = Host.CreateApplicationBuilder(args);
 
-        string? customStoragePath = builder.Configuration["Storage:RawDataPath"];
-
         builder.Services.AddSingleton(runConfig);
 
+        // Storage
+        string? customStoragePath = builder.Configuration["Storage:RawDataPath"];
         builder.Services.AddSingleton(sp =>
         {
             var logger = sp.GetRequiredService<ILogger<LocalRawDataStorage>>();
