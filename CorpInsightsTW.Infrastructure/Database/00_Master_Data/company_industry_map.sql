@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS company_industry_map (
     -- 1. 主鍵與核心識別
-    company_code VARCHAR(6)  NOT NULL COMMENT '公司代號 ( e.g., "2330", "2881" )',
-    company_name VARCHAR(26) NOT NULL COMMENT '公司名稱 ( e.g., "台積電", "富邦金" )',
+    company_code VARCHAR(10)  NOT NULL COMMENT '公司代號 ( e.g., "2330", "2881" )',
+    company_name VARCHAR(100) NOT NULL COMMENT '公司名稱 ( e.g., "台積電", "富邦金" )',
     
     -- 2. 路由核心欄位
     industry_type ENUM('ci', 'basi', 'bd', 'fh', 'ins', 'mim') NOT NULL 

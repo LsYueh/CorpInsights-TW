@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS t187ap06_basi (
     year         SMALLINT         NOT NULL COMMENT '年度 ( e.g., "2026" )',
     quarter      TINYINT UNSIGNED NOT NULL COMMENT '季別 ( 1: 第一季, 2: 第二季, 3: 第三季, 4: 第四季 )',
     market_type  CHAR(1)          NOT NULL COMMENT '市場註記 ( L: 上市公司, X: 公發公司 )',
-    company_code VARCHAR(6)       NOT NULL COMMENT '公司代號',
-    company_name VARCHAR(26)      NOT NULL COMMENT '公司名稱',
+    company_code VARCHAR(10)      NOT NULL COMMENT '公司代號',
+    company_name VARCHAR(100)     NOT NULL COMMENT '公司名稱',
     
     -- 2. 金融業營業損益項目
     net_interest_income             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '利息淨收益',
