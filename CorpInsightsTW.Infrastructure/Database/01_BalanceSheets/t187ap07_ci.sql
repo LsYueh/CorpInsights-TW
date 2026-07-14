@@ -17,21 +17,21 @@ CREATE TABLE IF NOT EXISTS t187ap07_ci (
     total_liabilities       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '負債總計',
     
     -- 4. 權益類項目
-    share_capital     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '股本',
-    equity            DECIMAL(20, 2) DEFAULT 0.00 COMMENT '權益 (具證券性質之虛擬通貨)',
-    capital_surplus   DECIMAL(20, 2) DEFAULT 0.00 COMMENT '資本公積',
-    retained_earnings DECIMAL(20, 2) DEFAULT 0.00 COMMENT '保留盈餘（累積虧損)',
-    other_equity      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他權益',
-    treasury_stock    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '庫藏股票',
-    equity_attributable_to_owners DECIMAL(20, 2) DEFAULT 0.00 COMMENT '歸屬於母公司業主之權益合計',
-    predecessor_interests         DECIMAL(20, 2) DEFAULT 0.00 COMMENT '共同控制下前手權益',
-    non_joint_control_equity      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '合併前非屬共同控制股權',
-    non_controlling_interests     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '非控制權益',
-    total_equity                  DECIMAL(20, 2) DEFAULT 0.00 COMMENT '權益總計',
+    share_capital             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '股本',
+    security_token_equity     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '權益 (具證券性質之虛擬通貨)',
+    capital_surplus           DECIMAL(20, 2) DEFAULT 0.00 COMMENT '資本公積',
+    retained_earnings         DECIMAL(20, 2) DEFAULT 0.00 COMMENT '保留盈餘（累積虧損)',
+    other_equity              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他權益',
+    treasury_stock            DECIMAL(20, 2) DEFAULT 0.00 COMMENT '庫藏股票',
+    equity_attributable_to_owners_of_parent DECIMAL(20, 2) DEFAULT 0.00 COMMENT '歸屬於母公司業主之權益合計',
+    predecessor_interests     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '共同控制下前手權益',
+    equity_not_under_common_control DECIMAL(20, 2) DEFAULT 0.00 COMMENT '合併前非屬共同控制股權',
+    non_controlling_interests DECIMAL(20, 2) DEFAULT 0.00 COMMENT '非控制權益',
+    total_equity              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '權益總計',
     
     -- 5. 股數與每股價值項目
     pending_cancellation_shares       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '待註銷股本股數（單位：股）',
-    pre_received_shares               DECIMAL(20, 2) DEFAULT 0.00 COMMENT '預收股款（權益項下）之約當發行股數（單位：股）',
+    pre_received_shares_equivalent    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '預收股款（權益項下）之約當發行股數（單位：股）',
     parent_subsidiary_treasury_shares DECIMAL(20, 2) DEFAULT 0.00 COMMENT '母公司暨子公司所持有之母公司庫藏股股數（單位：股）',
     net_value_per_share               DECIMAL(20, 2) DEFAULT 0.00 COMMENT '每股參考淨值',
     
