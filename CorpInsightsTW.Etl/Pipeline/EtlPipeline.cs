@@ -2,6 +2,7 @@ using CorpInsightsTW.Etl.Extract;
 using CorpInsightsTW.Etl.Transform;
 using CorpInsightsTW.Etl.Load;
 using CorpInsightsTW.Core.Enums;
+using CorpInsightsTW.Core.Extensions;
 
 namespace CorpInsightsTW.Etl.Pipeline;
 
@@ -77,16 +78,16 @@ public class EtlPipeline(
 
             // 🔄 2. Transform
             _logger.LogDebug("🔄 [Pipeline] 開始轉換 (Transform)...");
-            using var transformedDoc = _transformer.Transform(rawDoc);
+            var jsonRows = _transformer.Transform(rawDoc);
 
             // 💾 3. Load
             _logger.LogDebug("💾 [Pipeline] 開始載入 (Load)...");
-            await _loader.LoadAsync(transformedDoc, cancellationToken);
+            await _loader.LoadAsync(jsonRows, cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "❌ [Pipeline] {ApCode}_{Status}_{Taxonomy} ({Date}) 處理時發生未預期異常！", 
-                apCode, status, taxonomy, date.ToString("yyyyMMdd"));
+                apCode.ToCode(), status.ToCode(), taxonomy.ToCode(), date.ToString("yyyyMMdd"));
             throw;
         }
 

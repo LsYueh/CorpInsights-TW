@@ -1,18 +1,25 @@
 using System.Text.Json;
 namespace CorpInsightsTW.Etl.Load;
 
-public class ConsoleDataLoader(ILogger<ConsoleDataLoader> logger) : IDataLoader
+public class ConsoleDataLoader(
+    ILogger<ConsoleDataLoader> logger) : IDataLoader
 {
     private readonly ILogger<ConsoleDataLoader> _logger = logger;
 
-    private readonly JsonSerializerOptions options = new() { WriteIndented = true };
-
-    public Task LoadAsync(JsonDocument data, CancellationToken cancellationToken)
+    public Task LoadAsync(IEnumerable<JsonElement> rows, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("💾 執行資料載入 (輸出至控制台)...");
+        int count = 0;
 
-        // 格式化印出，確認剛才 Extract 出來的 JSON 內容完全吻合
-        Console.WriteLine(JsonSerializer.Serialize(data, options));
+        foreach (JsonElement row in rows)
+        {
+            // 配合 CancellationToken，若外部取消則立刻停止輸出
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // 🎯 直通列印：直接把單一列的完整 JSON 結構還原成字串輸出
+            _logger.LogInformation("💾 [ConsoleLoad] 項目 [{Index}]: {RawText}", ++count, row.GetRawText());
+        }
+
+        _logger.LogInformation("✅ [ConsoleLoad] 資料流印出完畢，共處理 {Total} 筆。", count);
 
         return Task.CompletedTask;
     }

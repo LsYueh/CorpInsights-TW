@@ -4,5 +4,5 @@ namespace CorpInsightsTW.Etl.Transform;
 
 public interface IDataTransformer
 {
-    JsonDocument Transform(JsonDocument source);
+    IEnumerable<JsonElement> Transform(JsonDocument source);
 }

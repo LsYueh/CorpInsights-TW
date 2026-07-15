@@ -111,7 +111,7 @@ public class Program
         });
 
         builder.Services.AddTransient<IDataExtractor, JsonFileDataExtractor>();
-        builder.Services.AddTransient<IDataTransformer, PassthroughDataTransformer>();
+        builder.Services.AddTransient<IDataTransformer, JsonDataTransformer>();
         builder.Services.AddTransient<IDataLoader, ConsoleDataLoader>();
         builder.Services.AddTransient<EtlPipeline>();
 

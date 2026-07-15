@@ -4,5 +4,5 @@ namespace CorpInsightsTW.Etl.Load;
 
 public interface IDataLoader
 {
-    Task LoadAsync(JsonDocument data, CancellationToken cancellationToken);
+    Task LoadAsync(IEnumerable<JsonElement> rows, CancellationToken cancellationToken);
 }
