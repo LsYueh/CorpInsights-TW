@@ -7,18 +7,18 @@ CREATE TABLE IF NOT EXISTS t187ap06_bd (
     company_name VARCHAR(100)     NOT NULL COMMENT '公司名稱',
     
     -- 2. 證券期貨業主要營業損益項目
-    revenues           DECIMAL(20, 2) DEFAULT 0.00 COMMENT '收益',
-    expenses_and_costs DECIMAL(20, 2) DEFAULT 0.00 COMMENT '支出及費用',
-    operating_income   DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業利益',
-    non_operating_income_and_expenses DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業外損益',
+    revenues             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '收益',
+    expenses_and_costs   DECIMAL(20, 2) DEFAULT 0.00 COMMENT '支出及費用',
+    operating_income     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業利益',
+    non_operating_income DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業外損益',
     
     -- 3. 稅前與稅後淨利項目
-    net_income_before_tax                              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '稅前淨利（淨損）',
-    income_tax_expense_or_benefit                      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '所得稅費用（利益）',
-    net_income_from_continuing_operations              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '繼續營業單位本期淨利（淨損）',
-    discontinued_operations_income_or_loss             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '停業單位損益',
-    pre_merger_non_joint_control_equity_income_or_loss DECIMAL(20, 2) DEFAULT 0.00 COMMENT '合併前非屬共同控制股權損益',
-    net_income_or_loss                                 DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期淨利（淨損）',
+    income_before_tax             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '稅前淨利（淨損）',
+    income_tax                    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '所得稅費用（利益）',
+    income_after_tax              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '繼續營業單位本期淨利（淨損）',
+    discontinued_ops_income       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '停業單位損益',
+    pre_merger_non_control_income DECIMAL(20, 2) DEFAULT 0.00 COMMENT '合併前非屬共同控制股權損益',
+    net_income                    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期淨利（淨損）',
     
     -- 4. 其他綜合損益項目
     other_comprehensive_income_after_tax_net DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期其他綜合損益（稅後淨額）',

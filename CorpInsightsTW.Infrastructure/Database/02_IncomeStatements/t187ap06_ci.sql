@@ -7,28 +7,28 @@ CREATE TABLE IF NOT EXISTS t187ap06_ci (
     company_name VARCHAR(100)     NOT NULL COMMENT '公司名稱',
     
     -- 2. 營業收入、成本與毛利項目
-    operating_revenue                     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業收入',
-    operating_costs                       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業成本',
-    gains_losses_on_initial_recognition_of_biological_assets   DECIMAL(20, 2) DEFAULT 0.00 COMMENT '原始認列生物資產及農產品之利益（損失）',
-    gains_losses_on_changes_in_fair_value_of_biological_assets DECIMAL(20, 2) DEFAULT 0.00 COMMENT '生物資產當期公允價值減出售成本之變動利益（損失）',
-    gross_profit_loss_from_operations     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業毛利（毛損）',
-    unrealized_gains_losses_on_sales      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '未實現銷貨（損）益',
-    realized_gains_losses_on_sales        DECIMAL(20, 2) DEFAULT 0.00 COMMENT '已實現銷貨（損）益',
-    net_gross_profit_loss_from_operations DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業毛利（毛損）淨額',
+    revenue                      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業收入',
+    costs                        DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業成本',
+    bio_assets_initial_gain_loss DECIMAL(20, 2) DEFAULT 0.00 COMMENT '原始認列生物資產及農產品之利益（損失）',
+    bio_assets_fv_gain_loss      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '生物資產當期公允價值減出售成本之變動利益（損失）',
+    gross_profit                 DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業毛利（毛損）',
+    unrealized_gains_losses      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '未實現銷貨（損）益',
+    realized_gains_losses        DECIMAL(20, 2) DEFAULT 0.00 COMMENT '已實現銷貨（損）益',
+    net_gross_profit             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業毛利（毛損）淨額',
     
     -- 3. 營業費用與營業利益
-    operating_expenses                DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業費用',
-    net_other_revenues_and_gains_expenses_and_losses DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他收益及費損淨額',
-    operating_income_loss             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業利益（損失）',
-    non_operating_income_and_expenses DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業外收入及支出',
+    expenses              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業費用',
+    net_other_income      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他收益及費損淨額',
+    operating_income      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業利益（損失）',
+    non_operating_income  DECIMAL(20, 2) DEFAULT 0.00 COMMENT '營業外收入及支出',
     
     -- 4. 稅前與稅後淨利項目
-    net_income_before_tax                              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '稅前淨利（淨損）',
-    income_tax_expense_or_benefit                      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '所得稅費用（利益）',
-    net_income_from_continuing_operations              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '繼續營業單位本期淨利（淨損）',
-    discontinued_operations_income_or_loss             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '停業單位損益',
-    pre_merger_non_joint_control_equity_income_or_loss DECIMAL(20, 2) DEFAULT 0.00 COMMENT '合併前非屬共同控制股權損益',
-    net_income_or_loss                                 DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期淨利（淨損）',
+    income_before_tax             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '稅前淨利（淨損）',
+    income_tax                    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '所得稅費用（利益）',
+    income_after_tax              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '繼續營業單位本期淨利（淨損）',
+    discontinued_ops_income       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '停業單位損益',
+    pre_merger_non_control_income DECIMAL(20, 2) DEFAULT 0.00 COMMENT '合併前非屬共同控制股權損益',
+    net_income                    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期淨利（淨損）',
     
     -- 5. 其他綜合損益項目
     other_comprehensive_income_net_after_tax DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他綜合損益（淨額）',

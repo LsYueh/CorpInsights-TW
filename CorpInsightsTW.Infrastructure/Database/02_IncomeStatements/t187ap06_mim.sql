@@ -11,11 +11,11 @@ CREATE TABLE IF NOT EXISTS t187ap06_mim (
     expenses DECIMAL(20, 2) DEFAULT 0.00 COMMENT '支出',
     
     -- 3. 稅前與稅後淨利項目
-    net_income_before_tax_from_continuing_operations DECIMAL(20, 2) DEFAULT 0.00 COMMENT '繼續營業單位稅前淨利（淨損）',
-    income_tax_expense_or_benefit                    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '所得稅費用（利益）',
-    net_income_after_tax_from_continuing_operations  DECIMAL(20, 2) DEFAULT 0.00 COMMENT '繼續營業單位本期淨利（淨損）',
-    discontinued_operations_income_or_loss           DECIMAL(20, 2) DEFAULT 0.00 COMMENT '停業單位損益',
-    net_income_or_loss                               DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期淨利（淨損）',
+    income_before_tax       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '繼續營業單位稅前淨利（淨損）',
+    income_tax              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '所得稅費用（利益）',
+    income_after_tax        DECIMAL(20, 2) DEFAULT 0.00 COMMENT '繼續營業單位本期淨利（淨損）',
+    discontinued_ops_income DECIMAL(20, 2) DEFAULT 0.00 COMMENT '停業單位損益',
+    net_income              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期淨利（淨損）',
     
     -- 4. 其他綜合損益項目
     other_comprehensive_income DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他綜合損益',
