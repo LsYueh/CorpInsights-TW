@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS t187ap07_ins (
     receivables                 DECIMAL(20, 2) DEFAULT 0.00 COMMENT '應收款項',
     current_tax_assets          DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期所得稅資產',
     assets_held_for_sale        DECIMAL(20, 2) DEFAULT 0.00 COMMENT '待出售資產',
-    assets_for_distribution_net DECIMAL(20, 2) DEFAULT 0.00 COMMENT '待分配予業主之資產 (處分群組)',
+    assets_for_distribution     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '待分配予業主之資產 (處分群組)',
     investments                 DECIMAL(20, 2) DEFAULT 0.00 COMMENT '投資',
     reinsurance_contract_assets DECIMAL(20, 2) DEFAULT 0.00 COMMENT '再保險合約資產',
     property_and_equipment      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '不動產及設備',
