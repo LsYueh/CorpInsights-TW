@@ -21,22 +21,22 @@ CREATE TABLE IF NOT EXISTS t187ap06_basi (
     net_income                    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期稅後淨利（淨損）',
     
     -- 4. 其他綜合損益項目
-    other_comprehensive_income_after_tax DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他綜合損益（稅後）',
-    pre_merger_non_joint_control_equity_other_comprehensive_income_net DECIMAL(20, 2) DEFAULT 0.00 COMMENT '合併前非屬共同控制股權綜合損益淨額',
-    total_comprehensive_income_after_tax DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期綜合損益總額（稅後）',
+    other_comprehensive_income DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他綜合損益（稅後）',
+    pre_merger_non_control_oci DECIMAL(20, 2) DEFAULT 0.00 COMMENT '合併前非屬共同控制股權綜合損益淨額',
+    total_comprehensive_income DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期綜合損益總額（稅後）',
     
     -- 5. 損益歸屬項目
-    net_income_attributable_to_owners_of_parent          DECIMAL(20, 2) DEFAULT 0.00 COMMENT '淨利（淨損）歸屬於母公司業主',
-    net_income_attributable_to_predecessor_interests     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '淨利（淨損）歸屬於共同控制下前手權益',
-    net_income_attributable_to_non_controlling_interests DECIMAL(20, 2) DEFAULT 0.00 COMMENT '淨利（淨損）歸屬於非控制權益',
+    net_income_parent      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '淨利（淨損）歸屬於母公司業主',
+    net_income_predecessor DECIMAL(20, 2) DEFAULT 0.00 COMMENT '淨利（淨損）歸屬於共同控制下前手權益',
+    net_income_nci         DECIMAL(20, 2) DEFAULT 0.00 COMMENT '淨利（淨損）歸屬於非控制權益',
     
     -- 6. 綜合損益總額歸屬項目
-    total_comprehensive_income_attributable_to_owners_of_parent          DECIMAL(20, 2) DEFAULT 0.00 COMMENT '綜合損益總額歸屬於母公司業主',
-    total_comprehensive_income_attributable_to_predecessor_interests     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '綜合損益總額歸屬於共同控制下前手權益',
-    total_comprehensive_income_attributable_to_non_controlling_interests DECIMAL(20, 2) DEFAULT 0.00 COMMENT '綜合損益總額歸屬於非控制權益',
+    comp_income_parent      DECIMAL(20, 2) DEFAULT 0.00 COMMENT '綜合損益總額歸屬於母公司業主',
+    comp_income_predecessor DECIMAL(20, 2) DEFAULT 0.00 COMMENT '綜合損益總額歸屬於共同控制下前手權益',
+    comp_income_nci         DECIMAL(20, 2) DEFAULT 0.00 COMMENT '綜合損益總額歸屬於非控制權益',
     
     -- 7. 每股盈餘項目
-    basic_earnings_per_share DECIMAL(20, 2) DEFAULT 0.00 COMMENT '基本每股盈餘（元）',
+    basic_eps DECIMAL(20, 2) DEFAULT 0.00 COMMENT '基本每股盈餘（元）',
     
     -- 8. 系統稽核欄位
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '資料最後更新時間',
