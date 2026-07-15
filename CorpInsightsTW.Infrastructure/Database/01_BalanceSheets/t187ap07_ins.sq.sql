@@ -23,24 +23,24 @@ CREATE TABLE IF NOT EXISTS t187ap07_ins (
     total_assets                DECIMAL(20, 2) DEFAULT 0.00 COMMENT '資產總計',
     
     -- 3. 保險業負債類項目
-    short_term_debts            DECIMAL(20, 2) DEFAULT 0.00 COMMENT '短期債務',
-    payables                    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '應付款項',
-    current_tax_liabilities     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期所得稅負債',
-    liabilities_related_to_assets_held_for_sale  DECIMAL(20, 2) DEFAULT 0.00 COMMENT '與待出售資產直接相關之負債',
-    financial_liabilities_at_fvtpl               DECIMAL(20, 2) DEFAULT 0.00 COMMENT '透過損益按公允價值衡量之金融負債',
-    derivative_financial_liabilities_for_hedging DECIMAL(20, 2) DEFAULT 0.00 COMMENT '避險之衍生金融負債',
-    bonds_payable               DECIMAL(20, 2) DEFAULT 0.00 COMMENT '應付債券',
-    preferred_stock_liabilities DECIMAL(20, 2) DEFAULT 0.00 COMMENT '特別股負債',
-    other_financial_liabilities DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他金融負債',
-    lease_liabilities           DECIMAL(20, 2) DEFAULT 0.00 COMMENT '租賃負債',
-    insurance_liabilities       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '保險負債',
-    financial_insurance_reserves        DECIMAL(20, 2) DEFAULT 0.00 COMMENT '具金融商品性質之保險契約準備',
+    short_term_debts         DECIMAL(20, 2) DEFAULT 0.00 COMMENT '短期債務',
+    payables                 DECIMAL(20, 2) DEFAULT 0.00 COMMENT '應付款項',
+    current_tax_liabs        DECIMAL(20, 2) DEFAULT 0.00 COMMENT '本期所得稅負債',
+    liabs_related_to_assets_held_for_sale DECIMAL(20, 2) DEFAULT 0.00 COMMENT '與待出售資產直接相關之負債',
+    financial_liabs_at_fvtpl DECIMAL(20, 2) DEFAULT 0.00 COMMENT '透過損益按公允價值衡量之金融負債',
+    derivative_financial_liabs_for_hedging DECIMAL(20, 2) DEFAULT 0.00 COMMENT '避險之衍生金融負債',
+    bonds_payable            DECIMAL(20, 2) DEFAULT 0.00 COMMENT '應付債券',
+    preferred_stock_liabs    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '特別股負債',
+    other_financial_liabs    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他金融負債',
+    lease_liabs              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '租賃負債',
+    insurance_liabs          DECIMAL(20, 2) DEFAULT 0.00 COMMENT '保險負債',
+    financial_insurance_reserves DECIMAL(20, 2) DEFAULT 0.00 COMMENT '具金融商品性質之保險契約準備',
     foreign_exchange_valuation_reserves DECIMAL(20, 2) DEFAULT 0.00 COMMENT '外匯價格變動準備',
-    provisions                  DECIMAL(20, 2) DEFAULT 0.00 COMMENT '負債準備',
-    deferred_tax_liabilities    DECIMAL(20, 2) DEFAULT 0.00 COMMENT '遞延所得稅負債',
-    other_liabilities           DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他負債',
-    liabilities_on_segregated_accounts  DECIMAL(20, 2) DEFAULT 0.00 COMMENT '分離帳戶保險商品負債',
-    total_liabilities           DECIMAL(20, 2) DEFAULT 0.00 COMMENT '負債總計',
+    provisions               DECIMAL(20, 2) DEFAULT 0.00 COMMENT '負債準備',
+    deferred_tax_liabs       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '遞延所得稅負債',
+    other_liabs              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '其他負債',
+    liabs_on_segregated_accounts DECIMAL(20, 2) DEFAULT 0.00 COMMENT '分離帳戶保險商品負債',
+    total_liabs              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '負債總計',
     
     -- 4. 權益類項目
     share_capital             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '股本',
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS t187ap07_ins (
     total_equity              DECIMAL(20, 2) DEFAULT 0.00 COMMENT '權益總計',
     
     -- 5. 保險業特有總計項目
-    total_liabilities_and_equity DECIMAL(20, 2) DEFAULT 0.00 COMMENT '負債及權益總計',
+    total_liabs_and_equity DECIMAL(20, 2) DEFAULT 0.00 COMMENT '負債及權益總計',
     
     -- 6. 股數與每股價值項目
     pending_cancellation_shares       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '待註銷股本股數（單位：股）',

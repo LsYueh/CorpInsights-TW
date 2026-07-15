@@ -12,9 +12,9 @@ CREATE TABLE IF NOT EXISTS t187ap07_ci (
     total_assets       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '資產總計',
     
     -- 3. 負債類項目
-    current_liabilities     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '流動負債',
-    non_current_liabilities DECIMAL(20, 2) DEFAULT 0.00 COMMENT '非流動負債',
-    total_liabilities       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '負債總計',
+    current_liabs     DECIMAL(20, 2) DEFAULT 0.00 COMMENT '流動負債',
+    non_current_liabs DECIMAL(20, 2) DEFAULT 0.00 COMMENT '非流動負債',
+    total_liabs       DECIMAL(20, 2) DEFAULT 0.00 COMMENT '負債總計',
     
     -- 4. 權益類項目
     share_capital             DECIMAL(20, 2) DEFAULT 0.00 COMMENT '股本',
