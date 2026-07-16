@@ -27,8 +27,10 @@ public class TwseApiService(
         string tag = $"{context.ApCode.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
         string title = $"{context.Status.ToDisplay()} {context.ApCode.ToDisplay()} - {context.Taxonomy.ToDisplay()}";
 
+        var storageContext = new StorageContext(context.ApCode, context.Status, context.Taxonomy);
+
         // 檔案檢查
-        if (_storage.Exists(context.ApCode, context.Status, context.Taxonomy))
+        if (_storage.Exists(storageContext, indentLevel + 1))
         {
             _logger.LogInformation("{Indent}🚀 檔案: {Tag} ({Title}) 已存在，跳過 HTTP 請求。", indent, tag, title);
             return;
@@ -51,7 +53,7 @@ public class TwseApiService(
             {
                 // Note: 區域範疇區隔，確保寫入完畢並 Flush 後，立刻關檔釋放鎖定
                 
-                using var fileStream = _storage.CreateWritableStream(context.ApCode, context.Status, context.Taxonomy);
+                using var fileStream = _storage.CreateWritableStream(storageContext, indentLevel + 1);
                 await responseStream.CopyToAsync(fileStream, stoppingToken);
                 await fileStream.FlushAsync(stoppingToken);
             }
@@ -61,16 +63,22 @@ public class TwseApiService(
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "{Indent}❌ 呼叫證交所 OpenAPI 時發生網路連線或 HTTP 狀態碼錯誤 [URL: {Url}]", indent, targetUrl);
+
+            _storage.Delete(storageContext, indentLevel + 1);
+
             throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "{Indent}❌ 檔案下載或落地儲存時發生非預期錯誤 [URL: {Url}]", indent, targetUrl);
+
+            _storage.Delete(storageContext, indentLevel + 1);
+
             throw;
         }
 
         // 爬蟲禮儀延遲
-        await Task.Delay(500, stoppingToken);
+        await Task.Delay(1000, stoppingToken);
     }
 
     public string GetTargetUrl(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, int indentLevel = 0)

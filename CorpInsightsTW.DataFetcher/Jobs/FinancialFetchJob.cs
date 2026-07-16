@@ -52,16 +52,7 @@ public class FinancialFetchJob(
             {
                 foreach (var status in statusToFetch)
                 {
-                    _logger.LogInformation("{Indent}⚡ 派發作業: {Status} {Taxonomy}", indent, status.ToDisplay(), taxonomy.ToDisplay());
-
-                    foreach (var apCode in reportsToFetch)
-                    {
-                        stoppingToken.ThrowIfCancellationRequested();
-
-                        var context = new FetchContext(apCode, status, taxonomy);
-
-                        await _twseApiService.FetchFinancialDataAsync(context, stoppingToken, indentLevel + 1);
-                    }
+                    await FetchReportsGroupAsync(taxonomy, status, reportsToFetch, stoppingToken, indentLevel + 1);
                 }
             }
 
@@ -71,6 +62,24 @@ public class FinancialFetchJob(
         {
             _logger.LogError(ex, "{Indent}❌ 執行期間發生未預期錯誤", indent);
             throw; 
+        }
+    }
+
+    private async Task FetchReportsGroupAsync(
+        XbrlTaxonomy taxonomy, ListingStatus status, IEnumerable<T187ApCode> apCodes,
+        CancellationToken stoppingToken, int indentLevel = 0)
+    {
+        string indent = GetIndent(indentLevel);
+        
+        _logger.LogInformation("{Indent}⚡ HTTP 請求: {Status} - {Taxonomy}", indent, status.ToDisplay(), taxonomy.ToDisplay());
+
+        foreach (var apCode in apCodes)
+        {
+            stoppingToken.ThrowIfCancellationRequested();
+
+            var context = new FetchContext(apCode, status, taxonomy);
+
+            await _twseApiService.FetchFinancialDataAsync(context, stoppingToken, indentLevel + 1);
         }
     }
 }
