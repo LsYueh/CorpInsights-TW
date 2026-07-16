@@ -27,6 +27,20 @@ CorpInsightsTW/                             # 專案總根目錄
 
 <br>
 
+## 功能
+
+### `綜合損益表` 與 `資產負債表` 資料請求  
+
+![Data Fetcher](/docs/DataFetcher.png)  
+
+<br>
+
+### 資料處理 (暫)
+
+![ETL](/docs/ETL.png)  
+
+<br>
+
 ## 快速操作
 
 抓取財務報表
