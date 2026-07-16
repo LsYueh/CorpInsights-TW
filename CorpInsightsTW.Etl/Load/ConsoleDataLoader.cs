@@ -6,20 +6,23 @@ public class ConsoleDataLoader(
 {
     private readonly ILogger<ConsoleDataLoader> _logger = logger;
 
-    public Task LoadAsync(IEnumerable<JsonElement> rows, CancellationToken cancellationToken)
+    // 追蹤跨批次累計的總筆數
+    private int _totalProcessedCount = 0;
+
+    public Task LoadAsync(IReadOnlyList<JsonElement> batch, int fileTotalCount, CancellationToken cancellationToken)
     {
-        int count = 0;
+        cancellationToken.ThrowIfCancellationRequested();
 
-        foreach (JsonElement row in rows)
-        {
-            // 配合 CancellationToken，若外部取消則立刻停止輸出
-            cancellationToken.ThrowIfCancellationRequested();
+        int currentTotal = Interlocked.Add(ref _totalProcessedCount, batch.Count);
 
-            // 🎯 直通列印：直接把單一列的完整 JSON 結構還原成字串輸出
-            _logger.LogInformation("💾 [ConsoleLoad] 項目 [{Index}]: {RawText}", ++count, row.GetRawText());
-        }
+        _logger.LogInformation("💾 [ConsoleLoad] 進度: {CurrentTotal}/{FileTotal}", 
+            currentTotal, fileTotalCount);
 
-        _logger.LogInformation("✅ [ConsoleLoad] 資料流印出完畢，共處理 {Total} 筆。", count);
+        // 當處理到檔案的最後一筆時，重置計數器（方便下一個檔案進來時重新計算）
+        if (currentTotal >= fileTotalCount)
+            Interlocked.Exchange(ref _totalProcessedCount, 0);
+
+        // TODO: ...
 
         return Task.CompletedTask;
     }

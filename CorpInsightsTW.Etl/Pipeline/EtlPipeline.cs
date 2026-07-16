@@ -78,11 +78,14 @@ public class EtlPipeline(
 
             // 🔄 2. Transform
             _logger.LogDebug("🔄 [Pipeline] 開始轉換 (Transform)...");
-            var jsonRows = _transformer.Transform(rawDoc);
+            var jsonBatches = _transformer.Transform(rawDoc);
 
             // 💾 3. Load
             _logger.LogDebug("💾 [Pipeline] 開始載入 (Load)...");
-            await _loader.LoadAsync(jsonRows, cancellationToken);
+            foreach (var (batch, totalCount) in jsonBatches)
+            {
+                await _loader.LoadAsync(batch, totalCount, cancellationToken);
+            }
         }
         catch (Exception ex)
         {

@@ -4,5 +4,5 @@ namespace CorpInsightsTW.Etl.Transform;
 
 public interface IDataTransformer
 {
-    IEnumerable<JsonElement> Transform(JsonDocument source);
+    IEnumerable<(IReadOnlyList<JsonElement> Batch, int TotalCount)> Transform(JsonDocument source, int BatchSize = 200);
 }
