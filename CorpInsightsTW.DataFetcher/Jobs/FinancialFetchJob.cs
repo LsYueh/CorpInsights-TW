@@ -1,5 +1,6 @@
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
+using CorpInsightsTW.DataFetcher.Common;
 using CorpInsightsTW.DataFetcher.Services;
 
 namespace CorpInsightsTW.DataFetcher.Jobs;
@@ -13,14 +14,17 @@ public class FinancialFetchJob(
     private readonly TwseApiService _twseApiService = twseApiService;
     private readonly FetchRunConfig _config = config;
 
-    public async Task ExecuteAsync(CancellationToken stoppingToken)
+    private static string GetIndent(int level) => new(' ', level * 4);
+
+    public async Task ExecuteAsync(CancellationToken stoppingToken, int indentLevel = 0)
     {
+        string indent = GetIndent(indentLevel);
+        
         XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         ListingStatus targetStatus   = _config.Status;
         T187ApCode    targetApCode   = _config.ApCode;
 
-        _logger.LogInformation("⚡ 開始執行同步作業...");
-        _logger.LogInformation("🎬 發動: {Status} {Taxonomy} - {Name}", 
+        _logger.LogInformation("{Indent}🎬 發動 HTTP 請求: {Status} {Taxonomy} - {Name}", indent, 
             targetStatus.ToDisplay(), targetTaxonomy.ToDisplay(), targetApCode.ToDisplay());
 
         stoppingToken.ThrowIfCancellationRequested();
@@ -41,32 +45,32 @@ public class FinancialFetchJob(
                 ? Enum.GetValues<T187ApCode>().Where(r => r != T187ApCode.All)
                 : [targetApCode];
 
-            _logger.LogInformation("📊 預計執行組合數: {Count} 組", 
+            _logger.LogInformation("{Indent}📊 預計執行組合數: {Count} 組", indent, 
                 statusToFetch.Count() * taxonomiesToFetch.Count() * reportsToFetch.Count());
 
             foreach (var taxonomy in taxonomiesToFetch)
             {
                 foreach (var status in statusToFetch)
                 {
-                    _logger.LogInformation("⚡ 派發作業: {Status} {Taxonomy}", status.ToDisplay(), taxonomy.ToDisplay());
+                    _logger.LogInformation("{Indent}⚡ 派發作業: {Status} {Taxonomy}", indent, status.ToDisplay(), taxonomy.ToDisplay());
 
                     foreach (var apCode in reportsToFetch)
                     {
                         stoppingToken.ThrowIfCancellationRequested();
 
-                        await _twseApiService.FetchFinancialDataAsync(apCode, status, taxonomy, stoppingToken);
+                        var context = new FetchContext(apCode, status, taxonomy);
+
+                        await _twseApiService.FetchFinancialDataAsync(context, stoppingToken, indentLevel + 1);
                     }
                 }
             }
 
-            _logger.LogInformation("✨ FinancialFetchJob 本次批次同步調度安全結束。");
+            _logger.LogInformation("{Indent}✨ 批次 HTTP 請求安全結束。", indent);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "❌ FinancialFetchJob 在執行期間發生未預期錯誤");
+            _logger.LogError(ex, "{Indent}❌ 執行期間發生未預期錯誤", indent);
             throw; 
         }
-
-        _logger.LogInformation("📴 同步作業已順利完成");
     }
 }

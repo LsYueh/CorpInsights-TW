@@ -1,5 +1,5 @@
 using System.Text.Json;
-using CorpInsightsTW.Core.Enums;
+using CorpInsightsTW.Etl.Common;
 using CorpInsightsTW.Infrastructure.Storage;
 
 namespace CorpInsightsTW.Etl.Extract;
@@ -11,22 +11,26 @@ public class JsonFileDataExtractor(
     private readonly ILogger<JsonFileDataExtractor> _logger = logger;
     private readonly LocalRawDataStorage _storage = storage;
 
-    public async Task<JsonDocument?> ExtractAsync(
-        T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, DateOnly date,
-        CancellationToken cancellationToken)
+    private static string GetIndent(int level) => new(' ', level * 4);
+
+    public async Task<JsonDocument?> ExtractAsync(EtlContext context, CancellationToken cancellationToken, int indentLevel = 0)
     {
+        string indent = GetIndent(indentLevel);
+        
+        string path = _storage.GetStoragePath(context.ApCode, context.Status, context.Taxonomy, context.Date);
+
         // 檢查檔案是否存在
-        if (!_storage.Exists(apCode, status, taxonomy, date))
+        if (!_storage.Exists(context.ApCode, context.Status, context.Taxonomy, context.Date))
         {
-            string path = _storage.GetStoragePath(apCode, status, taxonomy, date);
-            _logger.LogWarning("⚠️ 找不到對應的原始檔案： {Path}", path);
+            
+            _logger.LogWarning("{Indent}⚠️ 找不到對應的原始檔案： {Path}", indent, path);
             return null;
         }
 
-        _logger.LogInformation("📥 開啟本地原始檔案流...");
+        _logger.LogInformation("{Indent}📥 檔案: {Path}", indent, path);
         
         // 透過基礎建設層的 Stream 機制唯讀開啟
-        using var stream = _storage.OpenReadableStream(apCode, status, taxonomy, date);
+        using var stream = _storage.OpenReadableStream(context.ApCode, context.Status, context.Taxonomy, context.Date);
         
         // 高效反序列化成 JsonDocument 並回傳
         return await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);

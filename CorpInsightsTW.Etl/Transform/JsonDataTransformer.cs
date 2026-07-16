@@ -7,7 +7,7 @@ public class JsonDataTransformer : IDataTransformer
     /// <summary>
     /// 將 JsonDocument 的陣列攤, 切塊（Batching）輸出
     /// </summary>
-    public IEnumerable<(IReadOnlyList<JsonElement> Batch, int TotalCount)> Transform(JsonDocument doc, int batchSize = 200)
+    public IEnumerable<(IReadOnlyList<JsonElement> Batch, int TotalCount)> Transform(JsonDocument doc, int batchSize, int indentLevel = 0)
     {
         int totalCount = doc.RootElement.GetArrayLength();
 

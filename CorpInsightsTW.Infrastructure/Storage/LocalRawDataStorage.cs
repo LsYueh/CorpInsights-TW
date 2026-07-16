@@ -13,6 +13,8 @@ public class LocalRawDataStorage(
     private const string BaseFolderName = "raw_data";
     private const string pattern = "yyyyMMdd";
 
+    private static string GetIndent(int level) => new(' ', level * 4);
+
     /// <summary>
     /// 檢查今日是否已經有落地檔案
     /// </summary>
@@ -93,15 +95,17 @@ public class LocalRawDataStorage(
     /// <summary>
     /// 確保實體資料夾存在，若不存在則自動建立
     /// </summary>
-    private void EnsureDirectoryExists(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, DateOnly date)
+    private void EnsureDirectoryExists(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, DateOnly date, int indentLevel = 0)
     {
+        string indent = GetIndent(indentLevel);
+        
         string fullPath = GetStoragePath(apCode, status, taxonomy, date);
         string? directoryPath = Path.GetDirectoryName(fullPath);
 
         if (directoryPath != null && !Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);
-            _logger.LogInformation("📁 [資料落地] 自動建立今日資料夾: {Path}", directoryPath);
+            _logger.LogInformation("{Indent}📁 [資料落地] 自動建立今日資料夾: {Path}", indent, directoryPath);
         }
     }
 }

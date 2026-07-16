@@ -2,6 +2,7 @@ using CorpInsightsTW.Etl.Extract;
 using CorpInsightsTW.Etl.Transform;
 using CorpInsightsTW.Etl.Load;
 using CorpInsightsTW.Core.Enums;
+using CorpInsightsTW.Etl.Common;
 using CorpInsightsTW.Core.Extensions;
 
 namespace CorpInsightsTW.Etl.Pipeline;
@@ -19,6 +20,8 @@ public class EtlPipeline(
     private readonly IDataExtractor _extractor = extractor;
     private readonly IDataTransformer _transformer = transformer;
     private readonly IDataLoader _loader = loader;
+
+    private static string GetIndent(int level) => new(' ', level * 4);
 
     public async Task RunAsync(CancellationToken cancellationToken = default)
     {
@@ -40,16 +43,18 @@ public class EtlPipeline(
             ? Enum.GetValues<T187ApCode>().Where(r => r != T187ApCode.All)
             : [targetApCode];
 
+        _logger.LogInformation("🏁 [Pipeline] 開始執行批次排程...");
+
         foreach (var taxonomy in taxonomiesToFetch)
         {
             foreach (var status in statusToFetch)
             {
                 foreach (var apCode in reportsToFetch)
                 {
-                    _logger.LogInformation("🏁 [Pipeline] 管線目標: {ApCode}_{Status}_{Taxonomy} (日期: {Date})", 
-                        apCode, status, taxonomy, targetDate.ToString("yyyyMMdd"));
+                    cancellationToken.ThrowIfCancellationRequested();
                     
-                    await ExecutePipelineStepAsync(apCode, status, taxonomy, targetDate, cancellationToken);
+                    var context = new EtlContext(apCode, status, taxonomy, targetDate);
+                    await ExecutePipelineStepAsync(context, cancellationToken, 1);
                 }
             }
         }
@@ -60,39 +65,48 @@ public class EtlPipeline(
     /// <summary>
     /// 單一規格組的 ETL 處理
     /// </summary>
-    private async Task ExecutePipelineStepAsync (
-        T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, DateOnly date,
-        CancellationToken cancellationToken)
+    private async Task ExecutePipelineStepAsync (EtlContext context, CancellationToken cancellationToken, int indentLevel = 0)
     {
+        string indent = GetIndent(indentLevel);
+
+        string tag = $"{context.ApCode.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
+        string title = $"{context.Status.ToDisplay()} {context.ApCode.ToDisplay()} - {context.Taxonomy.ToDisplay()}";
+        string message = $"[{context.Date:yyyyMMdd}] {tag} ({title})";
+
+        _logger.LogInformation("{Indent}🏁 [Pipeline] 目標: {Message}", indent, message);
+
         try
         {
             // 📥 1. Extract
-            _logger.LogDebug("📥 [Pipeline] 開始擷取 (Extract)...");
-            using var rawDoc = await _extractor.ExtractAsync(apCode, status, taxonomy, date, cancellationToken);
+            _logger.LogDebug("{Indent}📥 [Pipeline] 開始擷取 (Extract)...", indent);
+            using var rawDoc = await _extractor.ExtractAsync(context, cancellationToken, indentLevel + 1);
             if (rawDoc == null)
             {
-                _logger.LogWarning("⏹️ [Pipeline] {ApCode}_{Status}_{Taxonomy} ({Date}) 擷取階段未取得資料，管線提前中止。", 
-                    apCode, status, taxonomy, date.ToString("yyyyMMdd"));
+                _logger.LogWarning("{Indent}⏹️ [Pipeline] {Message} 擷取階段未取得資料，管線提前中止。", indent, message);
                 return;
             }
 
             // 🔄 2. Transform
-            _logger.LogDebug("🔄 [Pipeline] 開始轉換 (Transform)...");
-            var jsonBatches = _transformer.Transform(rawDoc);
+            _logger.LogDebug("{Indent}🔄 [Pipeline] 開始轉換 (Transform)...", indent);
+            var jsonBatches = _transformer.Transform(rawDoc, 200, indentLevel + 1);
 
             // 💾 3. Load
-            _logger.LogDebug("💾 [Pipeline] 開始載入 (Load)...");
+            _logger.LogDebug("{Indent}💾 [Pipeline] 開始載入 (Load)...", indent);
+
+            int fileTotalCount = 0;
+
             foreach (var (batch, totalCount) in jsonBatches)
             {
-                await _loader.LoadAsync(batch, totalCount, cancellationToken);
+                fileTotalCount = totalCount;
+                await _loader.LoadAsync(context, batch, totalCount, cancellationToken, indentLevel + 1);
             }
+
+            _logger.LogInformation("{Indent}✅ [Pipeline] 完畢，共處理 {Total} 筆。", indent, fileTotalCount);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "❌ [Pipeline] {ApCode}_{Status}_{Taxonomy} ({Date}) 處理時發生未預期異常！", 
-                apCode.ToCode(), status.ToCode(), taxonomy.ToCode(), date.ToString("yyyyMMdd"));
+            _logger.LogError(ex, "{Indent}❌ [Pipeline] {Message} 處理時發生未預期異常！", indent, message);
             throw;
         }
-
     }
 }

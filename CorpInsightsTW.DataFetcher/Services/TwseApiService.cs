@@ -1,5 +1,6 @@
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
+using CorpInsightsTW.DataFetcher.Common;
 using CorpInsightsTW.Infrastructure.Storage;
 
 namespace CorpInsightsTW.DataFetcher.Services;
@@ -15,18 +16,25 @@ public class TwseApiService(
     private readonly FetchRunConfig _config = config;
     private readonly LocalRawDataStorage _storage = storage;
 
-    public async Task FetchFinancialDataAsync(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, CancellationToken stoppingToken)
+    private static string GetIndent(int level) => new(' ', level * 4);
+
+    public async Task FetchFinancialDataAsync(FetchContext context, CancellationToken stoppingToken, int indentLevel = 0)
     {
         if (stoppingToken.IsCancellationRequested) return;
 
+        string indent = GetIndent(indentLevel);
+
+        string tag = $"{context.ApCode.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
+        string title = $"{context.Status.ToDisplay()} {context.ApCode.ToDisplay()} - {context.Taxonomy.ToDisplay()}";
+
         // 檔案檢查
-        if (_storage.Exists(apCode, status, taxonomy))
+        if (_storage.Exists(context.ApCode, context.Status, context.Taxonomy))
         {
-            _logger.LogInformation("🚀 [Cache Hit] 落地檔案已存在，跳過網路請求。");
+            _logger.LogInformation("{Indent}🚀 檔案: {Tag} ({Title}) 已存在，跳過 HTTP 請求。", indent, tag, title);
             return;
         }
 
-        string targetUrl = GetTargetUrl(apCode, status, taxonomy);
+        string targetUrl = GetTargetUrl(context.ApCode, context.Status, context.Taxonomy, indentLevel);
 
         using var client = _httpClientFactory.CreateClient();
 
@@ -43,21 +51,21 @@ public class TwseApiService(
             {
                 // Note: 區域範疇區隔，確保寫入完畢並 Flush 後，立刻關檔釋放鎖定
                 
-                using var fileStream = _storage.CreateWritableStream(apCode, status, taxonomy);
+                using var fileStream = _storage.CreateWritableStream(context.ApCode, context.Status, context.Taxonomy);
                 await responseStream.CopyToAsync(fileStream, stoppingToken);
                 await fileStream.FlushAsync(stoppingToken);
             }
 
-            _logger.LogInformation("✅ 資料成功寫入");
+            _logger.LogInformation("{Indent}✅ 資料成功寫入", indent);
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "❌ 呼叫證交所 OpenAPI 時發生網路連線或 HTTP 狀態碼錯誤 [URL: {Url}]", targetUrl);
+            _logger.LogError(ex, "{Indent}❌ 呼叫證交所 OpenAPI 時發生網路連線或 HTTP 狀態碼錯誤 [URL: {Url}]", indent, targetUrl);
             throw;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "❌ 檔案下載或落地儲存時發生非預期錯誤 [URL: {Url}]", targetUrl);
+            _logger.LogError(ex, "{Indent}❌ 檔案下載或落地儲存時發生非預期錯誤 [URL: {Url}]", indent, targetUrl);
             throw;
         }
 
@@ -65,14 +73,16 @@ public class TwseApiService(
         await Task.Delay(500, stoppingToken);
     }
 
-    public string GetTargetUrl(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy)
+    public string GetTargetUrl(T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, int indentLevel = 0)
     {
+        string indent = GetIndent(indentLevel);
+
         string baseUrl = _config.TwseRootUrl.TrimEnd('/'); // 確保 RootUrl 結尾乾淨
         string targetUrl = $"{baseUrl}/opendata/{apCode.ToCode()}_{status.ToCode()}_{taxonomy.ToCode()}";
         
-        _logger.LogInformation("🌐 抓取資料: {Status} {Taxonomy} - {Name} ({Code})",
+        _logger.LogInformation("{Indent}🌐 抓取資料: {Status} {Taxonomy} - {Name} ({Code})", indent,
             status.ToDisplay(), taxonomy.ToDisplay(), apCode.ToDisplay(), apCode.ToCode());
-        _logger.LogDebug("🔗 URL: {Url}", targetUrl);
+        _logger.LogDebug("{Indent}🔗 URL: {Url}", indent, targetUrl);
 
         return targetUrl;
     }

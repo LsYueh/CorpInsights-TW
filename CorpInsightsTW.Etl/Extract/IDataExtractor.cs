@@ -1,11 +1,9 @@
 using System.Text.Json;
-using CorpInsightsTW.Core.Enums;
+using CorpInsightsTW.Etl.Common;
 
 namespace CorpInsightsTW.Etl.Extract;
 
 public interface IDataExtractor
 {
-    Task<JsonDocument?> ExtractAsync(
-        T187ApCode apCode, ListingStatus status, XbrlTaxonomy taxonomy, DateOnly date,
-        CancellationToken cancellationToken);
+    Task<JsonDocument?> ExtractAsync(EtlContext context, CancellationToken cancellationToken, int indentLevel = 0);
 }

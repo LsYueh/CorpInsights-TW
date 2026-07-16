@@ -2,9 +2,9 @@
 
 `CorpInsights-TW` 是一個專為台灣上市櫃及公發公司財務報表設計的資料倉儲與大數據分析專案。本專案將公開資訊觀測站的財報 JSON 數據進行清洗、結構化，為後續的量化分析與公司洞察提供堅實的數據底座。
 
----
+<br>
 
-## 📁 專案目錄結構 (暫)
+## 📁 專案目錄結構
 
 ```text
 CorpInsightsTW/                             # 專案總根目錄
@@ -23,4 +23,18 @@ CorpInsightsTW/                             # 專案總根目錄
 │   └── ... (Data, OpenApiClients, Mappers)
 ├── CorpInsightsTW.Tests
 └── CorpInsightsTW.slnx                     # .NET 10 方案核心管理檔
+```
+
+<br>
+
+## 快速操作
+
+抓取財務報表
+```console
+dotnet run --project CorpInsightsTW.DataFetcher --
+```
+
+讀取落地資料
+```console
+dotnet run --project CorpInsightsTW.Etl --
 ```

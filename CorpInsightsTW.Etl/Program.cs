@@ -3,9 +3,11 @@
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Etl.Extract;
 using CorpInsightsTW.Etl.Load;
+using CorpInsightsTW.Etl.Logging;
 using CorpInsightsTW.Etl.Pipeline;
 using CorpInsightsTW.Etl.Transform;
 using CorpInsightsTW.Infrastructure.Storage;
+using Microsoft.Extensions.Logging.Console;
 
 namespace CorpInsightsTW.Etl;
 
@@ -99,6 +101,13 @@ public class Program
     private static IHost CreateHost(string[] args, EtlRunConfig runConfig)
     {
         var builder = Host.CreateApplicationBuilder(args);
+
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole(options =>
+        {
+            options.FormatterName = CleanConsoleFormatter.FormatterName; // 指定使用 CleanConsole
+        });
+        builder.Logging.AddConsoleFormatter<CleanConsoleFormatter, ConsoleFormatterOptions>();
 
         builder.Services.AddSingleton(runConfig);
 

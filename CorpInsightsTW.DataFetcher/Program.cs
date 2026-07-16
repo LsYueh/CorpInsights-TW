@@ -3,7 +3,9 @@ using CommandLine;
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.DataFetcher.Jobs;
 using CorpInsightsTW.DataFetcher.Services;
+using CorpInsightsTW.Etl.Logging;
 using CorpInsightsTW.Infrastructure.Storage;
+using Microsoft.Extensions.Logging.Console;
 
 namespace CorpInsightsTW.DataFetcher;
 
@@ -38,7 +40,7 @@ public class Program
         }
         catch (OperationCanceledException)
         {
-            Console.WriteLine("🛑 同步作業已被使用者安全取消。");
+            Console.WriteLine("🛑 作業已被使用者取消。");
             exitCode = 130; // Linux Ctrl+C 標準結束代碼
         }
         catch (Exception)
@@ -94,6 +96,13 @@ public class Program
     private static IHost CreateHost(string[] args, FetchRunConfig fetchConfig)
     {
         var builder = Host.CreateApplicationBuilder(args);
+
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole(options =>
+        {
+            options.FormatterName = CleanConsoleFormatter.FormatterName; // 指定使用 CleanConsole
+        });
+        builder.Logging.AddConsoleFormatter<CleanConsoleFormatter, ConsoleFormatterOptions>();
 
         // Config
         string rootUrl = builder.Configuration["TwseApi:RootUrl"] ?? "https://openapi.twse.com.tw/v1";

@@ -24,6 +24,6 @@ public enum ListingStatus
     // Emerging = 3,
 
     /// <summary> 公開發行公司 </summary>
-    [Code("X"), Display("公開發行公司")]
+    [Code("X"), Display("公發公司")]
     PublicOffering = 4,
 }
