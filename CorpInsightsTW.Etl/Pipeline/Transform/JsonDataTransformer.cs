@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CorpInsightsTW.Core.Extensions;
 using CorpInsightsTW.Etl.Core.Common;
 using CorpInsightsTW.Etl.Dtos;
 
@@ -22,6 +23,7 @@ public class JsonDataTransformer : IDataTransformer
             
             if (dto != null)
             {
+                dto.MarketType = context.Status.ToCode();
                 buffer.Add(dto);
             }
 

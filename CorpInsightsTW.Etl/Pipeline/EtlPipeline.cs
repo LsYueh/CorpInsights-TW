@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
 using CorpInsightsTW.Etl.Core.Common;
@@ -75,6 +76,9 @@ public class EtlPipeline(
 
         _logger.LogInformation("{Indent}🏁 [Pipeline] 目標: {Message}", indent, message);
 
+        int currentBatchIndex = 0; 
+        int fileTotalCount = 0;
+        
         try
         {
             // 📥 1. Extract
@@ -95,18 +99,37 @@ public class EtlPipeline(
             // 💾 3. Load
             _logger.LogDebug("{Indent}💾 [Pipeline] 開始載入 (Load)...", indent);
 
-            int fileTotalCount = 0;
             foreach (var (batch, totalCount) in t187Batches)
             {
+                currentBatchIndex++;
                 fileTotalCount = totalCount;
                 await _loader.LoadAsync(context, batch, totalCount, cancellationToken, indentLevel + 1);
             }
 
             _logger.LogInformation("{Indent}✅ [Pipeline] 完畢，共處理 {Total} 筆。", indent, fileTotalCount);
         }
+        catch (JsonException jsonEx)
+        {
+            _logger.LogCritical(jsonEx, "{Indent}💥 [Pipeline] {Tag} JSON 解析嚴重失敗！",
+                indent, tag);
+            _logger.LogCritical(jsonEx, "{Indent}{Indent}👉 錯誤原因: {ExMessage}",
+                indent, indent, jsonEx.Message);
+            _logger.LogCritical(jsonEx, "{Indent}{Indent}👉 JSON 錯誤位置: 行號 {LineNumber} | 該行字元位置 {BytePositionInLine}",
+                indent, indent, jsonEx.LineNumber, jsonEx.BytePositionInLine);
+            _logger.LogCritical(jsonEx, "{Indent}{Indent}👉 偵錯提示: 請檢查 DTO 定義的 [JsonPropertyName] 是否與政府最新欄位名稱一致，或數值型別是否不符。",
+                indent, indent);
+            throw;
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Indent}❌ [Pipeline] {Message} 處理時發生未預期異常！", indent, message);
+            _logger.LogError(ex, "{Indent}❌ [Pipeline] {Tag} 處理時發生未預期異常！\n",
+                indent, tag);
+            _logger.LogError(ex, "{Indent}{Indent}👉 執行上下文: 報表={ApCode}, 市場狀態={Status}, 分類={Taxonomy}, 日期={Date}\n",
+                indent, indent, context.ApCode, context.Status, context.Taxonomy, context.Date);
+            _logger.LogError(ex, "{Indent}{Indent}👉 當前進度: 已成功處理到第 {BatchIdx} 批次 (總共約 {Total} 筆)\n",
+                indent, indent, currentBatchIndex + 1, fileTotalCount);
+            _logger.LogError(ex, "{Indent}{Indent}👉 異常類型: {ExType} | 訊息: {ExMessage}", 
+                indent, indent, ex.GetType().Name, ex.Message);
             throw;
         }
     }

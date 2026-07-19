@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace CorpInsightsTW.Etl.Dtos.T187Ap07;
 
 /// <summary>
@@ -5,10 +7,13 @@ namespace CorpInsightsTW.Etl.Dtos.T187Ap07;
 /// </summary>
 public record BasiDto(
     // 1. 核心識別與索引欄位
+    [property: JsonPropertyName("年度"), JsonRequired]
     short Year,
+    [property: JsonPropertyName("季別"), JsonRequired]
     byte Quarter,
-    string MarketType,
+    [property: JsonPropertyName("公司代號"), JsonRequired]
     string CompanyCode,
+    [property: JsonPropertyName("公司名稱"), JsonRequired]
     string CompanyName,
 
     // 2. 金融業資產類項目
@@ -76,4 +81,7 @@ public record BasiDto(
 
     // 6. 系統稽核欄位 (由資料庫自動處理，但 DTO 預留以利追蹤，可為 null)
     DateTime? UpdatedAt = null
-) : IT187RawDto;
+) : IT187RawDto
+{
+    public string MarketType { get; set; } = string.Empty;
+}
