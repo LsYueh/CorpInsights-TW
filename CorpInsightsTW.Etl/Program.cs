@@ -1,13 +1,13 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Logging.Console;
 
 using CorpInsightsTW.Core.Enums;
-using CorpInsightsTW.Etl.Core.Extract;
-using CorpInsightsTW.Etl.Core.Load;
 using CorpInsightsTW.Etl.Core.Logging;
-using CorpInsightsTW.Etl.Core.Pipeline;
-using CorpInsightsTW.Etl.Core.Transform;
+using CorpInsightsTW.Etl.Pipeline;
+using CorpInsightsTW.Etl.Pipeline.Extract;
+using CorpInsightsTW.Etl.Pipeline.Load;
+using CorpInsightsTW.Etl.Pipeline.Transform;
 using CorpInsightsTW.Infrastructure.Storage;
-using Microsoft.Extensions.Logging.Console;
 
 namespace CorpInsightsTW.Etl;
 

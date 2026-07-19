@@ -1,11 +1,11 @@
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
 using CorpInsightsTW.Etl.Core.Common;
-using CorpInsightsTW.Etl.Core.Extract;
-using CorpInsightsTW.Etl.Core.Load;
-using CorpInsightsTW.Etl.Core.Transform;
+using CorpInsightsTW.Etl.Pipeline.Extract;
+using CorpInsightsTW.Etl.Pipeline.Load;
+using CorpInsightsTW.Etl.Pipeline.Transform;
 
-namespace CorpInsightsTW.Etl.Core.Pipeline;
+namespace CorpInsightsTW.Etl.Pipeline;
 
 public class EtlPipeline(
     ILogger<EtlPipeline> logger,
@@ -90,13 +90,13 @@ public class EtlPipeline(
             _logger.LogDebug("{Indent}🔄 [Pipeline] 開始轉換 (Transform)...", indent);
 
             int targetBatchSize = 200;
-            var jsonBatches = _transformer.Transform(context, rawDoc, targetBatchSize, indentLevel + 1);
+            var t187Batches = _transformer.Transform(context, rawDoc, targetBatchSize, indentLevel + 1);
 
             // 💾 3. Load
             _logger.LogDebug("{Indent}💾 [Pipeline] 開始載入 (Load)...", indent);
 
             int fileTotalCount = 0;
-            foreach (var (batch, totalCount) in jsonBatches)
+            foreach (var (batch, totalCount) in t187Batches)
             {
                 fileTotalCount = totalCount;
                 await _loader.LoadAsync(context, batch, totalCount, cancellationToken, indentLevel + 1);

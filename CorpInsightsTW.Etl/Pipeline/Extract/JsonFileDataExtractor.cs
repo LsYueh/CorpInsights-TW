@@ -2,7 +2,7 @@ using System.Text.Json;
 using CorpInsightsTW.Etl.Core.Common;
 using CorpInsightsTW.Infrastructure.Storage;
 
-namespace CorpInsightsTW.Etl.Core.Extract;
+namespace CorpInsightsTW.Etl.Pipeline.Extract;
 
 public class JsonFileDataExtractor(
     ILogger<JsonFileDataExtractor> logger,

@@ -1,7 +1,7 @@
-using System.Text.Json;
 using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Dtos;
 
-namespace CorpInsightsTW.Etl.Core.Load;
+namespace CorpInsightsTW.Etl.Pipeline.Load;
 
 public class ConsoleDataLoader(
     ILogger<ConsoleDataLoader> logger) : IDataLoader
@@ -14,7 +14,7 @@ public class ConsoleDataLoader(
     private int _totalProcessedCount = 0;
 
     public Task LoadAsync(EtlContext context,
-        IReadOnlyList<JsonElement> batch, int fileTotalCount,
+        IReadOnlyList<IT187RawDto> batch, int fileTotalCount,
         CancellationToken cancellationToken, int indentLevel = 0)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -30,7 +30,7 @@ public class ConsoleDataLoader(
         if (currentTotal >= fileTotalCount)
             Interlocked.Exchange(ref _totalProcessedCount, 0);
 
-        // TODO: ...
+        // TODO: DTO...
 
         return Task.CompletedTask;
     }

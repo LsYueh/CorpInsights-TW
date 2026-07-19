@@ -1,7 +1,7 @@
 using System.Text.Json;
 using CorpInsightsTW.Etl.Core.Common;
 
-namespace CorpInsightsTW.Etl.Core.Extract;
+namespace CorpInsightsTW.Etl.Pipeline.Extract;
 
 public interface IDataExtractor
 {
