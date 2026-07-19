@@ -1,6 +1,6 @@
 using CorpInsightsTW.Core.Enums;
 
-namespace CorpInsightsTW.Etl.Common;
+namespace CorpInsightsTW.Etl.Core.Common;
 
 /// <summary>
 /// 當前 ETL 任務的詮釋資料與上下文背景

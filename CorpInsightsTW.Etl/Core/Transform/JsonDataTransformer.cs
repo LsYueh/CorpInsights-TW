@@ -1,13 +1,15 @@
 using System.Text.Json;
+using CorpInsightsTW.Etl.Core.Common;
 
-namespace CorpInsightsTW.Etl.Transform;
+namespace CorpInsightsTW.Etl.Core.Transform;
 
 public class JsonDataTransformer : IDataTransformer
 {
     /// <summary>
     /// 將 JsonDocument 的陣列攤, 切塊（Batching）輸出
     /// </summary>
-    public IEnumerable<(IReadOnlyList<JsonElement> Batch, int TotalCount)> Transform(JsonDocument doc, int batchSize, int indentLevel = 0)
+    public IEnumerable<(IReadOnlyList<JsonElement> Batch, int TotalCount)> Transform(
+        EtlContext context, JsonDocument doc, int batchSize, int indentLevel = 0)
     {
         int totalCount = doc.RootElement.GetArrayLength();
 

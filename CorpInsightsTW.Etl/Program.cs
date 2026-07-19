@@ -1,11 +1,11 @@
 ﻿using CommandLine;
 
 using CorpInsightsTW.Core.Enums;
-using CorpInsightsTW.Etl.Extract;
-using CorpInsightsTW.Etl.Load;
-using CorpInsightsTW.Etl.Logging;
-using CorpInsightsTW.Etl.Pipeline;
-using CorpInsightsTW.Etl.Transform;
+using CorpInsightsTW.Etl.Core.Extract;
+using CorpInsightsTW.Etl.Core.Load;
+using CorpInsightsTW.Etl.Core.Logging;
+using CorpInsightsTW.Etl.Core.Pipeline;
+using CorpInsightsTW.Etl.Core.Transform;
 using CorpInsightsTW.Infrastructure.Storage;
 using Microsoft.Extensions.Logging.Console;
 
@@ -119,9 +119,9 @@ public class Program
             return new LocalRawDataStorage(logger, customStoragePath);
         });
 
-        builder.Services.AddTransient<IDataExtractor, JsonFileDataExtractor>();
+        builder.Services.AddTransient<IDataExtractor  , JsonFileDataExtractor>();
         builder.Services.AddTransient<IDataTransformer, JsonDataTransformer>();
-        builder.Services.AddTransient<IDataLoader, ConsoleDataLoader>();
+        builder.Services.AddTransient<IDataLoader     , ConsoleDataLoader>();
         builder.Services.AddTransient<EtlPipeline>();
 
         return builder.Build();

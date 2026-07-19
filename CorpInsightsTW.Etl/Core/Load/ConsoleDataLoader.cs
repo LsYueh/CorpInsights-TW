@@ -1,7 +1,7 @@
 using System.Text.Json;
-using CorpInsightsTW.Etl.Common;
+using CorpInsightsTW.Etl.Core.Common;
 
-namespace CorpInsightsTW.Etl.Load;
+namespace CorpInsightsTW.Etl.Core.Load;
 
 public class ConsoleDataLoader(
     ILogger<ConsoleDataLoader> logger) : IDataLoader
