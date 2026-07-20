@@ -26,8 +26,7 @@ public static class T187DtoFactory
         NumberHandling = JsonNumberHandling.AllowReadingFromString,
         Converters = 
         {
-            new SmartDecimalConverter(), // 自訂的 Decimal 轉換器
-            new JsonPropertyNamesConverterFactory(),
+            new T187JsonConverterFactory(),
         }
     };
 
