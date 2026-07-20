@@ -61,7 +61,7 @@ public record BdDto(
     decimal TotalEquity = 0.00m,
 
     // 5. 股數與每股價值項目
-    [property:JsonPropertyNames(
+    [property: JsonPropertyNames(
         "待註銷股本股數",
         "待註銷股本股數（單位：股）"
         ), JsonRequired]
