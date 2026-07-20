@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
 using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Core.Json;
 
 namespace CorpInsightsTW.Etl.Dtos;
 
@@ -22,7 +23,12 @@ public static class T187DtoFactory
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
-        NumberHandling = JsonNumberHandling.AllowReadingFromString
+        NumberHandling = JsonNumberHandling.AllowReadingFromString,
+        Converters = 
+        {
+            new SmartDecimalConverter(), // 自訂的 Decimal 轉換器
+            new JsonPropertyNamesConverterFactory(),
+        }
     };
 
     /// <summary>
@@ -49,12 +55,12 @@ public static class T187DtoFactory
         // TODO: 下一階段實作
         // return context.Taxonomy switch
         // {
-        //     XbrlTaxonomy.General       => row.Deserialize<T187Ap06.CiDto>(_jsonOptions),
-        //     XbrlTaxonomy.Banking       => row.Deserialize<T187Ap06.BasiDto>(_jsonOptions),
-        //     XbrlTaxonomy.Securities    => row.Deserialize<T187Ap06.BdDto>(_jsonOptions),
-        //     XbrlTaxonomy.Holding       => row.Deserialize<T187Ap06.FhDto>(_jsonOptions),
-        //     XbrlTaxonomy.Insurance     => row.Deserialize<T187Ap06.InsDto>(_jsonOptions),
-        //     XbrlTaxonomy.CrossIndustry => row.Deserialize<T187Ap06.MimDto>(_jsonOptions),
+        //     XbrlTaxonomy.CI   => row.Deserialize<T187Ap06.CiDto  >(_jsonOptions),
+        //     XbrlTaxonomy.BASI => row.Deserialize<T187Ap06.BasiDto>(_jsonOptions),
+        //     XbrlTaxonomy.BD   => row.Deserialize<T187Ap06.BdDto  >(_jsonOptions),
+        //     XbrlTaxonomy.FH   => row.Deserialize<T187Ap06.FhDto  >(_jsonOptions),
+        //     XbrlTaxonomy.INS  => row.Deserialize<T187Ap06.InsDto >(_jsonOptions),
+        //     XbrlTaxonomy.MIM  => row.Deserialize<T187Ap06.MimDto >(_jsonOptions),
         //     _ => throw new NotSupportedException($"未知的 T187Ap06 分類: {context.Taxonomy.ToCode()}")
         // };
 
@@ -68,12 +74,12 @@ public static class T187DtoFactory
     {
         return context.Taxonomy switch
         {
-            XbrlTaxonomy.General       => row.Deserialize<T187Ap07.CiDto>(_jsonOptions),
-            XbrlTaxonomy.Banking       => row.Deserialize<T187Ap07.BasiDto>(_jsonOptions),
-            XbrlTaxonomy.Securities    => row.Deserialize<T187Ap07.BdDto>(_jsonOptions),
-            XbrlTaxonomy.Holding       => row.Deserialize<T187Ap07.FhDto>(_jsonOptions),
-            XbrlTaxonomy.Insurance     => row.Deserialize<T187Ap07.InsDto>(_jsonOptions),
-            XbrlTaxonomy.CrossIndustry => row.Deserialize<T187Ap07.MimDto>(_jsonOptions),
+            XbrlTaxonomy.CI   => row.Deserialize<T187Ap07.CiDto  >(_jsonOptions),
+            XbrlTaxonomy.BASI => row.Deserialize<T187Ap07.BasiDto>(_jsonOptions),
+            XbrlTaxonomy.BD   => row.Deserialize<T187Ap07.BdDto  >(_jsonOptions),
+            XbrlTaxonomy.FH   => row.Deserialize<T187Ap07.FhDto  >(_jsonOptions),
+            XbrlTaxonomy.INS  => row.Deserialize<T187Ap07.InsDto >(_jsonOptions),
+            XbrlTaxonomy.MIM  => row.Deserialize<T187Ap07.MimDto >(_jsonOptions),
             _ => throw new NotSupportedException($"未知的 T187Ap07 分類: {context.Taxonomy.ToCode()}")
         };
     }

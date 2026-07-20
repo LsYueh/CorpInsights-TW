@@ -60,7 +60,7 @@ public class EtlPipeline(
             }
         }
 
-        _logger.LogInformation("✅ [Pipeline] 全線加工完成！");
+        _logger.LogInformation("✅ [Pipeline] 批次排程結束");
     }
 
     /// <summary>

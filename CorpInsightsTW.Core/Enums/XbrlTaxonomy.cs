@@ -13,27 +13,27 @@ public enum XbrlTaxonomy
     [Code("all"), Display("全部財報分類")]
     All = 0,
 
-    /// <summary> ci: 一般行業 </summary>
+    /// <summary> 一般行業 </summary>
     [Code("ci"), Display("一般行業")]
-    General = 1,
+    CI = 1,
 
-    /// <summary> basi: 金融業 </summary>
+    /// <summary> 金融業 </summary>
     [Code("basi"), Display("金融業")]
-    Banking = 2,
+    BASI = 2,
 
-    /// <summary> bd: 證券期貨業 </summary>
+    /// <summary> 證券期貨業 </summary>
     [Code("bd"), Display("證券期貨業")]
-    Securities = 3,
+    BD = 3,
 
-    /// <summary> fh: 金控業 </summary>
+    /// <summary> 金控業 </summary>
     [Code("fh"), Display("金控業")]
-    Holding = 4,
+    FH = 4,
 
-    /// <summary> ins: 保險業 </summary>
+    /// <summary> 保險業 </summary>
     [Code("ins"), Display("保險業")]
-    Insurance = 5,
+    INS = 5,
 
-    /// <summary> mim: 異業別合併 </summary>
+    /// <summary> 異業別合併 </summary>
     [Code("mim"), Display("異業別合併")]
-    CrossIndustry = 6,
+    MIM = 6,
 }

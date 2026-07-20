@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS t187ap07_basi (
     -- 設定主鍵與索引
     PRIMARY KEY (company_code, year, quarter),
     INDEX idx_year_quarter (year, quarter)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公發公司資產負債表-金融業';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公司資產負債表-金融業';
 -- ----------------------------------------------------
 -- 💡 未來擴充備案：若未來加入日頻率大數據，再啟用年份分區
 -- PARTITION BY RANGE COLUMNS(year) (

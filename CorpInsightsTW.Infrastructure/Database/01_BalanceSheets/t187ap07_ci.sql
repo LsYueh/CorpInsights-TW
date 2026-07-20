@@ -41,4 +41,4 @@ CREATE TABLE IF NOT EXISTS t187ap07_ci (
     -- 設定主鍵與索引
     PRIMARY KEY (company_code, year, quarter),
     INDEX idx_year_quarter (year, quarter)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公發公司資產負債表-一般業';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公司資產負債表-一般業';

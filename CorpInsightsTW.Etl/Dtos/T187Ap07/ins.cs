@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace CorpInsightsTW.Etl.Dtos.T187Ap07;
 
 /// <summary>
-/// 公發公司資產負債表-保險業
+/// 公司資產負債表-保險業
 /// </summary>
 public record InsDto(
     // 1. 核心識別與索引欄位
