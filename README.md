@@ -12,10 +12,12 @@ CorpInsightsTW/                             # 專案總根目錄
 ├── CorpInsightsTW.DataFetcher/             # 財報資料抓取工具
 ├── CorpInsightsTW.DbMigrator/              # 資料庫初始化/維運專用微型工具
 ├── CorpInsightsTW.Etl/                     # ETL
-│   ├── Extract/
-│   ├── Transform/
-│   ├── Load/
+│   ├── Core/
+│   ├── Dtos/                               # DTO
 │   └── Pipeline/
+│       ├── Extract/
+│       ├── Transform/
+│       ├── Load/
 │       └── EtlPipeline.cs                  # 串接 Extract → Transform → Load
 ├── CorpInsightsTW.Infrastructure/          # 基礎建設層
 │   ├── Database/                           # DDL 腳本區
@@ -27,28 +29,43 @@ CorpInsightsTW/                             # 專案總根目錄
 
 <br>
 
-## 功能
-
-### `綜合損益表` 與 `資產負債表` 資料請求  
+## `綜合損益表` 與 `資產負債表` 資料請求  
 
 ![Data Fetcher](/docs/DataFetcher.png)  
 
-<br>
+### 快速操作
 
-### 資料處理 (暫)
-
-![ETL](/docs/ETL.png)  
-
-<br>
-
-## 快速操作
-
-抓取財務報表
 ```console
 dotnet run --project CorpInsightsTW.DataFetcher --
 ```
 
-讀取落地資料
+<br>
+
+## 資料處理
+
+![ETL](/docs/ETL.png)  
+
+### 快速操作
+
 ```console
 dotnet run --project CorpInsightsTW.Etl --
 ```
+
+<br>
+
+### 客製化 `JsonPropertyNames`
+
+解決台灣公開資料庫（MOPS）跨業別或跨版本欄位別名痛點  
+![ETL](/docs/JsonPropertyNames.png)  
+
+<br>
+
+台灣公開資料庫在資料格式上常有一些資料品質痛點：  
+1. 跨業別命名不一致：`上市公司`使用 "避險之金融資產－淨額"，`公發公司`卻使用 "避險之衍生金融資產淨額"。  
+2. 新舊版本 API 變更：舊版 API 給 "公司代號"，新版 API 無預警改為 "公司代碼"。  
+
+<br>
+
+為了在不破壞既有 DTO 結構、不降低反序列化效能的前提下，讓同一 C# 的JSON屬性方便支援多個中文 Key，同時具備嚴謹的「欄位缺失防守（至少要出現其中一個別名）」機制。
+
+
