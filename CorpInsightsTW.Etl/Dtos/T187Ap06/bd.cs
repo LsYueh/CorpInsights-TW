@@ -42,19 +42,19 @@ public record BdDto
     decimal NetIncome = 0.00m,
 
     // 4. 其他綜合損益項目
-    [property: JsonPropertyName("其他綜合損益（稅後）"), JsonRequired]
+    [property: JsonPropertyName("本期其他綜合損益（稅後淨額）"), JsonRequired]
     decimal OtherComprehensiveIncome = 0.00m,
     [property: JsonPropertyName("合併前非屬共同控制股權綜合損益淨額"), JsonRequired]
     decimal PreMergerNonControlOci = 0.00m,
-    [property: JsonPropertyName("本期綜合損益總額（稅後）"), JsonRequired]
+    [property: JsonPropertyName("本期綜合損益總額"), JsonRequired]
     decimal TotalComprehensiveIncome = 0.00m,
 
     // 5. 損益歸屬項目
-    [property: JsonPropertyName("淨利（淨損）歸屬於母公司業主"), JsonRequired]
+    [property: JsonPropertyName("淨利（損）歸屬於母公司業主"), JsonRequired]
     decimal NetIncomeParent = 0.00m,
     [property: JsonPropertyName("淨利（淨損）歸屬於共同控制下前手權益"), JsonRequired]
     decimal NetIncomePredecessor = 0.00m,
-    [property: JsonPropertyName("淨利（淨損）歸屬於非控制權益"), JsonRequired]
+    [property: JsonPropertyName("淨利（損）歸屬於非控制權益"), JsonRequired]
     decimal NetIncomeNci = 0.00m,
 
     // 6. 綜合損益總額歸屬項目
