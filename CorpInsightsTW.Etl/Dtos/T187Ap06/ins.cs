@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using CorpInsightsTW.Etl.Core.Json;
 
 namespace CorpInsightsTW.Etl.Dtos.T187Ap06;
 
@@ -44,11 +45,13 @@ public record InsDto
     decimal NetIncome = 0.00m,
 
     // 4. 其他綜合損益項目
-    [property: JsonPropertyName("其他綜合損益（稅後）"), JsonRequired]
+    [property: JsonPropertyNames(
+        "其他綜合損益（淨額）",
+        "其他綜合損益（稅後淨額）"), JsonRequired]
     decimal OtherComprehensiveIncome = 0.00m,
     [property: JsonPropertyName("合併前非屬共同控制股權綜合損益淨額"), JsonRequired]
     decimal PreMergerNonControlOci = 0.00m,
-    [property: JsonPropertyName("本期綜合損益總額（稅後）"), JsonRequired]
+    [property: JsonPropertyName("本期綜合損益總額"), JsonRequired]
     decimal TotalComprehensiveIncome = 0.00m,
 
     // 5. 損益歸屬項目

@@ -8,7 +8,7 @@
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       },
-      "commandLineArgs": "--report t187ap06 --status all --taxonomy bd"
+      "commandLineArgs": "--report t187ap06 --status all --taxonomy mim"
     }
   }
 }

@@ -60,11 +60,11 @@ public record CiDto
     decimal NetIncome = 0.00m,
 
     // 5. 其他綜合損益項目
-    [property: JsonPropertyName("其他綜合損益（稅後）"), JsonRequired]
+    [property: JsonPropertyName("其他綜合損益（淨額）"), JsonRequired]
     decimal OtherComprehensiveIncome = 0.00m,
     [property: JsonPropertyName("合併前非屬共同控制股權綜合損益淨額"), JsonRequired]
     decimal PreMergerNonControlOci = 0.00m,
-    [property: JsonPropertyName("本期綜合損益總額（稅後）"), JsonRequired]
+    [property: JsonPropertyName("本期綜合損益總額"), JsonRequired]
     decimal TotalComprehensiveIncome = 0.00m,
 
     // 6. 損益歸屬項目

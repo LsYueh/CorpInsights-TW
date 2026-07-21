@@ -20,6 +20,8 @@ public record FhDto
     // 2. 金控業特有營業淨收益項目
     [property: JsonPropertyName("利息淨收益"), JsonRequired]
     decimal NetInterestIncome = 0.00m,
+    [property: JsonPropertyName("其他收益及費損淨額")] // 上市
+    decimal NetOtherIncome = 0.00m,
     [property: JsonPropertyName("利息以外淨收益"), JsonRequired]
     decimal NonInterestIncome = 0.00m,
     [property: JsonPropertyName("淨收益"), JsonRequired]
@@ -36,7 +38,7 @@ public record FhDto
     // 4. 稅前與稅後淨利項目
     [property: JsonPropertyName("繼續營業單位稅前損益"), JsonRequired]
     decimal IncomeBeforeTax = 0.00m,
-    [property: JsonPropertyName("所得稅（費用）利益"), JsonRequired]
+    [property: JsonPropertyName("所得稅（費用）利益")] // 公發
     decimal IncomeTax = 0.00m,
     [property: JsonPropertyName("繼續營業單位本期淨利（淨損）"), JsonRequired]
     decimal IncomeAfterTax = 0.00m,
