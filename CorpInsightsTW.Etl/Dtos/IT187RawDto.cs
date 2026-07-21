@@ -51,17 +51,16 @@ public static class T187DtoFactory
     /// </summary>
     private static IT187RawDto? MapToAp06Dto(EtlContext context, JsonElement row)
     {
-        // TODO: 下一階段實作
-        // return context.Taxonomy switch
-        // {
-        //     XbrlTaxonomy.CI   => row.Deserialize<T187Ap06.CiDto  >(_jsonOptions),
-        //     XbrlTaxonomy.BASI => row.Deserialize<T187Ap06.BasiDto>(_jsonOptions),
-        //     XbrlTaxonomy.BD   => row.Deserialize<T187Ap06.BdDto  >(_jsonOptions),
-        //     XbrlTaxonomy.FH   => row.Deserialize<T187Ap06.FhDto  >(_jsonOptions),
-        //     XbrlTaxonomy.INS  => row.Deserialize<T187Ap06.InsDto >(_jsonOptions),
-        //     XbrlTaxonomy.MIM  => row.Deserialize<T187Ap06.MimDto >(_jsonOptions),
-        //     _ => throw new NotSupportedException($"未知的 T187Ap06 分類: {context.Taxonomy.ToCode()}")
-        // };
+        return context.Taxonomy switch
+        {
+            XbrlTaxonomy.CI   => row.Deserialize<T187Ap06.CiDto  >(_jsonOptions),
+            XbrlTaxonomy.BASI => row.Deserialize<T187Ap06.BasiDto>(_jsonOptions),
+            XbrlTaxonomy.BD   => row.Deserialize<T187Ap06.BdDto  >(_jsonOptions),
+            XbrlTaxonomy.FH   => row.Deserialize<T187Ap06.FhDto  >(_jsonOptions),
+            XbrlTaxonomy.INS  => row.Deserialize<T187Ap06.InsDto >(_jsonOptions),
+            XbrlTaxonomy.MIM  => row.Deserialize<T187Ap06.MimDto >(_jsonOptions),
+            _ => throw new NotSupportedException($"未知的 T187Ap06 分類: {context.Taxonomy.ToCode()}")
+        };
 
         throw new NotImplementedException("T187AP06 損益表 DTO 轉換尚未實作。");
     }
