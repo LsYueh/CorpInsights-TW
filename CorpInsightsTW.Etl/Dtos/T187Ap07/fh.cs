@@ -141,5 +141,5 @@ public record FhDto(
     DateTime? UpdatedAt = null
 ) : IT187RawDto
 {
-    public string MarketType { get; set; } = string.Empty;
+    public string ListingStatus { get; set; } = string.Empty;
 }

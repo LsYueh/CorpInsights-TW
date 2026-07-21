@@ -15,7 +15,11 @@ public interface IT187RawDto
 {
     // ====== ETL 自行加工欄位 (反序列化時會忽略) ======
     // 💡 允許後續手動賦值 (set)，且給予預設空字串避免 Null 異常
-    string MarketType { get; set; }
+
+    /// <summary>
+    /// 掛牌狀態: 'L' (上市公司), 'X' (公開發行公司)
+    /// </summary>
+    string ListingStatus { get; set; }
 }
 
 public static class T187DtoFactory

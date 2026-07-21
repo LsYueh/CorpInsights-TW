@@ -23,7 +23,7 @@ public class JsonDataTransformer : IDataTransformer
             
             if (dto != null)
             {
-                dto.MarketType = context.Status.ToCode();
+                dto.ListingStatus = context.Status.ToCode();
                 buffer.Add(dto);
             }
 
