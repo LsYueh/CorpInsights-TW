@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using CorpInsightsTW.Etl.Core.Json;
 
 namespace CorpInsightsTW.Etl.Dtos.T187Ap06;
 
@@ -32,13 +33,15 @@ public record BasiDto
     decimal IncomeBeforeTax = 0.00m,
     [property: JsonPropertyName("所得稅費用（利益）"), JsonRequired]
     decimal IncomeTax = 0.00m,
-    [property: JsonPropertyName("繼續營業單位本期稅後淨利（淨損）"), JsonRequired]
+    [property: JsonPropertyNames(
+        "繼續營業單位本期淨利（淨損）",
+        "繼續營業單位本期稅後淨利（淨損）"), JsonRequired]
     decimal IncomeAfterTax = 0.00m,
     [property: JsonPropertyName("停業單位損益"), JsonRequired]
     decimal DiscontinuedOpsIncome = 0.00m,
     [property: JsonPropertyName("合併前非屬共同控制股權損益"), JsonRequired]
     decimal PreMergerNonControlIncome = 0.00m,
-    [property: JsonPropertyName("本期稅後淨利（淨損）"), JsonRequired]
+    [property: JsonPropertyNames("本期淨利（淨損）", "本期稅後淨利（淨損）"), JsonRequired]
     decimal NetIncome = 0.00m,
 
     // 4. 其他綜合損益項目
@@ -50,11 +53,11 @@ public record BasiDto
     decimal TotalComprehensiveIncome = 0.00m,
 
     // 5. 損益歸屬項目
-    [property: JsonPropertyName("淨利（淨損）歸屬於母公司業主"), JsonRequired]
+    [property: JsonPropertyName("淨利（損）歸屬於母公司業主"), JsonRequired]
     decimal NetIncomeParent = 0.00m,
-    [property: JsonPropertyName("淨利（淨損）歸屬於共同控制下前手權益"), JsonRequired]
+    [property: JsonPropertyName("淨利（損）歸屬於共同控制下前手權益"), JsonRequired]
     decimal NetIncomePredecessor = 0.00m,
-    [property: JsonPropertyName("淨利（淨損）歸屬於非控制權益"), JsonRequired]
+    [property: JsonPropertyName("淨利（損）歸屬於非控制權益"), JsonRequired]
     decimal NetIncomeNci = 0.00m,
 
     // 6. 綜合損益總額歸屬項目
