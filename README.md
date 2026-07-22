@@ -13,17 +13,20 @@ CorpInsightsTW/                             # 專案總根目錄
 ├── CorpInsightsTW.DbMigrator/              # 資料庫初始化/維運專用微型工具
 ├── CorpInsightsTW.Etl/                     # ETL
 │   ├── Core/
-│   ├── Dtos/                               # DTO
-│   └── Pipeline/
-│       ├── Extract/
-│       ├── Transform/
-│       ├── Load/
-│       └── EtlPipeline.cs                  # 串接 Extract → Transform → Load
+│   ├── Dtos/                               # DTOs
+│   ├── Pipeline/
+│   │   ├── Extract/
+│   │   ├── Transform/
+│   │   ├── Load/
+│   │   └── EtlPipeline.cs                  # 串接 Extract → Transform → Load
+│   └── Repository/                         # 儲藏區
 ├── CorpInsightsTW.Infrastructure/          # 基礎建設層
 │   ├── Database/                           # DDL 腳本區
 │   ├── Storage/                            # 實體資料管理
 │   └── ... (Data, OpenApiClients, Mappers)
 ├── CorpInsightsTW.Tests
+├── docker/
+│   └── mariadb/                            # 資料庫服務
 └── CorpInsightsTW.slnx                     # .NET 10 方案核心管理檔
 ```
 
@@ -46,6 +49,8 @@ dotnet run --project CorpInsightsTW.DataFetcher --
 ![ETL](/docs/ETL.png)  
 
 ### 快速操作
+
+> ⚠️ 使用前請先確定資料庫服務已啟動且資料表皆建立完畢。 ([資料庫服務操作文件](/docs/docker/mariadb.md))
 
 ```console
 dotnet run --project CorpInsightsTW.Etl --
