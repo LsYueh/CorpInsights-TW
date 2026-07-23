@@ -120,7 +120,16 @@ public class Program
 
         builder.Services.AddTransient<IDataExtractor  , JsonFileDataExtractor>();
         builder.Services.AddTransient<IDataTransformer, JsonDataTransformer>();
-        builder.Services.AddTransient<IDataLoader     , ConsoleDataLoader>();
+        builder.Services.AddTransient<IDataLoader>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<T187DataLoader>>();
+            var config = sp.GetRequiredService<IConfiguration>();
+            
+            string connectionString = config.GetConnectionString("DefaultConnection") 
+                ?? throw new InvalidOperationException("找不到 DefaultConnection 連線字串設定");
+
+            return new T187DataLoader(logger, connectionString);
+        });
         builder.Services.AddTransient<EtlPipeline>();
 
         return builder.Build();

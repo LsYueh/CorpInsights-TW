@@ -47,7 +47,7 @@ public class Program
             logger.LogInformation("📂 開始依序掃描 00_、01_、02_ 目錄並執行 DDL...");
             await initializer.RunAsync();
 
-            logger.LogInformation("🎉 資料庫所有大寬表與索引初始化/驗證成功！");
+            logger.LogInformation("🎉 資料庫初始化完成！");
         }
         catch (Exception ex)
         {
