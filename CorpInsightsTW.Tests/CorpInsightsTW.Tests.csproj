@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CorpInsightsTW.Core\CorpInsightsTW.Core.csproj" />
-    <ProjectReference Include="..\CorpInsightsTW.Infrastructure\CorpInsightsTW.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

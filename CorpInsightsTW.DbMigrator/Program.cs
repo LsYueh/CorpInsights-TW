@@ -1,5 +1,5 @@
-﻿using CorpInsightsTW.Core.Logging;
-using CorpInsightsTW.Infrastructure.Database;
+﻿using CorpInsightsTW.Core.Database;
+using CorpInsightsTW.Core.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

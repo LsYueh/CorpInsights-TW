@@ -55,5 +55,5 @@ dotnet run
 
 | 套件 | 來源 |
 |---|---|
-| `MySqlConnector` | 經由 `CorpInsightsTW.Infrastructure` 傳遞相依 |
+| `MySqlConnector` | 經由 `CorpInsightsTW.Core` 傳遞相依 |
 | `Microsoft.Extensions.Hosting` | Generic Host / 組態載入 |

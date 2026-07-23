@@ -1,8 +1,8 @@
+using CorpInsightsTW.Core.Extensions;
 using Microsoft.Extensions.Logging;
 
-using CorpInsightsTW.Core.Extensions;
+namespace CorpInsightsTW.Core.Storage;
 
-namespace CorpInsightsTW.Infrastructure.Storage;
 public class LocalRawDataStorage(
     ILogger<LocalRawDataStorage> logger,
     string? basePath = null)

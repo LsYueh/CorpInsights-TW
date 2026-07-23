@@ -1,7 +1,7 @@
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
+using CorpInsightsTW.Core.Storage;
 using CorpInsightsTW.DataFetcher.Core.Common;
-using CorpInsightsTW.Infrastructure.Storage;
 
 namespace CorpInsightsTW.DataFetcher.Services;
 

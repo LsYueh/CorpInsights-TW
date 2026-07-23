@@ -1,6 +1,6 @@
 using MySqlConnector; 
 
-namespace CorpInsightsTW.Infrastructure.Database;
+namespace CorpInsightsTW.Core.Database;
 
 public class DatabaseInitializer(string connectionString, string scriptsPath)
 {

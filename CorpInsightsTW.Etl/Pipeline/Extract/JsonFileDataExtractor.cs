@@ -1,6 +1,6 @@
 using System.Text.Json;
+using CorpInsightsTW.Core.Storage;
 using CorpInsightsTW.Etl.Core.Common;
-using CorpInsightsTW.Infrastructure.Storage;
 
 namespace CorpInsightsTW.Etl.Pipeline.Extract;
 

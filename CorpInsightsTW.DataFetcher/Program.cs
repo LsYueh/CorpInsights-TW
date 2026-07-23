@@ -1,11 +1,10 @@
-using Microsoft.Extensions.Logging.Console;
 using CommandLine;
-
 using CorpInsightsTW.Core.Enums;
+using CorpInsightsTW.Core.Logging;
+using CorpInsightsTW.Core.Storage;
 using CorpInsightsTW.DataFetcher.Jobs;
 using CorpInsightsTW.DataFetcher.Services;
-using CorpInsightsTW.Infrastructure.Storage;
-using CorpInsightsTW.Core.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace CorpInsightsTW.DataFetcher;
 

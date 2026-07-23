@@ -1,6 +1,6 @@
 using CorpInsightsTW.Core.Enums;
 
-namespace CorpInsightsTW.Infrastructure.Storage;
+namespace CorpInsightsTW.Core.Storage;
 
 /// <summary>
 /// 

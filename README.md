@@ -8,7 +8,10 @@
 
 ```text
 CorpInsightsTW/                             # 專案總根目錄
-├── CorpInsightsTW.Core/                    # 核心領域層
+├── CorpInsightsTW.Core/
+│   ├── Database/                           # DDL 腳本區
+│   ├── Storage/                            # 實體資料管理
+│   └── ... (Data, OpenApiClients, Mappers)
 ├── CorpInsightsTW.DataFetcher/             # 財報資料抓取工具
 ├── CorpInsightsTW.DbMigrator/              # 資料庫初始化/維運專用微型工具
 ├── CorpInsightsTW.Etl/                     # ETL
@@ -20,10 +23,6 @@ CorpInsightsTW/                             # 專案總根目錄
 │   │   ├── Load/
 │   │   └── EtlPipeline.cs                  # 串接 Extract → Transform → Load
 │   └── Repository/                         # 儲藏區
-├── CorpInsightsTW.Infrastructure/          # 基礎建設層
-│   ├── Database/                           # DDL 腳本區
-│   ├── Storage/                            # 實體資料管理
-│   └── ... (Data, OpenApiClients, Mappers)
 ├── CorpInsightsTW.Tests
 ├── docker/
 │   └── mariadb/                            # 資料庫服務
@@ -36,7 +35,7 @@ CorpInsightsTW/                             # 專案總根目錄
 
 | 套件 | 來源 |
 |---|---|
-| `MySqlConnector` | 經由 `CorpInsightsTW.Infrastructure` 傳遞相依 |
+| `MySqlConnector` | 經由 `CorpInsightsTW.Core` 傳遞相依 |
 
 <br>
 
