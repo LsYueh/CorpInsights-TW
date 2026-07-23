@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Console;
 
 using CorpInsightsTW.Core.Enums;
-using CorpInsightsTW.Etl.Core.Logging;
+using CorpInsightsTW.Core.Logging;
 using CorpInsightsTW.Etl.Pipeline;
 using CorpInsightsTW.Etl.Pipeline.Extract;
 using CorpInsightsTW.Etl.Pipeline.Load;

@@ -32,6 +32,14 @@ CorpInsightsTW/                             # 專案總根目錄
 
 <br>
 
+### ⚠️ 相依套件
+
+| 套件 | 來源 |
+|---|---|
+| `MySqlConnector` | 經由 `CorpInsightsTW.Infrastructure` 傳遞相依 |
+
+<br>
+
 ## `綜合損益表` 與 `資產負債表` 資料請求  
 
 ![Data Fetcher](/docs/DataFetcher.png)  

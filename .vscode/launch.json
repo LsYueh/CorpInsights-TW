@@ -17,7 +17,6 @@
             "name": "🚀 偵錯 - DbMigrator",
             "type": "dotnet",
             "request": "launch",
-            "preLaunchTask": "build-migrator",
             "projectPath": "${workspaceFolder}/CorpInsightsTW.DbMigrator/CorpInsightsTW.DbMigrator.csproj"
         }
     ]

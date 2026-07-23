@@ -1,5 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CorpInsightsTW.Core.Logging;
 using CorpInsightsTW.Infrastructure.Database;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using MySqlConnector;
 
 namespace CorpInsightsTW.DbMigrator;
 
@@ -7,20 +13,13 @@ public class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        Console.WriteLine("==================================================");
-        Console.WriteLine("🚀 CorpInsightsTW 資料庫維運與初始化工具啟動");
-        Console.WriteLine("==================================================");
-
-        string environment = GetEnvironmentString();
-
-        Console.WriteLine($"ℹ️ 當前偵測運行環境: [ {environment} ]");
-
-        // 1. 載入 appsettings.json 組態
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
-            .Build();
+        using var host = CreateHost(args);
+        var logger        = host.Services.GetRequiredService<ILogger<Program>>();
+        var configuration = host.Services.GetRequiredService<IConfiguration>();
+        
+        logger.LogInformation("==================================================");
+        logger.LogInformation("🚀 CorpInsightsTW CIS 資料庫初始化工具啟動");
+        logger.LogInformation("==================================================");
 
         string connectionString = configuration.GetConnectionString("DefaultConnection") 
             ?? throw new InvalidOperationException("找不到 ConnectionStrings:DefaultConnection 配置。");
@@ -29,52 +28,48 @@ public class Program
             ?? throw new InvalidOperationException("找不到 MigrationSettings:DatabaseScriptsPath 配置。");
 
         bool dropFirst = bool.Parse(configuration["MigrationSettings:DropDatabaseFirst"] ?? "false");
-
-        // 2. 實例化 Infrastructure 層的盲刷引擎
-        var initializer = new DatabaseInitializer(connectionString, scriptsPath);
+   
+        var csb = new MySqlConnectionStringBuilder(connectionString);
+        logger.LogInformation("🔌 連線目標   : {Server} / {Database}", csb.Server, csb.Database);
+        logger.LogInformation("📁 腳本路徑   : {ScriptsPath}", scriptsPath);
+        logger.LogInformation("🗑️ 重置資料庫 : {DropFirst}", dropFirst);
 
         try
         {
+            var initializer = new DatabaseInitializer(connectionString, scriptsPath);
+
             if (dropFirst)
             {
-                Console.WriteLine("⚠️ [警告] 偵測到 DropDatabaseFirst = true，開始執行毀滅性資料庫重置...");
+                logger.LogWarning("⚠️ [警告] 偵測到 DropDatabaseFirst = true ，開始執行毀滅性資料庫重置...");
                 initializer.DropAndCreateDatabase();
             }
 
-            Console.WriteLine("📂 開始依序掃描 00_、01_、02_ 目錄並盲刷 DDL...");
+            logger.LogInformation("📂 開始依序掃描 00_、01_、02_ 目錄並執行 DDL...");
             await initializer.RunAsync();
 
-            Console.WriteLine("\n🎉 資料庫所有大寬表與索引初始化/驗證成功！");
+            logger.LogInformation("🎉 資料庫所有大寬表與索引初始化/驗證成功！");
         }
         catch (Exception ex)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\n❌ 執行初始化時發生致命錯誤：");
-            Console.WriteLine(ex.Message);
-            Console.ResetColor();
+            logger.LogError(ex, "❌ 執行初始化時發生致命錯誤");
             return 1;
         }
 
-        Console.WriteLine("==================================================");
+        logger.LogInformation("==================================================");
         return 0;
     }
 
-    private static string GetEnvironmentString()
+    private static IHost CreateHost(string[] args)
     {
-        // 1. 先抓取標準環境變數
-        string? env = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT") 
-                   ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+        var builder = Host.CreateApplicationBuilder(args);
 
-        // 2. 若環境變數是空的，則依據編譯模式決定 fallback 預設值
-        if (string.IsNullOrWhiteSpace(env))
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole(options =>
         {
-            #if DEBUG
-            env = "Development";
-            #else
-            env = "Production";
-            #endif
-        }
+            options.FormatterName = CleanConsoleFormatter.FormatterName; // 指定使用 CleanConsole
+        });
+        builder.Logging.AddConsoleFormatter<CleanConsoleFormatter, ConsoleFormatterOptions>();
 
-        return env;
+        return builder.Build();
     }
 }

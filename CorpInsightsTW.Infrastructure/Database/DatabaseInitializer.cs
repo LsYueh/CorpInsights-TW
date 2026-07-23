@@ -1,9 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-// 💡 註：實務上你可以使用 Dapper、MySqlConnector 或 EF Core 的 DbContext.Database.ExecuteSqlRawAsync
-// 這裡先以標準的 ADO.NET (MySqlConnector) 邏輯作為規格範本，確保 Native AOT 相容性
 using MySqlConnector; 
 
 namespace CorpInsightsTW.Infrastructure.Database;
