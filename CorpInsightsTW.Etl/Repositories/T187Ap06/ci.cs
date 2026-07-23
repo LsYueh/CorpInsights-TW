@@ -4,7 +4,7 @@ using CorpInsightsTW.Etl.Dtos.T187Ap06;
 
 namespace CorpInsightsTW.Etl.Repositories.T187Ap06;
 
-public class CiRepository(string connectionString)
+public class CiRepository(string connectionString) : IRepository<CiDto>
 {
     private readonly string _connectionString = connectionString;
 

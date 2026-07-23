@@ -4,7 +4,7 @@ using CorpInsightsTW.Etl.Dtos.T187Ap06;
 
 namespace CorpInsightsTW.Etl.Repositories.T187Ap06;
 
-public class BasiRepository(string connectionString)
+public class BasiRepository(string connectionString) : IRepository<BasiDto>
 {
     private readonly string _connectionString = connectionString;
 

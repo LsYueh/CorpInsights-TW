@@ -4,7 +4,7 @@ using CorpInsightsTW.Etl.Dtos.T187Ap06;
 
 namespace CorpInsightsTW.Etl.Repositories.T187Ap06;
 
-public class MimRepository(string connectionString)
+public class MimRepository(string connectionString) : IRepository<MimDto>
 {
     private readonly string _connectionString = connectionString;
 

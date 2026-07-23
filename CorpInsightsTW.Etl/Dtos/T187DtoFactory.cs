@@ -1,27 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
 using CorpInsightsTW.Etl.Core.Common;
 using CorpInsightsTW.Etl.Core.Json;
 
 namespace CorpInsightsTW.Etl.Dtos;
-
-/// <summary>
-/// 統一的 DTO 介面，用於 Transformer 與 Loader 之間的管線傳遞
-/// </summary>
-public interface IT187RawDto
-{
-    // ====== ETL 自行加工欄位 (反序列化時會忽略) ======
-    // 💡 允許後續手動賦值 (set)，且給予預設空字串避免 Null 異常
-
-    /// <summary>
-    /// 掛牌狀態: 'L' (上市公司), 'X' (公開發行公司)
-    /// </summary>
-    string ListingStatus { get; set; }
-}
-
 public static class T187DtoFactory
 {
     private static readonly JsonSerializerOptions _jsonOptions = new()
@@ -40,7 +24,7 @@ public static class T187DtoFactory
     /// <param name="context"></param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
-    public static IT187RawDto? MapToStrongTypeDto(EtlContext context, JsonElement row)
+    public static IT187Dto? MapToStrongTypeDto(EtlContext context, JsonElement row)
     {
         return context.ApCode switch
         {
@@ -53,7 +37,7 @@ public static class T187DtoFactory
     /// <summary>
     /// T187Ap06 (綜合損益表) 各業別的解析
     /// </summary>
-    private static IT187RawDto? MapToAp06Dto(EtlContext context, JsonElement row)
+    private static IT187Dto? MapToAp06Dto(EtlContext context, JsonElement row)
     {
         return context.Taxonomy switch
         {
@@ -72,7 +56,7 @@ public static class T187DtoFactory
     /// <summary>
     /// T187Ap07 (資產負債表) 各業別的解析
     /// </summary>
-    private static IT187RawDto? MapToAp07Dto(EtlContext context, JsonElement row)
+    private static IT187Dto? MapToAp07Dto(EtlContext context, JsonElement row)
     {
         return context.Taxonomy switch
         {

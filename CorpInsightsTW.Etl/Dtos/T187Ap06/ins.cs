@@ -6,77 +6,68 @@ namespace CorpInsightsTW.Etl.Dtos.T187Ap06;
 /// <summary>
 /// 公司綜合損益表-保險業
 /// </summary>
-public record InsDto
-(
+public record InsDto : BaseT187Dto
+{
     // 1. 核心識別與索引欄位
-    [property: JsonPropertyName("年度"), JsonRequired]
-    int Year,
-    [property: JsonPropertyName("季別"), JsonRequired]
-    int Quarter,
-    [property: JsonPropertyName("公司代號"), JsonRequired]
-    string CompanyCode,
     [property: JsonPropertyName("公司名稱"), JsonRequired]
-    string CompanyName,
+    public string CompanyName { get; init; } = string.Empty;
 
     // 2. 保險業營業損益項目
     [property: JsonPropertyName("營業收入"), JsonRequired]
-    decimal OperatingRevenue = 0.00m,
+    public decimal OperatingRevenue { get; init; } = 0.00m;
     [property: JsonPropertyName("營業成本"), JsonRequired]
-    decimal OperatingCosts = 0.00m,
+    public decimal OperatingCosts { get; init; } = 0.00m;
     [property: JsonPropertyName("營業費用"), JsonRequired]
-    decimal OperatingExpenses = 0.00m,
+    public decimal OperatingExpenses { get; init; } = 0.00m;
     [property: JsonPropertyName("營業利益（損失）"), JsonRequired]
-    decimal OperatingIncome = 0.00m,
+    public decimal OperatingIncome { get; init; } = 0.00m;
     [property: JsonPropertyName("營業外收入及支出"), JsonRequired]
-    decimal NonOperatingIncome = 0.00m,
+    public decimal NonOperatingIncome { get; init; } = 0.00m;
 
     // 3. 稅前與稅後純益項目
     [property: JsonPropertyName("繼續營業單位稅前純益（純損）"), JsonRequired]
-    decimal IncomeBeforeTax = 0.00m,
+    public decimal IncomeBeforeTax { get; init; } = 0.00m;
     [property: JsonPropertyName("所得稅費用（利益）"), JsonRequired]
-    decimal IncomeTax = 0.00m,
+    public decimal IncomeTax { get; init; } = 0.00m;
     [property: JsonPropertyName("繼續營業單位本期純益（純損）"), JsonRequired]
-    decimal IncomeAfterTax = 0.00m,
+    public decimal IncomeAfterTax { get; init; } = 0.00m;
     [property: JsonPropertyName("停業單位損益"), JsonRequired]
-    decimal DiscontinuedOpsIncome = 0.00m,
+    public decimal DiscontinuedOpsIncome { get; init; } = 0.00m;
     [property: JsonPropertyName("合併前非屬共同控制股權損益"), JsonRequired]
-    decimal PreMergerNonControlIncome = 0.00m,
+    public decimal PreMergerNonControlIncome { get; init; } = 0.00m;
     [property: JsonPropertyName("本期淨利（淨損）"), JsonRequired]
-    decimal NetIncome = 0.00m,
+    public decimal NetIncome { get; init; } = 0.00m;
 
     // 4. 其他綜合損益項目
     [property: JsonPropertyNames(
         "其他綜合損益（淨額）",
         "其他綜合損益（稅後淨額）"), JsonRequired]
-    decimal OtherComprehensiveIncome = 0.00m,
+    public decimal OtherComprehensiveIncome { get; init; } = 0.00m;
     [property: JsonPropertyName("合併前非屬共同控制股權綜合損益淨額"), JsonRequired]
-    decimal PreMergerNonControlOci = 0.00m,
+    public decimal PreMergerNonControlOci { get; init; } = 0.00m;
     [property: JsonPropertyName("本期綜合損益總額"), JsonRequired]
-    decimal TotalComprehensiveIncome = 0.00m,
+    public decimal TotalComprehensiveIncome { get; init; } = 0.00m;
 
     // 5. 損益歸屬項目
     [property: JsonPropertyName("淨利（淨損）歸屬於母公司業主"), JsonRequired]
-    decimal NetIncomeParent = 0.00m,
+    public decimal NetIncomeParent { get; init; } = 0.00m;
     [property: JsonPropertyName("淨利（淨損）歸屬於共同控制下前手權益"), JsonRequired]
-    decimal NetIncomePredecessor = 0.00m,
+    public decimal NetIncomePredecessor { get; init; } = 0.00m;
     [property: JsonPropertyName("淨利（淨損）歸屬於非控制權益"), JsonRequired]
-    decimal NetIncomeNci = 0.00m,
+    public decimal NetIncomeNci { get; init; } = 0.00m;
 
     // 6. 綜合損益總額歸屬項目
     [property: JsonPropertyName("綜合損益總額歸屬於母公司業主"), JsonRequired]
-    decimal CompIncomeParent = 0.00m,
+    public decimal CompIncomeParent { get; init; } = 0.00m;
     [property: JsonPropertyName("綜合損益總額歸屬於共同控制下前手權益"), JsonRequired]
-    decimal CompIncomePredecessor = 0.00m,
+    public decimal CompIncomePredecessor { get; init; } = 0.00m;
     [property: JsonPropertyName("綜合損益總額歸屬於非控制權益"), JsonRequired]
-    decimal CompIncomeNci = 0.00m,
+    public decimal CompIncomeNci { get; init; } = 0.00m;
 
     // 7. 每股盈餘項目
     [property: JsonPropertyName("基本每股盈餘（元）"), JsonRequired]
-    decimal BasicEps = 0.00m,
+    public decimal BasicEps { get; init; } = 0.00m;
 
     // 8. 系統稽核欄位
-    DateTime? UpdatedAt = null
-) : IT187RawDto
-{
-    public string ListingStatus { get; set; } = string.Empty;
+    public DateTime? UpdatedAt = null;
 }

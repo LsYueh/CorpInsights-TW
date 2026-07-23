@@ -1,7 +1,7 @@
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Etl.Core.Common;
 using CorpInsightsTW.Etl.Dtos;
-using CorpInsightsTW.Etl.Repositories.T187Ap06;
+using CorpInsightsTW.Etl.Repositories;
 
 namespace CorpInsightsTW.Etl.Pipeline.Load;
 
@@ -18,7 +18,7 @@ public class T187DataLoader(
     private int _totalProcessedCount = 0;
 
     public async Task LoadAsync(EtlContext context,
-        IReadOnlyList<IT187RawDto> batch, int fileTotalCount,
+        IReadOnlyList<IT187Dto> batch, int fileTotalCount,
         CancellationToken cancellationToken, int indentLevel = 0)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -76,7 +76,7 @@ public class T187DataLoader(
 
     public async Task ExecAsync(
         EtlContext context, 
-        IReadOnlyList<IT187RawDto> batch,
+        IReadOnlyList<IT187Dto> batch,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -95,21 +95,17 @@ public class T187DataLoader(
 
     private async Task ProcessT187Ap06BatchAsync(
         EtlContext context, 
-        IReadOnlyList<IT187RawDto> batch, 
+        IReadOnlyList<IT187Dto> batch, 
         CancellationToken cancellationToken)
     {
         switch (context.Taxonomy)
         {
-            case XbrlTaxonomy.BASI:
-                var basiDtos = batch.OfType<Dtos.T187Ap06.BasiDto>();
-                var repo = new BasiRepository(_connectionString);
-                await repo.UpsertAsync(basiDtos, cancellationToken);
-                break;
-            case XbrlTaxonomy.BD: break;
-            case XbrlTaxonomy.CI: break;
-            case XbrlTaxonomy.FH: break;
-            case XbrlTaxonomy.INS: break;
-            case XbrlTaxonomy.MIM: break;
+            case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap06.BasiRepository(_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.BD  : await ExecUpsertAsync(new Repositories.T187Ap06.BdRepository  (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.CI  : await ExecUpsertAsync(new Repositories.T187Ap06.CiRepository  (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.FH  : await ExecUpsertAsync(new Repositories.T187Ap06.FhRepository  (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.INS : await ExecUpsertAsync(new Repositories.T187Ap06.InsRepository (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.MIM : await ExecUpsertAsync(new Repositories.T187Ap06.MimRepository (_connectionString), batch, cancellationToken); break;
             default:
                 _logger.LogWarning("⚠️ [T187Ap06] 未知的 XBRL Taxonomy: {Taxonomy}", context.Taxonomy);
                 break;
@@ -118,20 +114,35 @@ public class T187DataLoader(
 
     private async Task ProcessT187Ap07BatchAsync(
         EtlContext context, 
-        IReadOnlyList<IT187RawDto> batch, 
+        IReadOnlyList<IT187Dto> batch, 
         CancellationToken cancellationToken)
     {
         switch (context.Taxonomy)
         {
-            case XbrlTaxonomy.BASI: break;
-            case XbrlTaxonomy.BD: break;
-            case XbrlTaxonomy.CI: break;
-            case XbrlTaxonomy.FH: break;
-            case XbrlTaxonomy.INS: break;
-            case XbrlTaxonomy.MIM: break;
+            case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap07.BasiRepository(_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.BD  : await ExecUpsertAsync(new Repositories.T187Ap07.BdRepository  (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.CI  : await ExecUpsertAsync(new Repositories.T187Ap07.CiRepository  (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.FH  : await ExecUpsertAsync(new Repositories.T187Ap07.FhRepository  (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.INS : await ExecUpsertAsync(new Repositories.T187Ap07.InsRepository (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.MIM : await ExecUpsertAsync(new Repositories.T187Ap07.MimRepository (_connectionString), batch, cancellationToken); break;
             default:
                 _logger.LogWarning("⚠️ [T187Ap07] 未知的 XBRL Taxonomy: {Taxonomy}", context.Taxonomy);
                 break;
+        }
+    }
+
+    /// <summary>
+    /// IRepository 泛型通用呼叫器
+    /// </summary>
+    private static async Task ExecUpsertAsync<TDto>(
+        IRepository<TDto> repository, 
+        IReadOnlyList<IT187Dto> batch, 
+        CancellationToken cancellationToken)
+    {
+        var dtos = batch.OfType<TDto>().ToList();
+        if (dtos.Count > 0)
+        {
+            await repository.UpsertAsync(dtos, cancellationToken);
         }
     }
 }
