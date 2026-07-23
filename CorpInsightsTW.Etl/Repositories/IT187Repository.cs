@@ -1,6 +1,6 @@
 namespace CorpInsightsTW.Etl.Repositories;
 
-public interface IRepository<TDto>
+public interface IT187Repository<TDto>
 {
     Task UpsertAsync(IEnumerable<TDto> dtos, CancellationToken cancellationToken = default);
 }

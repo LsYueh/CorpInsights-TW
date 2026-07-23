@@ -135,7 +135,7 @@ public class T187DataLoader(
     /// IRepository 泛型通用呼叫器
     /// </summary>
     private static async Task ExecUpsertAsync<TDto>(
-        IRepository<TDto> repository, 
+        IT187Repository<TDto> repository, 
         IReadOnlyList<IT187Dto> batch, 
         CancellationToken cancellationToken)
     {

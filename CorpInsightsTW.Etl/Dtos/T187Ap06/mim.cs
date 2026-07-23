@@ -5,11 +5,10 @@ namespace CorpInsightsTW.Etl.Dtos.T187Ap06;
 /// <summary>
 /// 公司綜合損益表-異業
 /// </summary>
-public record MimDto : BaseT187Dto
+public record MimDto : T187Dto
 {
     // 1. 核心識別與索引欄位
-    [property: JsonPropertyName("公司名稱"), JsonRequired]
-    public string CompanyName { get; init; } = string.Empty;
+    // 繼承自 T187Dto
 
     // 2. 異業最精簡之收支項目
     [property: JsonPropertyName("收入"), JsonRequired]

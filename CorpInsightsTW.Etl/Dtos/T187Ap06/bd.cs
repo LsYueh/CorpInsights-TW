@@ -5,11 +5,10 @@ namespace CorpInsightsTW.Etl.Dtos.T187Ap06;
 /// <summary>
 /// 公司綜合損益表-證券期貨業
 /// </summary>
-public record BdDto : BaseT187Dto
+public record BdDto : T187Dto
 {
     // 1. 核心識別與索引欄位
-    [property: JsonPropertyName("公司名稱"), JsonRequired]
-    public string CompanyName { get; init; } = string.Empty;
+    // 繼承自 T187Dto
 
     // 2. 證券期貨業主要營業損益項目
     [property: JsonPropertyName("收益"), JsonRequired]

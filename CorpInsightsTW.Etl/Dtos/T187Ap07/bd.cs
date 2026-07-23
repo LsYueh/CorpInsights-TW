@@ -6,11 +6,10 @@ namespace CorpInsightsTW.Etl.Dtos.T187Ap07;
 /// <summary>
 /// 公司資產負債表-證券期貨業
 /// </summary>
-public record BdDto : BaseT187Dto
+public record BdDto : T187Dto
 {
     // 1. 核心識別與索引欄位
-    [property: JsonPropertyName("公司名稱"), JsonRequired]
-    public string CompanyName { get; init; } = string.Empty;
+    // 繼承自 T187Dto
 
     // 2. 資產類項目
     [property: JsonPropertyName("流動資產"), JsonRequired]

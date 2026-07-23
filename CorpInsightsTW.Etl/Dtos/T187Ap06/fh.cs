@@ -5,11 +5,10 @@ namespace CorpInsightsTW.Etl.Dtos.T187Ap06;
 /// <summary>
 /// 公司綜合損益表-金控業
 /// </summary>
-public record FhDto : BaseT187Dto
+public record FhDto : T187Dto
 {
     // 1. 核心識別與索引欄位
-    [property: JsonPropertyName("公司名稱"), JsonRequired]
-    public string CompanyName { get; init; } = string.Empty;
+    // 繼承自 T187Dto
 
     // 2. 金控業特有營業淨收益項目
     [property: JsonPropertyName("利息淨收益"), JsonRequired]

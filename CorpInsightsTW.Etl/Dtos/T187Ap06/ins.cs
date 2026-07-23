@@ -6,11 +6,10 @@ namespace CorpInsightsTW.Etl.Dtos.T187Ap06;
 /// <summary>
 /// 公司綜合損益表-保險業
 /// </summary>
-public record InsDto : BaseT187Dto
+public record InsDto : T187Dto
 {
     // 1. 核心識別與索引欄位
-    [property: JsonPropertyName("公司名稱"), JsonRequired]
-    public string CompanyName { get; init; } = string.Empty;
+    // 繼承自 T187Dto
 
     // 2. 保險業營業損益項目
     [property: JsonPropertyName("營業收入"), JsonRequired]
