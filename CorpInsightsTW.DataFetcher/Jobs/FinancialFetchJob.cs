@@ -1,6 +1,6 @@
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
-using CorpInsightsTW.DataFetcher.Common;
+using CorpInsightsTW.DataFetcher.Core.Common;
 using CorpInsightsTW.DataFetcher.Services;
 
 namespace CorpInsightsTW.DataFetcher.Jobs;

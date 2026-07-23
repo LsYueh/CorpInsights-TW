@@ -1,6 +1,6 @@
 using CorpInsightsTW.Core.Enums;
 
-namespace CorpInsightsTW.DataFetcher.Common;
+namespace CorpInsightsTW.DataFetcher.Core.Common;
 
 /// <summary>
 /// 

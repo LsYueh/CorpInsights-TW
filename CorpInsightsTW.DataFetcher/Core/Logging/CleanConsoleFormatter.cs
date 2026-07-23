@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging.Console;
 
-namespace CorpInsightsTW.Etl.Logging;
+namespace CorpInsightsTW.Etl.Core.Logging;
 
 public class CleanConsoleFormatter : ConsoleFormatter
 {
