@@ -31,9 +31,9 @@ public class Program
 
         try
         {
-            var job = host.Services.GetRequiredService<FinancialFetchJob>();
+            var job = host.Services.GetRequiredService<FetchJob>();
 
-            await job.ExecuteAsync(cts.Token); 
+            await job.ExecAsync(cts.Token); 
 
             exitCode = 0;
         }
@@ -122,7 +122,7 @@ public class Program
             return new LocalRawDataStorage(logger, customStoragePath);
         });
 
-        builder.Services.AddTransient<FinancialFetchJob>();
+        builder.Services.AddTransient<FetchJob>();
         builder.Services.AddTransient<TwseApiService>();
 
         builder.Services.AddHttpClient();

@@ -49,8 +49,6 @@ public static class T187DtoFactory
             XbrlTaxonomy.MIM  => row.Deserialize<T187Ap06.MimDto >(_jsonOptions),
             _ => throw new NotSupportedException($"未知的 T187Ap06 分類: {context.Taxonomy.ToCode()}")
         };
-
-        throw new NotImplementedException("T187AP06 損益表 DTO 轉換尚未實作。");
     }
 
     /// <summary>
