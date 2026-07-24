@@ -60,7 +60,7 @@ dotnet run --project CorpInsightsTW.DataFetcher --
 > ⚠️ 使用前請先確定資料庫服務已啟動且資料表皆建立完畢。 ([資料庫服務操作文件](/docs/docker/mariadb.md))
 
 ```console
-dotnet run --project CorpInsightsTW.Etl --
+dotnet run --project CorpInsightsTW.Etl -- --dry
 ```
 
 <br>

@@ -14,10 +14,10 @@ public class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        var runConfig = TryParseConfig(args);
-        if (runConfig == null) return 1;
+        var config = TryParseConfig(args);
+        if (config == null) return 1;
 
-        using var host = CreateHost(args, runConfig);
+        using var host = CreateHost(args, config);
 
         using var cts = new CancellationTokenSource();
 
@@ -55,7 +55,7 @@ public class Program
         return exitCode;
     }
 
-    private static EtlRunConfig? TryParseConfig(string[] args)
+    private static RuntimeConfig? TryParseConfig(string[] args)
     {
         var parseResult = Parser.Default.ParseArguments<CliOptions>(args);
         if (parseResult.Tag == ParserResultType.NotParsed)
@@ -94,10 +94,10 @@ public class Program
             return null;
         }
 
-        return new EtlRunConfig(status, taxonomy, apCode, date);
+        return new RuntimeConfig(status, taxonomy, apCode, date, options.DryRun);
     }
 
-    private static IHost CreateHost(string[] args, EtlRunConfig runConfig)
+    private static IHost CreateHost(string[] args, RuntimeConfig runtimeConfig)
     {
         var builder = Host.CreateApplicationBuilder(args);
 
@@ -108,7 +108,7 @@ public class Program
         });
         builder.Logging.AddConsoleFormatter<CleanConsoleFormatter, ConsoleFormatterOptions>();
 
-        builder.Services.AddSingleton(runConfig);
+        builder.Services.AddSingleton(runtimeConfig);
 
         // Storage
         string? customStoragePath = builder.Configuration["Storage:RawDataPath"];
@@ -128,7 +128,7 @@ public class Program
             string connectionString = config.GetConnectionString("DefaultConnection") 
                 ?? throw new InvalidOperationException("找不到 DefaultConnection 連線字串設定");
 
-            return new T187DataLoader(logger, connectionString);
+            return new T187DataLoader(logger, runtimeConfig, connectionString);
         });
         builder.Services.AddTransient<EtlPipeline>();
 

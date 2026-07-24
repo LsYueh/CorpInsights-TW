@@ -7,10 +7,12 @@ namespace CorpInsightsTW.Etl.Pipeline.Load;
 
 public class T187DataLoader(
     ILogger<T187DataLoader> logger,
+    RuntimeConfig runtimeConfig,
     string connectionString) : IDataLoader
 {
-    private readonly string _connectionString = connectionString;
     private readonly ILogger<T187DataLoader> _logger = logger;
+    private readonly RuntimeConfig _runtimeConfig = runtimeConfig;
+    private readonly string _connectionString = connectionString;
 
     private static string GetIndent(int level) => new(' ', level * 4);
 
@@ -29,7 +31,7 @@ public class T187DataLoader(
 
         try
         {
-            await ExecAsync(context, batch, cancellationToken);
+            await ExecAsync(context, batch, cancellationToken, indentLevel);
 
             // 處理完成後才更新累計筆數並印出 Log
             int currentTotal = Interlocked.Add(ref _totalProcessedCount, batch.Count);
@@ -77,14 +79,15 @@ public class T187DataLoader(
     public async Task ExecAsync(
         EtlContext context, 
         IReadOnlyList<IT187Dto> batch,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        int indentLevel = 0)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         switch (context.ApCode)
         {
-            case T187ApCode.T187AP06: await ProcessT187Ap06BatchAsync(context, batch, cancellationToken); break;
-            case T187ApCode.T187AP07: await ProcessT187Ap07BatchAsync(context, batch, cancellationToken); break;
+            case T187ApCode.T187AP06: await ProcessT187Ap06BatchAsync(context, batch, cancellationToken, indentLevel); break;
+            case T187ApCode.T187AP07: await ProcessT187Ap07BatchAsync(context, batch, cancellationToken, indentLevel); break;
             default:
                 _logger.LogWarning("⚠️ 未知的 ApCode: {ApCode}", context.ApCode);
                 break;
@@ -96,8 +99,18 @@ public class T187DataLoader(
     private async Task ProcessT187Ap06BatchAsync(
         EtlContext context, 
         IReadOnlyList<IT187Dto> batch, 
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        int indentLevel = 0)
     {
+        string indent = GetIndent(indentLevel);
+        
+        if (_runtimeConfig.IsDryRun)
+        {
+            _logger.LogInformation("{Indent}🧪 [DryRun] 模擬執行 [T187Ap06] (Taxonomy: {Taxonomy}, 筆數: {Count})，跳過實際 Upsert", 
+                indent, context.Taxonomy, batch.Count);
+            return;
+        }
+        
         switch (context.Taxonomy)
         {
             case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap06.BasiRepository(_connectionString), batch, cancellationToken); break;
@@ -115,8 +128,19 @@ public class T187DataLoader(
     private async Task ProcessT187Ap07BatchAsync(
         EtlContext context, 
         IReadOnlyList<IT187Dto> batch, 
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        int indentLevel = 0)
     {
+        string indent = GetIndent(indentLevel);
+
+        if (_runtimeConfig.IsDryRun)
+        {
+            _logger.LogInformation("{Indent}🧪 [DryRun] 模擬執行 [T187Ap07] (Taxonomy: {Taxonomy}, 筆數: {Count})，跳過實際 Upsert", 
+                indent, context.Taxonomy, batch.Count);
+            return;
+        }
+        
+        
         switch (context.Taxonomy)
         {
             case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap07.BasiRepository(_connectionString), batch, cancellationToken); break;

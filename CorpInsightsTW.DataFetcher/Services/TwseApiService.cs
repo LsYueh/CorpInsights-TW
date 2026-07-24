@@ -8,12 +8,12 @@ namespace CorpInsightsTW.DataFetcher.Services;
 public class TwseApiService(
     ILogger<TwseApiService> logger,
     IHttpClientFactory httpClientFactory,
-    FetchRunConfig config,
+    RuntimeConfig config,
     LocalRawDataStorage storage)
 {
     private readonly ILogger<TwseApiService> _logger = logger;
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-    private readonly FetchRunConfig _config = config;
+    private readonly RuntimeConfig _config = config;
     private readonly LocalRawDataStorage _storage = storage;
 
     private static string GetIndent(int level) => new(' ', level * 4);

@@ -2,8 +2,9 @@ using CorpInsightsTW.Core.Enums;
 
 namespace CorpInsightsTW.Etl;
 
-public record EtlRunConfig(
+public record RuntimeConfig(
     ListingStatus Status,
     XbrlTaxonomy Taxonomy,
     T187ApCode ApCode,
-    DateOnly Date);
+    DateOnly Date,
+    bool IsDryRun);

@@ -58,7 +58,7 @@ public class Program
     /// 命令列參數解析與 Core Enums 轉換邏輯
     /// </summary>
     /// <returns>若解析成功回傳組態設定；失敗則回傳 null 且會自動於主控台印出錯誤</returns>
-    private static FetchRunConfig? TryParseConfig(string[] args)
+    private static RuntimeConfig? TryParseConfig(string[] args)
     {
         var parseResult = Parser.Default.ParseArguments<CliOptions>(args);
         if (parseResult.Tag == ParserResultType.NotParsed)
@@ -86,13 +86,13 @@ public class Program
             return null;
         }
 
-        return new FetchRunConfig(status, taxonomy, apCode, string.Empty);
+        return new RuntimeConfig(status, taxonomy, apCode, string.Empty);
     }
 
     /// <summary>
     /// .NET Host 的初始化與 DI 服務註冊
     /// </summary>
-    private static IHost CreateHost(string[] args, FetchRunConfig fetchConfig)
+    private static IHost CreateHost(string[] args, RuntimeConfig runtimeConfig)
     {
         var builder = Host.CreateApplicationBuilder(args);
 
@@ -105,7 +105,7 @@ public class Program
 
         // Config
         string rootUrl = builder.Configuration["TwseApi:RootUrl"] ?? "https://openapi.twse.com.tw/v1";
-        builder.Services.AddSingleton(fetchConfig with { TwseRootUrl = rootUrl });
+        builder.Services.AddSingleton(runtimeConfig with { TwseRootUrl = rootUrl });
 
         // Storage
         string? customStoragePath = builder.Configuration["Storage:RawDataPath"];

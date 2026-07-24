@@ -8,11 +8,11 @@ namespace CorpInsightsTW.DataFetcher.Jobs;
 public class FinancialFetchJob(
     ILogger<FinancialFetchJob> logger,
     TwseApiService twseApiService,
-    FetchRunConfig config)
+    RuntimeConfig config)
 {
     private readonly ILogger<FinancialFetchJob> _logger = logger;
     private readonly TwseApiService _twseApiService = twseApiService;
-    private readonly FetchRunConfig _config = config;
+    private readonly RuntimeConfig _config = config;
 
     private static string GetIndent(int level) => new(' ', level * 4);
 

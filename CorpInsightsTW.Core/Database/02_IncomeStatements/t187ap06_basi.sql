@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `t187ap06_basi` (
     -- 1. 核心識別與索引欄位
     `year`                                        SMALLINT        NOT NULL COMMENT '年度 ( e.g., 2026 )',
     `quarter`                                     TINYINT UNSIGNED NOT NULL COMMENT '季別 ( 1: 第一季, 2: 第二季, 3: 第三季, 4: 第四季 )',
-    `listing_status`                              CHAR(1)         NOT NULL COMMENT '掛牌狀態 ( L: 上市, O: 上櫃, R: 興櫃, X: 公發 )',
+    `listing_status`                              CHAR(1)         NOT NULL COMMENT '掛牌狀態 ( L: 上市, O: 上櫃, U: 興櫃, X: 公發 )',
     `company_code`                                VARCHAR(10)     NOT NULL COMMENT '公司代號',
     `company_name`                                VARCHAR(100)    NOT NULL COMMENT '公司名稱',
 

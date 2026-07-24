@@ -10,13 +10,13 @@ namespace CorpInsightsTW.Etl.Pipeline;
 
 public class EtlPipeline(
     ILogger<EtlPipeline> logger,
-    EtlRunConfig config,
+    RuntimeConfig config,
     IDataExtractor extractor,
     IDataTransformer transformer,
     IDataLoader loader)
 {
     private readonly ILogger<EtlPipeline> _logger = logger;
-    private readonly EtlRunConfig _config = config;
+    private readonly RuntimeConfig _config = config;
 
     private readonly IDataExtractor _extractor = extractor;
     private readonly IDataTransformer _transformer = transformer;
