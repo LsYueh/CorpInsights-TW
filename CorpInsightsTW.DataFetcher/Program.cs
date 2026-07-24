@@ -68,6 +68,12 @@ public class Program
 
         var options = ((Parsed<CliOptions>)parseResult).Value;
 
+        if (!Enum.TryParse<StockMarket>(options.Market, ignoreCase: true, out var market))
+        {
+            Console.WriteLine($"❌ 不合法的市場參數: '{options.Market}'");
+            return null;
+        }
+
         if (!Enum.TryParse<ListingStatus>(options.Status, ignoreCase: true, out var status))
         {
             Console.WriteLine($"❌ 不合法的上市狀態參數: '{options.Status}'");
@@ -86,7 +92,7 @@ public class Program
             return null;
         }
 
-        return new RuntimeConfig(status, taxonomy, apCode, string.Empty);
+        return new RuntimeConfig(market, status, taxonomy, apCode, string.Empty, string.Empty);
     }
 
     /// <summary>
@@ -103,9 +109,10 @@ public class Program
         });
         builder.Logging.AddConsoleFormatter<CleanConsoleFormatter, ConsoleFormatterOptions>();
 
-        // Config
-        string rootUrl = builder.Configuration["TwseApi:RootUrl"] ?? "https://openapi.twse.com.tw/v1";
-        builder.Services.AddSingleton(runtimeConfig with { TwseRootUrl = rootUrl });
+        // Config - API URLs
+        string twseApiUrl = builder.Configuration["TwseApi:RootUrl"] ?? "https://openapi.twse.com.tw/v1";
+        string tpexApiUrl = builder.Configuration["TpexApi:RootUrl"] ?? "https://www.tpex.org.tw/openapi/v1";
+        builder.Services.AddSingleton(runtimeConfig with { TwseRootUrl = twseApiUrl, TpexRootUrl = tpexApiUrl });
 
         // Storage
         string? customStoragePath = builder.Configuration["Storage:RawDataPath"];

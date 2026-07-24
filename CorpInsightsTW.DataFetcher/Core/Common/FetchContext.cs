@@ -6,6 +6,7 @@ namespace CorpInsightsTW.DataFetcher.Core.Common;
 /// 
 /// </summary>
 public record FetchContext(
+    StockMarket Market,
     T187ApCode ApCode,
     ListingStatus Status,
     XbrlTaxonomy Taxonomy

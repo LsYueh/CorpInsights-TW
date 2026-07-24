@@ -20,18 +20,23 @@ public class FinancialFetchJob(
     {
         string indent = GetIndent(indentLevel);
         
+        StockMarket   targetMarket   = _config.Market;
         XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         ListingStatus targetStatus   = _config.Status;
         T187ApCode    targetApCode   = _config.ApCode;
 
-        _logger.LogInformation("{Indent}🎬 發動 HTTP 請求: {Status} {Taxonomy} - {Name}", indent, 
-            targetStatus.ToDisplay(), targetTaxonomy.ToDisplay(), targetApCode.ToDisplay());
+        _logger.LogInformation("{Indent}🎬 發動 HTTP 請求: [{Market}] {Status} {Taxonomy} - {Name}", indent, 
+            targetMarket.ToDisplay(), targetStatus.ToDisplay(), targetTaxonomy.ToDisplay(), targetApCode.ToDisplay());
 
         stoppingToken.ThrowIfCancellationRequested();
 
         try
         {
             // Note: 清單過濾方式 (如果是 All，就抓出排除 All 以外的所有合法實體列舉)
+            
+            // var marketToFetch = targetMarket == StockMarket.All
+            //     ? Enum.GetValues<StockMarket>().Where(m => m != StockMarket.All)
+            //     : [targetMarket];
 
             var statusToFetch = targetStatus == ListingStatus.All
                 ? Enum.GetValues<ListingStatus>().Where(m => m != ListingStatus.All)
@@ -48,13 +53,17 @@ public class FinancialFetchJob(
             _logger.LogInformation("{Indent}📊 預計執行組合數: {Count} 組", indent, 
                 statusToFetch.Count() * taxonomiesToFetch.Count() * reportsToFetch.Count());
 
-            foreach (var taxonomy in taxonomiesToFetch)
-            {
-                foreach (var status in statusToFetch)
+            // foreach (var market in marketToFetch)
+            // {
+                foreach (var taxonomy in taxonomiesToFetch)
                 {
-                    await FetchReportsGroupAsync(taxonomy, status, reportsToFetch, stoppingToken, indentLevel + 1);
+                    foreach (var status in statusToFetch)
+                    {
+                        // await FetchReportsGroupAsync(market, taxonomy, status, reportsToFetch, stoppingToken, indentLevel + 1);
+                        await FetchReportsGroupAsync(StockMarket.TWSE, taxonomy, status, reportsToFetch, stoppingToken, indentLevel + 1);
+                    }
                 }
-            }
+            // }
 
             _logger.LogInformation("{Indent}✨ 批次 HTTP 請求安全結束。", indent);
         }
@@ -66,18 +75,19 @@ public class FinancialFetchJob(
     }
 
     private async Task FetchReportsGroupAsync(
+        StockMarket market,
         XbrlTaxonomy taxonomy, ListingStatus status, IEnumerable<T187ApCode> apCodes,
         CancellationToken stoppingToken, int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
         
-        _logger.LogInformation("{Indent}⚡ HTTP 請求: {Status} - {Taxonomy}", indent, status.ToDisplay(), taxonomy.ToDisplay());
+        _logger.LogInformation("{Indent}⚡ HTTP 請求: [{Market}] {Status} - {Taxonomy}", indent, market.ToCode(), status.ToDisplay(), taxonomy.ToDisplay());
 
         foreach (var apCode in apCodes)
         {
             stoppingToken.ThrowIfCancellationRequested();
 
-            var context = new FetchContext(apCode, status, taxonomy);
+            var context = new FetchContext(market, apCode, status, taxonomy);
 
             await _twseApiService.FetchFinancialDataAsync(context, stoppingToken, indentLevel + 1);
         }

@@ -1,11 +1,11 @@
 using CorpInsightsTW.Core.Attributes;
 
-namespace CorpInsightsTW.Core.Enums;
+namespace CorpInsightsTW.Core.Enums._ListingStatus;
 
 /// <summary>
-/// 上市狀態 TSE
+/// 上市狀態 Twse
 /// </summary>
-public enum ListingStatus
+public enum Twse
 {
     /// <summary> 全狀態 </summary>
     [Code("all"), Display("全上市狀態")]

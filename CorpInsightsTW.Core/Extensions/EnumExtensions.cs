@@ -8,7 +8,7 @@ public static class EnumExtensions
     /// <summary>
     /// 取得 Enum 標註的 OpenAPI 網址代碼
     /// </summary>
-    public static string ToCode(this Enum value)
+    public static string ToCode<TEnum>(this TEnum value) where TEnum : Enum
     {
         FieldInfo? field = value.GetType().GetField(value.ToString());
         if (field == null) return value.ToString();
@@ -20,7 +20,7 @@ public static class EnumExtensions
     /// <summary>
     /// 取得 Enum 標註的顯示名稱
     /// </summary>
-    public static string ToDisplay(this Enum value)
+    public static string ToDisplay<TEnum>(this TEnum value) where TEnum : Enum
     {
         FieldInfo? field = value.GetType().GetField(value.ToString());
         if (field == null) return value.ToString();
