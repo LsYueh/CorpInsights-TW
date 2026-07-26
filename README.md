@@ -41,7 +41,7 @@ CorpInsightsTW/                             # 專案總根目錄
 
 <br>
 
-## `綜合損益表` 與 `資產負債表` 資料請求  
+## 📡 `綜合損益表` 與 `資產負債表` 資料請求 (DataFetcher)  
 
 ![Data Fetcher](/docs/DataFetcher.png)  
 
@@ -61,7 +61,7 @@ dotnet run --project CorpInsightsTW.DataFetcher
 
 <br>
 
-## 資料處理
+## ⚙️ 資料處理 (ETL)
 
 ![ETL](/docs/ETL.png)  
 
@@ -72,7 +72,7 @@ dotnet run --project CorpInsightsTW.DataFetcher
 預設執行將自動轉換**今日全市場（TWSE/TPEX）所有財務報表**：
 
 ```bash
-dotnet run --project CorpInsightsTW.Etl --dry
+dotnet run --project CorpInsightsTW.Etl -- --dry
 ```
 
 <br>
@@ -83,7 +83,7 @@ dotnet run --project CorpInsightsTW.Etl --dry
 
 <br>
 
-## 客製化 `T187JsonConverter`
+## 🛠️ 客製化 `T187JsonConverter`
 
 解決 `證交所 OpenAPI` 公開資料內跨業別或跨版本`欄位別名`不一致的問題  
 ![ETL](/docs/JsonPropertyNames.png)  
