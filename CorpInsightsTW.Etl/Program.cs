@@ -106,16 +106,23 @@ public class Program
             return null;
         }
 
-        // 交易日校正
-        DateOnly adjustedDate = date.ToLastWeekday();
-        if (adjustedDate != date)
+        if (options.SkipDateCheck)
         {
-            Console.WriteLine(
-                $"ℹ️ 非交易日/假日操作，原始日期: {date:yyyy-MM-dd} ({date.DayOfWeek}), " +
-                $"市場: {market} -> 自動調整目錄日期為最近交易日: {adjustedDate:yyyy-MM-dd} ({adjustedDate.DayOfWeek})"
-            );
+            Console.WriteLine($"⚠️ 已啟用 --skip-date-check ，將強制跳過交易日校正！(目前指定的日期: {date:yyyy-MM-dd})");
+        }
+        else
+        {
+            // 交易日校正
+            DateOnly adjustedDate = date.ToLastWeekday();
+            if (adjustedDate != date)
+            {
+                Console.WriteLine(
+                    $"ℹ️ 非交易日/假日操作，原始日期: {date:yyyy-MM-dd} ({date.DayOfWeek}), " +
+                    $"市場: {market} -> 自動調整目錄日期為最近交易日: {adjustedDate:yyyy-MM-dd} ({adjustedDate.DayOfWeek})"
+                );
 
-            date = adjustedDate;
+                date = adjustedDate;
+            }
         }
 
         // 建立 Config

@@ -24,6 +24,10 @@ public class CliOptions
         HelpText = "指定匯入資料日期 (格式: yyyyMMdd)，預設為今日")]
     public string? Date { get; set; }
 
+    [Option("skip-date-check", Required = false, Default = false,
+        HelpText = "強制跳過交易日自動校正，允許執行非營業日/週末之資料處理")]
+    public bool SkipDateCheck { get; set; }
+
     [Option("dry", Required = false, Default = false,
         HelpText = "指定是否僅進行模擬執行（不實際寫入/匯入資料）")]
     public bool DryRun { get; set; }
