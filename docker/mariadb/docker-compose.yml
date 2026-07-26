@@ -1,0 +1,38 @@
+services:
+  mariadb:
+    image: mariadb:11.8
+    container_name: ${MARIADB_CONTAINER_NAME:-corpinsights_mariadb}
+    restart: always
+    ports:
+      - "${MARIADB_HOST_PORT:-3306}:3306"
+    environment:
+      # 指定容器時區為 Asia/Taipei (UTC+8)
+      TZ: Asia/Taipei
+      # 自動建立 root 密碼、預設 DB 及一般使用者
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MYSQL_DATABASE}
+      MARIADB_USER: ${MYSQL_USER}
+      MARIADB_PASSWORD: ${MYSQL_PASSWORD}
+      # 設定語系與字元集為 utf8mb4
+      MARIADB_CHARACTER_SET_SERVER: utf8mb4
+      MARIADB_COLLATION_SERVER: utf8mb4_unicode_ci
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - cis_network
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 1m
+      start_interval: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3
+
+networks:
+  cis_network:
+    name: cis_network
+    driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local

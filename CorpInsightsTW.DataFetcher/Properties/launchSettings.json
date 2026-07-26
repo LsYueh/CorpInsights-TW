@@ -1,0 +1,14 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "CorpInsightsTW.DataFetcher": {
+      "commandName": "Project",
+      "workingDirectory": "$(ProjectDir)/",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "commandLineArgs": ""
+    }
+  }
+}
