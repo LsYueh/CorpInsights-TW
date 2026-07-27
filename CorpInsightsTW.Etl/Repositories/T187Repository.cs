@@ -14,7 +14,7 @@ public abstract class T187Repository<TDto>(string connectionString) : IT187Repos
     protected abstract string MainTableUpsertSql { get; }
 
     /// <summary>
-    /// 子類別需提供專屬的 Taxonomy 名稱 (e.g., "basi", "bd", "ci")
+    /// 行業別分類 (e.g., "basi", "bd", "ci")
     /// </summary>
     protected abstract string Taxonomy { get; }
 
@@ -33,7 +33,7 @@ public abstract class T187Repository<TDto>(string connectionString) : IT187Repos
             await conn.ExecuteAsync(
                 new CommandDefinition(MainTableUpsertSql, dtoList, transaction: transaction, cancellationToken: cancellationToken));
 
-            await UpsertTaxonomyMapAsync(conn, transaction, dtoList, Taxonomy, cancellationToken);
+            await UpsertCompanyAsync(conn, transaction, dtoList, Taxonomy, cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
         }
@@ -45,15 +45,22 @@ public abstract class T187Repository<TDto>(string connectionString) : IT187Repos
     }
 
     /// <summary>
-    /// 靜態輔助方法：同 Transaction 內更新公司 Taxonomy 對應表
+    /// 同 Transaction 內更新公司基本資料
     /// </summary>
-    protected static async Task UpsertTaxonomyMapAsync(
+    protected static async Task UpsertCompanyAsync(
         MySqlConnection conn,
         MySqlTransaction transaction,
         IEnumerable<T187Dto> dtos,
         string taxonomy,
         CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(taxonomy))
+        {
+            throw new ArgumentException("Taxonomy 參數不可為空或空字串", nameof(taxonomy));
+        }
+
+        var cleanTaxonomy = taxonomy.Trim().ToLower();
+        
         // 記憶體內去重 + 補上 Taxonomy 參數
         var mapItems = dtos
             .Where(x => !string.IsNullOrWhiteSpace(x.CompanyCode))
@@ -62,18 +69,21 @@ public abstract class T187Repository<TDto>(string connectionString) : IT187Repos
             {
                 x.CompanyCode,
                 x.CompanyName,
-                Taxonomy = taxonomy.ToLower()
+                x.ListingStatus,
+                Taxonomy = cleanTaxonomy
             })
             .ToList();
 
         if (mapItems.Count == 0) return;
 
         const string mapSql = @"
-            INSERT INTO company_taxonomy_map (company_code, company_name, xbrl_taxonomy)
-            VALUES (@CompanyCode, @CompanyName, @Taxonomy)
+            INSERT INTO companies (company_code, company_name, listing_status, xbrl_taxonomy)
+            VALUES (@CompanyCode, @CompanyName, @ListingStatus, @Taxonomy)
             ON DUPLICATE KEY UPDATE
                 company_name = VALUES(company_name),
-                xbrl_taxonomy = VALUES(xbrl_taxonomy);";
+                listing_status = VALUES(listing_status),
+                xbrl_taxonomy = VALUES(xbrl_taxonomy),
+                updated_at = NOW();";
 
         await conn.ExecuteAsync(
             new CommandDefinition(mapSql, mapItems, transaction: transaction, cancellationToken: cancellationToken));
