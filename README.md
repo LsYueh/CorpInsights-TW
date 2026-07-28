@@ -4,14 +4,28 @@
 
 <br>
 
-## 📁 專案目錄結構
+```
+依`證券交易法第36條`及證券期貨局相關函令規定，財務報告申報期限如下：
+  1.一般行業申報期限：第一季為5月15日，第二季為8月14日，第三季為11月14日，年度為3月31日。
+  2.金控業申報期限：第一季為5月30日，第二季為8月31日，第三季為11月29日，年度為3月31日。
+  3.銀行及票券業申報期限：第一季為5月15日，第二季為8月31日，第三季為11月14日，年度為3月31日。
+  4.保險業申報期限：第一季為5月15日，第二季為8月31日，第三季為11月14日，年度為3月31日。
+  5.證券業申報期限：第一季為5月15日，第二季為8月31日，第三季為11月14日，年度為3月31日。
+  6.申報期限如遇例假日，以證券期貨局公布者為準。
+```
 
+<br>
+
+<details>
+    <summary>專案內容</summary>
+
+## 📁 專案目錄結構
 ```text
 CorpInsightsTW/                             # 專案總根目錄
 ├── CorpInsightsTW.Core/
 │   ├── Database/                           # DDL 腳本區
 │   ├── Storage/                            # 實體資料管理
-│   └── ... (Data, OpenApiClients, Mappers)
+│   └── ... 
 ├── CorpInsightsTW.DataFetcher/             # 財報資料抓取工具
 ├── CorpInsightsTW.DbMigrator/              # 資料庫初始化/維運專用微型工具
 ├── CorpInsightsTW.Etl/                     # ETL
@@ -29,19 +43,23 @@ CorpInsightsTW/                             # 專案總根目錄
 └── CorpInsightsTW.slnx                     # .NET 10 方案核心管理檔
 ```
 
-<br>
-
-### ⚠️ 相依套件
-
+## ⚠️ 相依套件
 | 套件 | 來源 |
 |---|---|
 | `MySqlConnector` | 經由 `CorpInsightsTW.Core` 傳遞相依 |
 
----
+</details>
 
 <br>
 
-## 📡 `綜合損益表` 與 `資產負債表` 資料請求 (DataFetcher)  
+---
+
+<br><br>
+
+# `綜合損益表` / `資產負債表`
+資料來源：`臺灣證券交易所 (OpenAPI)` 與 `證券櫃檯買賣中心 (OpenAPI)` 。  
+
+## 📡 資料請求 (DataFetcher)  
 
 ![Data Fetcher](/docs/DataFetcher.png)  
 
@@ -61,7 +79,7 @@ dotnet run --project CorpInsightsTW.DataFetcher
 
 <br>
 
-## ⚙️ 資料處理 (ETL)
+## ⚙️ 資料匯入 (ETL)
 
 ![ETL](/docs/ETL.png)  
 
@@ -79,29 +97,40 @@ dotnet run --project CorpInsightsTW.Etl -- --dry
 
 📖 完整 CLI 選項與產業別代碼請參閱：[ETL 參數說明文件](/docs/Etl/README.md)
 
+<br>
+
+<details>
+    <summary>🛠️ 客製化 T187JsonConverter</summary>
+
+    解決 `證交所 OpenAPI` 公開資料內跨業別或跨版本`欄位別名`不一致的問題  
+    ![ETL](/docs/JsonPropertyNames.png)  
+
+    交易所的公開資料在格式上常有一些資料品質痛點：  
+    1. 跨業別命名不一致：`上市公司`使用 "避險之金融資產－淨額"，`公發公司`卻使用 "避險之衍生金融資產淨額"。  
+    2. 新舊版本 API 變更：舊版 API 給 "公司代號"，新版 API 無預警改為 "公司代碼"。  
+
+    <br>
+
+    為了在不破壞既有 DTO 結構、不降低反序列化效能的前提下，讓同一 C# 的JSON屬性方便支援多個中文 Key，同時具備嚴謹的「欄位缺失防守（至少要出現其中一個別名）」機制。
+
+    <br>
+
+    可與 `JsonPropertyName` 混用 
+    ``` csharp
+    [JsonPropertyName("資產總額")]
+    [JsonPropertyNames("資產總計", "資產總額", "TotalAssets")]
+    public decimal TotalAssets { get; set; }
+    ```
+    Converter 會自動去重複，並產生單一別名陣列：`["資產總計", "資產總額", "TotalAssets"]`。  
+
+</details>
+
+<br>
+
 ---
 
-<br>
+<br><br>
 
-## 🛠️ 客製化 `T187JsonConverter`
+# `現金流量表`
+資料來源：`MOPS 公開資訊觀測站 (HTML)`
 
-解決 `證交所 OpenAPI` 公開資料內跨業別或跨版本`欄位別名`不一致的問題  
-![ETL](/docs/JsonPropertyNames.png)  
-
-交易所的公開資料在格式上常有一些資料品質痛點：  
-1. 跨業別命名不一致：`上市公司`使用 "避險之金融資產－淨額"，`公發公司`卻使用 "避險之衍生金融資產淨額"。  
-2. 新舊版本 API 變更：舊版 API 給 "公司代號"，新版 API 無預警改為 "公司代碼"。  
-
-<br>
-
-為了在不破壞既有 DTO 結構、不降低反序列化效能的前提下，讓同一 C# 的JSON屬性方便支援多個中文 Key，同時具備嚴謹的「欄位缺失防守（至少要出現其中一個別名）」機制。
-
-<br>
-
-可與 `JsonPropertyName` 混用 
-``` csharp
-[JsonPropertyName("資產總額")]
-[JsonPropertyNames("資產總計", "資產總額", "TotalAssets")]
-public decimal TotalAssets { get; set; }
-```
-Converter 會自動去重複，並產生單一別名陣列：`["資產總計", "資產總額", "TotalAssets"]`。  

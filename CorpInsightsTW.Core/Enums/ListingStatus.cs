@@ -15,10 +15,6 @@ public enum ListingStatus
     [Code("L"), Display("上市公司")]
     L = 1,
 
-    /// <summary> 公開發行公司 </summary>
-    [Code("X"), Display("公發公司")]
-    X = 2,
-
     /// <summary> 上櫃公司 </summary>
     [Code("O"), Display("上櫃公司")]
     O,
@@ -26,4 +22,8 @@ public enum ListingStatus
     /// <summary> 興櫃公司 </summary>
     [Code("U"), Display("興櫃公司")]
     U,
+
+    /// <summary> 公開發行公司 </summary>
+    [Code("X"), Display("公發公司")]
+    X,
 }
