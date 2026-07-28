@@ -4,11 +4,11 @@ using CorpInsightsTW.Etl.Core.Common;
 
 namespace CorpInsightsTW.Etl.Pipeline.Extract;
 
-public class JsonFileDataExtractor(
-    ILogger<JsonFileDataExtractor> logger,
+public class HtmlDataExtractor(
+    ILogger<HtmlDataExtractor> logger,
     LocalRawDataStorage storage) : IDataExtractor
 {
-    private readonly ILogger<JsonFileDataExtractor> _logger = logger;
+    private readonly ILogger<HtmlDataExtractor> _logger = logger;
     private readonly LocalRawDataStorage _storage = storage;
 
     private static string GetIndent(int level) => new(' ', level * 4);
@@ -30,11 +30,9 @@ public class JsonFileDataExtractor(
         }
 
         _logger.LogInformation("{Indent}📥 檔案: {Path}", indent, path);
-        
-        // 透過基礎建設層的 Stream 機制唯讀開啟
-        using var stream = _storage.OpenReadableStream(storageContext, indentLevel + 1);
-        
-        // 高效反序列化成 JsonDocument 並回傳
-        return await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+
+        // TODO: ...
+
+        throw new NotImplementedException();
     }
 }

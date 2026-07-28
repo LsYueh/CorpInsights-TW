@@ -159,7 +159,8 @@ public class Program
             return new LocalRawDataStorage(logger, customStoragePath);
         });
 
-        builder.Services.AddTransient<IDataExtractor  , JsonFileDataExtractor>();
+        builder.Services.AddKeyedTransient<IDataExtractor, JsonDataExtractor>("json");
+        builder.Services.AddKeyedTransient<IDataExtractor, HtmlDataExtractor>("html");
         builder.Services.AddTransient<IDataTransformer, JsonDataTransformer>();
         builder.Services.AddTransient<IDataLoader>(sp =>
         {
