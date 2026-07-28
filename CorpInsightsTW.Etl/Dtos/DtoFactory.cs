@@ -31,11 +31,11 @@ public static class DtoFactory
     /// </summary>
     public static IStatementDto? ToDto(EtlContext context, JsonElement row)
     {
-        return context.ApCode switch
+        return context.Type switch
         {
             StatementType.T187AP06 => MapToAp06Dto(context, row),
             StatementType.T187AP07 => MapToAp07Dto(context, row),
-            _ => throw new NotSupportedException($"未知的財務報表: {context.ApCode}")
+            _ => throw new NotSupportedException($"未知的財務報表: {context.Type}")
         };
     }
 

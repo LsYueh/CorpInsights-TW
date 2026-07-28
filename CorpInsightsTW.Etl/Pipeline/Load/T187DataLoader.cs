@@ -37,9 +37,9 @@ public class T187DataLoader(
             int currentTotal = Interlocked.Add(ref _totalProcessedCount, batch.Count);
 
             _logger.LogInformation(
-                "{Indent}💾 [T187Load] 寫入成功 | AP: {ApCode} | Taxonomy: {Taxonomy} | 本次批次: {BatchCount} 筆 | 進度: {CurrentTotal}/{FileTotal}",
+                "{Indent}💾 [T187Load] 寫入成功 | AP: {Type} | Taxonomy: {Taxonomy} | 本次批次: {BatchCount} 筆 | 進度: {CurrentTotal}/{FileTotal}",
                 indent,
-                context.ApCode,
+                context.Type,
                 context.Taxonomy,
                 batch.Count,
                 currentTotal,
@@ -51,8 +51,8 @@ public class T187DataLoader(
         }
         catch (OperationCanceledException)
         {
-            _logger.LogWarning("{Indent}⏹️ [T187Load] 批次寫入作業已取消 | AP: {ApCode} | Taxonomy: {Taxonomy}",
-                indent, context.ApCode, context.Taxonomy);
+            _logger.LogWarning("{Indent}⏹️ [T187Load] 批次寫入作業已取消 | AP: {Type} | Taxonomy: {Taxonomy}",
+                indent, context.Type, context.Taxonomy);
             
             // 發生取消時重置計數器
             Interlocked.Exchange(ref _totalProcessedCount, 0);
@@ -61,9 +61,9 @@ public class T187DataLoader(
         catch (Exception ex)
         {
             _logger.LogError(ex,
-                "{Indent}❌ [T187Load] 批次寫入失敗！ | AP: {ApCode} | Taxonomy: {Taxonomy} | 本批次筆數: {BatchCount} | 錯誤訊息: {Message}",
+                "{Indent}❌ [T187Load] 批次寫入失敗！ | AP: {Type} | Taxonomy: {Taxonomy} | 本批次筆數: {BatchCount} | 錯誤訊息: {Message}",
                 indent,
-                context.ApCode,
+                context.Type,
                 context.Taxonomy,
                 batch.Count,
                 ex.Message);
@@ -84,12 +84,12 @@ public class T187DataLoader(
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        switch (context.ApCode)
+        switch (context.Type)
         {
             case StatementType.T187AP06: await ProcessT187Ap06BatchAsync(context, batch, cancellationToken, indentLevel); break;
             case StatementType.T187AP07: await ProcessT187Ap07BatchAsync(context, batch, cancellationToken, indentLevel); break;
             default:
-                _logger.LogWarning("⚠️ 未知的 ApCode: {ApCode}", context.ApCode);
+                _logger.LogWarning("⚠️ 未知的 Statement Type: {Type}", context.Type);
                 break;
         }
 

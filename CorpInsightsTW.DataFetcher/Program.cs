@@ -90,9 +90,9 @@ public class Program
         }
 
         // 解析報表代號
-        if (!Enum.TryParse<StatementType>(options.ApCode, ignoreCase: true, out var apCode))
+        if (!Enum.TryParse<StatementType>(options.Type, ignoreCase: true, out var type))
         {
-            Console.WriteLine($"❌ 不合法的報表代號參數: '{options.ApCode}'");
+            Console.WriteLine($"❌ 不合法的報表代號參數: '{options.Type}'");
             return null;
         }
 
@@ -100,7 +100,7 @@ public class Program
         try
         {
             // 用 try-catch 攔截 RuntimeConfig 建構子丟出的市場/狀態不匹配例外
-            return new RuntimeConfig(market, status, taxonomy, apCode, string.Empty, string.Empty);
+            return new RuntimeConfig(market, status, taxonomy, type, string.Empty, string.Empty);
         }
         catch (ArgumentException ex)
         {

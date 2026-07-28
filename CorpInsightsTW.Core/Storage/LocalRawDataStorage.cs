@@ -71,7 +71,7 @@ public class LocalRawDataStorage(
     {
         string dateStr   = context.Date.ToString("yyyyMMdd");
         string subFolder = $"{context.Market.ToCode().ToLower()}";
-        string fileName  = $"{context.ApCode.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}.json";
+        string fileName  = $"{context.Type.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}.json";
 
         string[] rootPath = !string.IsNullOrWhiteSpace(basePath)
             ? [Path.GetFullPath(basePath)]            // 產出: /var/my_custom_path/20260713/twse/t187ap07_L_ci.json

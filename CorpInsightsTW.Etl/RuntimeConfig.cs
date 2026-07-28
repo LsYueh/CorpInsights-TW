@@ -8,7 +8,7 @@ public record RuntimeConfig
     public StockMarket Market { get; init; }
     public ListingStatus Status { get; init; }
     public XbrlTaxonomy Taxonomy { get; init; }
-    public StatementType Statement { get; init; }
+    public StatementType Type { get; init; }
     public DateOnly Date { get; init; }
     public bool IsDryRun { get; init; }
 
@@ -16,7 +16,7 @@ public record RuntimeConfig
         StockMarket market,
         ListingStatus status,
         XbrlTaxonomy taxonomy,
-        StatementType statement,
+        StatementType type,
         DateOnly date,
         bool isDryRun)
     {
@@ -29,12 +29,12 @@ public record RuntimeConfig
             throw new ArgumentException($"TPEX 市場不支援 '{status}' 狀態 (僅支援 All, O, U)。");
         }
 
-        Market    = market;
-        Status    = status;
-        Taxonomy  = taxonomy;
-        Statement = statement;
-        Date      = date;
-        IsDryRun  = isDryRun;
+        Market   = market;
+        Status   = status;
+        Taxonomy = taxonomy;
+        Type     = type;
+        Date     = date;
+        IsDryRun = isDryRun;
     }
 
     // 當前生效的 Code (使用 Extension Method 轉出)

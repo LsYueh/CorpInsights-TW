@@ -33,16 +33,16 @@ public class JsonDataTransformer(
 
             if (header == null)
             {
-                _logger?.LogWarning("{Indent}⚠️ [Transform] 無法提取 Header 結構，已跳過 | AP: {ApCode}",
-                    indent, context.ApCode);
+                _logger?.LogWarning("{Indent}⚠️ [Transform] 無法提取 Header 結構，已跳過 | Type: {Type}",
+                    indent, context.Type);
                 continue;
             }
 
             // 主鍵防禦性檢查
             if (!header.IsValidKey())
             {
-                _logger?.LogWarning("{Indent}⚠️ [Transform] 無效的主鍵資料，已跳過 | AP: {ApCode} | Taxonomy: {Taxonomy}",
-                    indent, context.ApCode, context.Taxonomy);
+                _logger?.LogWarning("{Indent}⚠️ [Transform] 無效的主鍵資料，已跳過 | Type: {Type} | Taxonomy: {Taxonomy}",
+                    indent, context.Type, context.Taxonomy);
                 continue;
             }
 
@@ -58,8 +58,8 @@ public class JsonDataTransformer(
             IStatementDto? dto = DtoFactory.ToDto(context, row);
             if (dto == null)
             {
-                _logger?.LogWarning("{Indent}⚠️ [Transform] JSON 反序列化失敗，已跳過 | AP: {ApCode}",
-                    indent, context.ApCode);
+                _logger?.LogWarning("{Indent}⚠️ [Transform] JSON 反序列化失敗，已跳過 | Type: {Type}",
+                    indent, context.Type);
                 continue;
             }
 

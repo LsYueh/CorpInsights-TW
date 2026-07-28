@@ -18,5 +18,5 @@ public class CliOptions
 
     [Option('r', "report", Required = false, Default = "all", 
         HelpText = "報表代號: 'all' (全部), 't187ap06' (綜合損益表), 't187ap07' (資產負債表)")]
-    public string ApCode { get; set; } = "all";
+    public string Type { get; set; } = "all";
 }

@@ -46,7 +46,7 @@ public class EtlPipeline(
     {
         string indent = GetIndent(indentLevel);
 
-        StatementType    targetApCode   = _config.Statement;
+        StatementType    targetApCode   = _config.Type;
         ListingStatus targetStatus   = _config.Status;
         XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         DateOnly      targetDate     = _config.Date;
@@ -67,8 +67,8 @@ public class EtlPipeline(
         var targetContexts = (
             from taxonomy in taxonomyList
             from status in statusList
-            from apCode in reportList
-            select new EtlContext(market, apCode, status, taxonomy, targetDate)
+            from type in reportList
+            select new EtlContext(market, type, status, taxonomy, targetDate)
         ).ToList();
 
         _logger.LogInformation("{Indent}🏁 [Pipeline] ({Market}) 開始執行批次排程...", indent, market.ToCode());
@@ -91,8 +91,8 @@ public class EtlPipeline(
         string indent = GetIndent(indentLevel);
         string subIndent = GetIndent(indentLevel + 1); // 子項目專用縮排
 
-        string tag = $"{context.ApCode.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
-        string title = $"{context.Status.ToDisplay()} {context.ApCode.ToDisplay()} - {context.Taxonomy.ToDisplay()}";
+        string tag = $"{context.Type.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
+        string title = $"{context.Status.ToDisplay()} {context.Type.ToDisplay()} - {context.Taxonomy.ToDisplay()}";
         string message = $"[{context.Date:yyyyMMdd}] {tag} ({title})";
 
         _logger.LogInformation("{Indent}🏁 [Pipeline] ({Market}) 目標: {Message}", indent, context.Market.ToCode(), message);
@@ -145,8 +145,8 @@ public class EtlPipeline(
         {
             _logger.LogError(ex, "{Indent}❌ [Pipeline] {Tag} 處理時發生未預期異常！\n",
                 indent, tag);
-            _logger.LogError(ex, "{SubIndent}👉 執行上下文: 報表={ApCode}, 市場狀態={Status}, 分類={Taxonomy}, 日期={Date}\n",
-                subIndent, context.ApCode, context.Status, context.Taxonomy, context.Date);
+            _logger.LogError(ex, "{SubIndent}👉 執行上下文: 報表={Type}, 市場狀態={Status}, 分類={Taxonomy}, 日期={Date}\n",
+                subIndent, context.Type, context.Status, context.Taxonomy, context.Date);
             _logger.LogError(ex, "{SubIndent}👉 當前進度: 已成功處理到第 {BatchIdx} 批次 (總共約 {Total} 筆)\n",
                 subIndent, currentBatchIndex, fileTotalCount);
             _logger.LogError(ex, "{SubIndent}👉 異常類型: {ExType} | 訊息: {ExMessage}", 

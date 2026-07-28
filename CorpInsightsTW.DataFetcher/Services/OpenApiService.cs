@@ -24,13 +24,13 @@ public class OpenApiService(
 
         string indent = GetIndent(indentLevel);
 
-        string tag = $"{context.ApCode.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
-        string title = $"{context.Status.ToDisplay()} {context.ApCode.ToDisplay()} - {context.Taxonomy.ToDisplay()}";
+        string tag = $"{context.Type.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
+        string title = $"{context.Status.ToDisplay()} {context.Type.ToDisplay()} - {context.Taxonomy.ToDisplay()}";
 
         var storageContext = context.Market switch
         {
-            StockMarket.TWSE => new StorageContext(StockMarket.TWSE, context.ApCode, context.Status, context.Taxonomy),
-            StockMarket.TPEX => new StorageContext(StockMarket.TPEX, context.ApCode, context.Status, context.Taxonomy),
+            StockMarket.TWSE => new StorageContext(StockMarket.TWSE, context.Type, context.Status, context.Taxonomy),
+            StockMarket.TPEX => new StorageContext(StockMarket.TPEX, context.Type, context.Status, context.Taxonomy),
             _ => throw new NotSupportedException($"未支援的市場分類: '{context.Market}'")
         };
 
@@ -92,7 +92,7 @@ public class OpenApiService(
     {
         string indent = GetIndent(indentLevel);
 
-        StatementType    apCode   = context.ApCode;
+        StatementType type     = context.Type;
         ListingStatus status   = context.Status;
         XbrlTaxonomy  taxonomy = context.Taxonomy;
 
@@ -103,7 +103,7 @@ public class OpenApiService(
             _ => throw new NotSupportedException($"未支援的市場分類: '{context.Market}'")
         };
 
-        string file = $"{apCode.ToCode()}_{status.ToCode()}_{taxonomy.ToCode()}";
+        string file = $"{type.ToCode()}_{status.ToCode()}_{taxonomy.ToCode()}";
 
         string targetUrl = context.Market switch
         {
@@ -113,7 +113,7 @@ public class OpenApiService(
         };
         
         _logger.LogInformation("{Indent}🌐 抓取資料: {Status} {Taxonomy} - {Name} ({Code})", indent,
-            status.ToDisplay(), taxonomy.ToDisplay(), apCode.ToDisplay(), apCode.ToCode());
+            status.ToDisplay(), taxonomy.ToDisplay(), type.ToDisplay(), type.ToCode());
         _logger.LogDebug("{Indent}🔗 URL: {Url}", indent, targetUrl);
 
         return targetUrl;

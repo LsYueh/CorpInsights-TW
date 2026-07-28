@@ -17,7 +17,7 @@ public class JsonFileDataExtractor(
     {
         string indent = GetIndent(indentLevel);
 
-        var storageContext = new StorageContext(context.Market, context.ApCode, context.Status, context.Taxonomy, context.Date);
+        var storageContext = new StorageContext(context.Market, context.Type, context.Status, context.Taxonomy, context.Date);
         
         string path = _storage.GetStoragePath(storageContext, indentLevel + 1);
 

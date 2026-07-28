@@ -40,7 +40,7 @@ public class FetchJob(
 
         XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         ListingStatus targetStatus   = _config.Status;
-        StatementType    targetApCode   = _config.ApCode;
+        StatementType    targetApCode   = _config.Type;
 
         ct.ThrowIfCancellationRequested();
 
@@ -87,18 +87,18 @@ public class FetchJob(
 
     private async Task FetchReportsGroupAsync(
         StockMarket market,
-        XbrlTaxonomy taxonomy, ListingStatus status, IEnumerable<StatementType> apCodes,
+        XbrlTaxonomy taxonomy, ListingStatus status, IEnumerable<StatementType> types,
         CancellationToken ct, int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
         
         _logger.LogInformation("{Indent}⚡ HTTP 請求: [{Market}] {Status} - {Taxonomy}", indent, market.ToCode(), status.ToDisplay(), taxonomy.ToDisplay());
 
-        foreach (var apCode in apCodes)
+        foreach (var type in types)
         {
             ct.ThrowIfCancellationRequested();
 
-            var context = new FetchContext(market, apCode, status, taxonomy);
+            var context = new FetchContext(market, type, status, taxonomy);
             await _openApiService.FetchDataAsync(context, ct, indentLevel + 1);
         }
     }
