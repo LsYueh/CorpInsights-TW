@@ -2,7 +2,10 @@ using CorpInsightsTW.Core.Attributes;
 
 namespace CorpInsightsTW.Core.Enums;
 
-public enum T187ApCode
+/// <summary>
+/// 財務報表類型
+/// </summary>
+public enum StatementType
 {
     /// <summary> 全財務報表 </summary>
     [Code("all"), Display("全財務報表")]

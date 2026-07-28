@@ -7,6 +7,6 @@ public interface IDataLoader
 {
     Task LoadAsync(
         EtlContext context,
-        IReadOnlyList<IT187Dto> batch, int fileTotalCount,
+        IReadOnlyList<IStatementDto> batch, int fileTotalCount,
         CancellationToken cancellationToken, int indentLevel = 0);
 }

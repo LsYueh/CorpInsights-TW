@@ -6,7 +6,7 @@ namespace CorpInsightsTW.Etl.Dtos.T187Ap07;
 /// <summary>
 /// 公司資產負債表-金控業
 /// </summary>
-public record FhDto : T187Dto
+public record FhDto : StatementDto
 {
     // 1. 核心識別與索引欄位
     // 繼承自 T187Dto

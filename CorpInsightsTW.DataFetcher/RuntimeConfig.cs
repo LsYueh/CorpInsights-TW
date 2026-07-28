@@ -8,7 +8,7 @@ public record RuntimeConfig
     public StockMarket Market { get; init; }
     public ListingStatus Status { get; init; }
     public XbrlTaxonomy Taxonomy { get; init; }
-    public T187ApCode ApCode { get; init; }
+    public StatementType ApCode { get; init; }
     public string TwseRootUrl { get; init; }
     public string TpexRootUrl { get; init; }
 
@@ -16,7 +16,7 @@ public record RuntimeConfig
         StockMarket market,
         ListingStatus status,
         XbrlTaxonomy taxonomy,
-        T187ApCode apCode,
+        StatementType apCode,
         string twseRootUrl,
         string tpexRootUrl)
     {

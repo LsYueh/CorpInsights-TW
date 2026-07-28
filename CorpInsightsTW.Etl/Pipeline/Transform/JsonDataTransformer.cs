@@ -15,21 +15,21 @@ public class JsonDataTransformer(
     /// <summary>
     /// 將 JsonDocument 的陣列攤開, 切塊（Batching）輸出
     /// </summary>
-    public IEnumerable<(IReadOnlyList<IT187Dto> Batch, int TotalCount)> Transform(
+    public IEnumerable<(IReadOnlyList<IStatementDto> Batch, int TotalCount)> Transform(
         EtlContext context, JsonDocument doc, int batchSize, int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
         
         int totalCount = doc.RootElement.GetArrayLength();
 
-        var buffer = new List<IT187Dto>(batchSize);
+        var buffer = new List<IStatementDto>(batchSize);
 
         foreach (JsonElement row in doc.RootElement.EnumerateArray())
         {
             // -------------------------------------------------------------
             // 前置驗證
             // -------------------------------------------------------------
-            var header = T187DtoFactory.ExtractHeader(row);
+            var header = DtoFactory.ExtractHeader(row);
 
             if (header == null)
             {
@@ -55,7 +55,7 @@ public class JsonDataTransformer(
             // -------------------------------------------------------------
             // 解析成完整 DTO
             // -------------------------------------------------------------
-            IT187Dto? dto = T187DtoFactory.ToDto(context, row);
+            IStatementDto? dto = DtoFactory.ToDto(context, row);
             if (dto == null)
             {
                 _logger?.LogWarning("{Indent}⚠️ [Transform] JSON 反序列化失敗，已跳過 | AP: {ApCode}",
@@ -73,7 +73,7 @@ public class JsonDataTransformer(
                 yield return (buffer, totalCount);
                 
                 // 重新配置一個固定容量的 List，讓上一批的記憶體能順利交棒並被後續處理/釋放
-                buffer = new List<IT187Dto>(batchSize);
+                buffer = new List<IStatementDto>(batchSize);
             }
         }
         
@@ -84,7 +84,7 @@ public class JsonDataTransformer(
         }
     }
 
-    private bool IsDateValid(EtlContext context, T187HeaderDto header, int indentLevel = 0)
+    private bool IsDateValid(EtlContext context, StatementHeaderDto header, int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
         

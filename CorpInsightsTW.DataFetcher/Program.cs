@@ -90,7 +90,7 @@ public class Program
         }
 
         // 解析報表代號
-        if (!Enum.TryParse<T187ApCode>(options.ApCode, ignoreCase: true, out var apCode))
+        if (!Enum.TryParse<StatementType>(options.ApCode, ignoreCase: true, out var apCode))
         {
             Console.WriteLine($"❌ 不合法的報表代號參數: '{options.ApCode}'");
             return null;

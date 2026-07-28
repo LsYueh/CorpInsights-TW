@@ -92,7 +92,7 @@ public class OpenApiService(
     {
         string indent = GetIndent(indentLevel);
 
-        T187ApCode    apCode   = context.ApCode;
+        StatementType    apCode   = context.ApCode;
         ListingStatus status   = context.Status;
         XbrlTaxonomy  taxonomy = context.Taxonomy;
 

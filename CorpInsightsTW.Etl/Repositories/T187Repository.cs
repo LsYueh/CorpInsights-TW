@@ -4,7 +4,7 @@ using MySqlConnector;
 
 namespace CorpInsightsTW.Etl.Repositories;
 
-public abstract class T187Repository<TDto>(string connectionString) : IT187Repository<TDto> where TDto : T187Dto
+public abstract class T187Repository<TDto>(string connectionString) : IT187Repository<TDto> where TDto : StatementDto
 {
     protected readonly string ConnectionString = connectionString;
 
@@ -50,7 +50,7 @@ public abstract class T187Repository<TDto>(string connectionString) : IT187Repos
     protected static async Task UpsertCompanyAsync(
         MySqlConnection conn,
         MySqlTransaction transaction,
-        IEnumerable<T187Dto> dtos,
+        IEnumerable<StatementDto> dtos,
         string taxonomy,
         CancellationToken cancellationToken)
     {

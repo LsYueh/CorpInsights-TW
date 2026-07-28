@@ -46,7 +46,7 @@ public class EtlPipeline(
     {
         string indent = GetIndent(indentLevel);
 
-        T187ApCode    targetApCode   = _config.ApCode;
+        StatementType    targetApCode   = _config.Statement;
         ListingStatus targetStatus   = _config.Status;
         XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         DateOnly      targetDate     = _config.Date;
@@ -59,8 +59,8 @@ public class EtlPipeline(
             ? Enum.GetValues<XbrlTaxonomy>().Where(t => t != XbrlTaxonomy.All).ToList()
             : [targetTaxonomy];
 
-        var reportList = targetApCode == T187ApCode.All
-            ? Enum.GetValues<T187ApCode>().Where(r => r != T187ApCode.All).ToList()
+        var reportList = targetApCode == StatementType.All
+            ? Enum.GetValues<StatementType>().Where(r => r != StatementType.All).ToList()
             : [targetApCode];
 
         // 扁平化所有組合

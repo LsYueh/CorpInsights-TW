@@ -20,7 +20,7 @@ public class T187DataLoader(
     private int _totalProcessedCount = 0;
 
     public async Task LoadAsync(EtlContext context,
-        IReadOnlyList<IT187Dto> batch, int fileTotalCount,
+        IReadOnlyList<IStatementDto> batch, int fileTotalCount,
         CancellationToken cancellationToken, int indentLevel = 0)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -78,7 +78,7 @@ public class T187DataLoader(
 
     public async Task ExecAsync(
         EtlContext context, 
-        IReadOnlyList<IT187Dto> batch,
+        IReadOnlyList<IStatementDto> batch,
         CancellationToken cancellationToken,
         int indentLevel = 0)
     {
@@ -86,8 +86,8 @@ public class T187DataLoader(
 
         switch (context.ApCode)
         {
-            case T187ApCode.T187AP06: await ProcessT187Ap06BatchAsync(context, batch, cancellationToken, indentLevel); break;
-            case T187ApCode.T187AP07: await ProcessT187Ap07BatchAsync(context, batch, cancellationToken, indentLevel); break;
+            case StatementType.T187AP06: await ProcessT187Ap06BatchAsync(context, batch, cancellationToken, indentLevel); break;
+            case StatementType.T187AP07: await ProcessT187Ap07BatchAsync(context, batch, cancellationToken, indentLevel); break;
             default:
                 _logger.LogWarning("⚠️ 未知的 ApCode: {ApCode}", context.ApCode);
                 break;
@@ -98,7 +98,7 @@ public class T187DataLoader(
 
     private async Task ProcessT187Ap06BatchAsync(
         EtlContext context, 
-        IReadOnlyList<IT187Dto> batch, 
+        IReadOnlyList<IStatementDto> batch, 
         CancellationToken cancellationToken,
         int indentLevel = 0)
     {
@@ -127,7 +127,7 @@ public class T187DataLoader(
 
     private async Task ProcessT187Ap07BatchAsync(
         EtlContext context, 
-        IReadOnlyList<IT187Dto> batch, 
+        IReadOnlyList<IStatementDto> batch, 
         CancellationToken cancellationToken,
         int indentLevel = 0)
     {
@@ -160,7 +160,7 @@ public class T187DataLoader(
     /// </summary>
     private static async Task ExecUpsertAsync<TDto>(
         IT187Repository<TDto> repository, 
-        IReadOnlyList<IT187Dto> batch, 
+        IReadOnlyList<IStatementDto> batch, 
         CancellationToken cancellationToken)
     {
         var dtos = batch.OfType<TDto>().ToList();

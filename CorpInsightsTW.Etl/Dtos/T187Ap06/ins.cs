@@ -6,7 +6,7 @@ namespace CorpInsightsTW.Etl.Dtos.T187Ap06;
 /// <summary>
 /// 公司綜合損益表-保險業
 /// </summary>
-public record InsDto : T187Dto
+public record InsDto : StatementDto
 {
     // 1. 核心識別與索引欄位
     // 繼承自 T187Dto

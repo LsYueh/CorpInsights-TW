@@ -6,6 +6,6 @@ namespace CorpInsightsTW.Etl.Pipeline.Transform;
 
 public interface IDataTransformer
 {
-    IEnumerable<(IReadOnlyList<IT187Dto> Batch, int TotalCount)> Transform(
+    IEnumerable<(IReadOnlyList<IStatementDto> Batch, int TotalCount)> Transform(
         EtlContext context, JsonDocument source, int batchSize, int indentLevel = 0);
 }

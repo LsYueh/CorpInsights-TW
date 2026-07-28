@@ -5,14 +5,14 @@ namespace CorpInsightsTW.Core.Storage;
 public record StorageContext
 {
     public StockMarket Market { get; }
-    public T187ApCode ApCode { get; }
+    public StatementType ApCode { get; }
     public ListingStatus Status { get; }
     public XbrlTaxonomy Taxonomy { get; }
     public DateOnly Date { get; }
 
     public StorageContext(
         StockMarket market,
-        T187ApCode apCode,
+        StatementType apCode,
         ListingStatus status,
         XbrlTaxonomy taxonomy,
         DateOnly? date = null)
@@ -20,7 +20,7 @@ public record StorageContext
         if (market == StockMarket.All)
             throw new ArgumentException("StorageContext 的 Market 不能為 StockMarket.All", nameof(market));
 
-        if (apCode == T187ApCode.All)
+        if (apCode == StatementType.All)
             throw new ArgumentException("StorageContext 的 ApCode 不能為 T187ApCode.All", nameof(apCode));
 
         if (status == ListingStatus.All)

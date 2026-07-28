@@ -40,7 +40,7 @@ public class FetchJob(
 
         XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         ListingStatus targetStatus   = _config.Status;
-        T187ApCode    targetApCode   = _config.ApCode;
+        StatementType    targetApCode   = _config.ApCode;
 
         ct.ThrowIfCancellationRequested();
 
@@ -53,8 +53,8 @@ public class FetchJob(
             ? Enum.GetValues<XbrlTaxonomy>().Where(t => t != XbrlTaxonomy.All)
             : [targetTaxonomy];
 
-        var reportsToFetch = targetApCode == T187ApCode.All
-            ? Enum.GetValues<T187ApCode>().Where(r => r != T187ApCode.All)
+        var reportsToFetch = targetApCode == StatementType.All
+            ? Enum.GetValues<StatementType>().Where(r => r != StatementType.All)
             : [targetApCode];
 
         try
@@ -87,7 +87,7 @@ public class FetchJob(
 
     private async Task FetchReportsGroupAsync(
         StockMarket market,
-        XbrlTaxonomy taxonomy, ListingStatus status, IEnumerable<T187ApCode> apCodes,
+        XbrlTaxonomy taxonomy, ListingStatus status, IEnumerable<StatementType> apCodes,
         CancellationToken ct, int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);

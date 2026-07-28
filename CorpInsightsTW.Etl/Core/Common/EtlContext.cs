@@ -7,7 +7,7 @@ namespace CorpInsightsTW.Etl.Core.Common;
 /// </summary>
 public record EtlContext(
     StockMarket Market,
-    T187ApCode ApCode,
+    StatementType ApCode,
     ListingStatus Status,
     XbrlTaxonomy Taxonomy,
     DateOnly Date
