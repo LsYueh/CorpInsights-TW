@@ -1,4 +1,6 @@
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using AngleSharp.Parser.Html;
 using CorpInsightsTW.Core.Storage;
 using CorpInsightsTW.Etl.Core.Context;
 
@@ -13,7 +15,13 @@ public class HtmlDataExtractor(
 
     private static string GetIndent(int level) => new(' ', level * 4);
 
-    public async Task<JsonDocument?> ExtractAsync(EtlContext context, CancellationToken cancellationToken, int indentLevel = 0)
+    private static readonly JsonSerializerOptions jsonOptions = new()
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // 避免中文字被轉成 \uXXXX
+        WriteIndented = false
+    };
+
+    public async Task<JsonDocument?> ExtractAsync(EtlContext context, CancellationToken ct, int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
 
@@ -24,42 +32,57 @@ public class HtmlDataExtractor(
         // 檢查檔案是否存在
         if (!_storage.Exists(storageContext, indentLevel + 1))
         {
-            
             _logger.LogWarning("{Indent}⚠️ 找不到對應的原始檔案： {Path}", indent, path);
             return null;
         }
 
         _logger.LogInformation("{Indent}📥 檔案: {Path}", indent, path);
 
-        // TODO: ...
+        using var stream = _storage.OpenReadableStream(storageContext, indentLevel + 1);
 
-        throw new NotImplementedException();
+        JsonDocument? jsonDocument = await HtmlDocument_ParseAsync(stream, ct, indentLevel + 1);
+
+        // if (jsonDocument != null)
+        // {
+        //     // 1. 使用格式化選項讓 JSON 印出來帶有縮排排版
+        //     var prettyOptions = new JsonSerializerOptions
+        //     {
+        //         WriteIndented = true,
+        //         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping // 避免中文變成 \uXXXX
+        //     };
+
+        //     string jsonString = JsonSerializer.Serialize(jsonDocument.RootElement, prettyOptions);
+
+        //     _logger.LogInformation("{Indent}📄 解析出的 JSON 內容:\n{Json}", indent, jsonString);
+        // }
+
+        return jsonDocument;
     }
 
-    /// <summary>
-    /// 根據指定日期（預設為今天）計算目前處於哪一個申報季度 (1~4)
-    /// </summary>
-    /// <param name="currentDate">要判斷的日期，若不傳則預設為今日 (DateTime.Today)</param>
-    /// <returns>1: 第一季 (Q1), 2: 第二季 (Q2), 3: 第三季 (Q3), 4: 第四季/年度 (Q4)</returns>
-    public static int GetCurrentFilingQuarter(DateTime? currentDate = null)
-    {
-        // 取得目標日期（不含時間 component）
-        var today = (currentDate ?? DateTime.Today).Date;
-        var year = today.Year;
-
-        // 01/01 ~ 03/31：申報「前一年度 (Q4)」財報（截止日 03/31）
-        if (today <= new DateTime(year, 3, 31)) return 4;
-
-        // 04/01 ~ 05/15：申報「第一季 (Q1)」財報（截止日 05/15）
-        if (today <= new DateTime(year, 5, 15)) return 1;
-
-        // 05/16 ~ 08/14：申報「第二季 (Q2)」財報（截止日 08/14）
-        if (today <= new DateTime(year, 8, 14)) return 2;
-
-        // 08/15 ~ 11/14：申報「第三季 (Q3)」財報（截止日 11/14）
-        if (today <= new DateTime(year, 11, 14)) return 3;
+    private async Task<JsonDocument?> HtmlDocument_ParseAsync(FileStream stream, CancellationToken ct, int indentLevel = 0)
+    {      
+        string indent = GetIndent(indentLevel);
         
-        // 11/15 ~ 12/31：進入「當年度 (Q4)」財報申報期（截止日為隔年 03/31）
-        return 4;
+        if (stream.CanSeek) stream.Position = 0;
+        
+        var htmlParser = new HtmlParser();
+        var document = await htmlParser.ParseAsync(stream, ct);
+
+        return null;
+
+        // var allRows = document.QuerySelectorAll("table tr");
+
+        // List<List<string>> allTableData = [.. allRows
+        //     .Select(tr => tr.QuerySelectorAll("th, td")
+        //                     .Select(cell => cell.TextContent.Trim())
+        //                     .ToList())
+        //     .Where(row => row.Count > 0)
+        //     .Where(columns => columns.Count == 9)];
+
+        // if (allTableData.Count == 0) return null;
+
+        // _logger.LogInformation("{Indent}✅ [Parse] 解析 {Count} 列資料", indent, allTableData.Count);
+
+        // return JsonSerializer.SerializeToDocument(allTableData, jsonOptions);
     }
 }

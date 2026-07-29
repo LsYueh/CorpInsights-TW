@@ -44,8 +44,9 @@ CorpInsightsTW/                             # 專案總根目錄
 ```
 
 ## ⚠️ 相依套件
-| 套件 | 來源 |
+| 套件 | 說明 |
 |---|---|
+| `AngleSharp` | 由 `CorpInsightsTW.Etl` 的 `HtmlDataExtractor` 來使用 |
 | `MySqlConnector` | 經由 `CorpInsightsTW.Core` 傳遞相依 |
 
 </details>

@@ -119,7 +119,7 @@ public class EtlPipeline(
 
             if (rawDoc == null)
             {
-                _logger.LogWarning("{Indent}⏹️ [Pipeline] {Message} 擷取階段未取得資料，管線提前中止。", indent, message);
+                _logger.LogWarning("{Indent}⚠️ [Pipeline] {Message} 擷取階段未取得資料，管線提前中止。", indent, message);
                 return;
             }
 
