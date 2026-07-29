@@ -1,4 +1,4 @@
-using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Core.Context;
 using CorpInsightsTW.Etl.Dtos;
 
 namespace CorpInsightsTW.Etl.Pipeline.Load;

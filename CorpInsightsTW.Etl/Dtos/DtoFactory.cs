@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
-using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Core.Context;
 using CorpInsightsTW.Etl.Core.Json;
 
 namespace CorpInsightsTW.Etl.Dtos;

@@ -1,5 +1,5 @@
 using System.Text.Json;
-using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Core.Context;
 
 namespace CorpInsightsTW.Etl.Pipeline.Extract;
 

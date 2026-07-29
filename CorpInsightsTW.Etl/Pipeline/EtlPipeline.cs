@@ -1,7 +1,7 @@
 using System.Text.Json;
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
-using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Core.Context;
 using CorpInsightsTW.Etl.Pipeline.Extract;
 using CorpInsightsTW.Etl.Pipeline.Load;
 using CorpInsightsTW.Etl.Pipeline.Transform;
@@ -65,17 +65,10 @@ public class EtlPipeline(
             ? Enum.GetValues<StatementType>().Where(r => r != StatementType.All).ToList()
             : [targetType];
 
-        // 扁平化所有組合
-        var targetContexts = (
-            from taxonomy in taxonomyList
-            from status in statusList
-            from type in reportList
-            select new EtlContext(market, type, status, taxonomy, targetDate)
-        ).ToList();
+        var targetContexts = EtlContextBuilder
+            .BuildContexts(market, reportList, statusList, taxonomyList, targetDate).ToList();
 
         _logger.LogInformation("{Indent}🏁 [Pipeline] ({Market}) 開始執行批次排程...", indent, market.ToCode());
-
-        // TODO: T163SB20 不看 taxonomy
 
         foreach (var context in targetContexts)
         {
@@ -96,7 +89,15 @@ public class EtlPipeline(
         string subIndent = GetIndent(indentLevel + 1); // 子項目專用縮排
 
         string tag = $"{context.Type.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
-        string title = $"{context.Status.ToDisplay()} {context.Type.ToDisplay()} - {context.Taxonomy.ToDisplay()}";
+        
+        string title = context.Type switch
+        {
+            StatementType.T187AP06 or 
+            StatementType.T187AP07 => $"{context.Status.ToDisplay()} {context.Type.ToDisplay()} - {context.Taxonomy.ToDisplay()}",
+            StatementType.T163SB20 => $"{context.Status.ToDisplay()} {context.Type.ToDisplay()}",
+            _ => throw new NotSupportedException($"不支援的報表代號: {context.Type}"),
+        };
+
         string message = $"[{context.Date:yyyyMMdd}] {tag} ({title})";
 
         _logger.LogInformation("{Indent}🏁 [Pipeline] ({Market}) 目標: {Message}", indent, context.Market.ToCode(), message);

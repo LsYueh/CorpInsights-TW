@@ -1,5 +1,5 @@
 using CorpInsightsTW.Core.Enums;
-using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Core.Context;
 using CorpInsightsTW.Etl.Dtos;
 using CorpInsightsTW.Etl.Repositories;
 
