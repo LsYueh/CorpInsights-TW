@@ -102,26 +102,26 @@ dotnet run --project CorpInsightsTW.Etl -- --dry
 <details>
     <summary>🛠️ 客製化 T187JsonConverter</summary>
 
-    解決 `證交所 OpenAPI` 公開資料內跨業別或跨版本`欄位別名`不一致的問題  
-    ![ETL](/docs/JsonPropertyNames.png)  
+解決 `證交所 OpenAPI` 公開資料內跨業別或跨版本`欄位別名`不一致的問題  
+![ETL](/docs/JsonPropertyNames.png)  
 
-    交易所的公開資料在格式上常有一些資料品質痛點：  
-    1. 跨業別命名不一致：`上市公司`使用 "避險之金融資產－淨額"，`公發公司`卻使用 "避險之衍生金融資產淨額"。  
-    2. 新舊版本 API 變更：舊版 API 給 "公司代號"，新版 API 無預警改為 "公司代碼"。  
+交易所的公開資料在格式上常有一些資料品質痛點：  
+1. 跨業別命名不一致：`上市公司`使用 "避險之金融資產－淨額"，`公發公司`卻使用 "避險之衍生金融資產淨額"。  
+2. 新舊版本 API 變更：舊版 API 給 "公司代號"，新版 API 無預警改為 "公司代碼"。  
 
-    <br>
+<br>
 
-    為了在不破壞既有 DTO 結構、不降低反序列化效能的前提下，讓同一 C# 的JSON屬性方便支援多個中文 Key，同時具備嚴謹的「欄位缺失防守（至少要出現其中一個別名）」機制。
+為了在不破壞既有 DTO 結構、不降低反序列化效能的前提下，讓同一 C# 的JSON屬性方便支援多個中文 Key，同時具備嚴謹的「欄位缺失防守（至少要出現其中一個別名）」機制。
 
-    <br>
+<br>
 
-    可與 `JsonPropertyName` 混用 
-    ``` csharp
-    [JsonPropertyName("資產總額")]
-    [JsonPropertyNames("資產總計", "資產總額", "TotalAssets")]
-    public decimal TotalAssets { get; set; }
-    ```
-    Converter 會自動去重複，並產生單一別名陣列：`["資產總計", "資產總額", "TotalAssets"]`。  
+可與 `JsonPropertyName` 混用 
+``` csharp
+[JsonPropertyName("資產總額")]
+[JsonPropertyNames("資產總計", "資產總額", "TotalAssets")]
+public decimal TotalAssets { get; set; }
+```
+Converter 會自動去重複，並產生單一別名陣列：`["資產總計", "資產總額", "TotalAssets"]`。  
 
 </details>
 
@@ -134,3 +134,33 @@ dotnet run --project CorpInsightsTW.Etl -- --dry
 # `現金流量表`
 資料來源：`MOPS 公開資訊觀測站 (HTML)`
 
+##
+
+請先至**公開資訊觀測站**下載[**現金流量表**](https://mops.twse.com.tw/mops/#/web/t163sb20)，並按照以下結構存放：
+
+```text
+(DATA_ROOT)
+├── yyyyMMdd/                 # 執行日期 (如：20260729)
+│   ├── tpex/                 # 櫃買中心
+│   │   ├── t163sb20_O.htm    # 上櫃
+│   │   └── t163sb20_U.htm    # 興櫃
+│   └── twse/                 # 證券交易所
+│       ├── t163sb20_L.htm    # 上市
+│       └── t163sb20_X.htm    # 公發
+└── ...
+```
+
+<br>
+
+
+<details>
+    <summary>💡 字尾代碼對照：</summary>
+
+| 字尾 | 對應市場 |
+| --- | --- |
+| `_L` | **上市** |
+| `_O` | **上櫃** |
+| `_U` | **興櫃** |
+| `_X` | **公發** |
+
+</details>

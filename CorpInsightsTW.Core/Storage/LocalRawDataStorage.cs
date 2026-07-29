@@ -76,7 +76,7 @@ public class LocalRawDataStorage(
         string fileName = context.Type switch {
             StatementType.T187AP06 or 
             StatementType.T187AP07 => $"{context.Type.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}.json",
-            StatementType.T163SB20 => $"{context.Type.ToCode()}_{context.Status.ToCode()}.html",
+            StatementType.T163SB20 => $"{context.Type.ToCode()}_{context.Status.ToCode()}.htm",
             _ => throw new NotSupportedException($"不支援的報表代號: {context.Type}"),
         };
 

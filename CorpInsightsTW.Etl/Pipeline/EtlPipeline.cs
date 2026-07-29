@@ -155,12 +155,12 @@ public class EtlPipeline(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Indent}❌ [Pipeline] {Tag} 處理時發生未預期異常！\n",
+            _logger.LogError(ex, "{Indent}❌ [Pipeline] {Tag} 處理時發生未預期異常！",
                 indent, tag);
-            _logger.LogError(ex, "{SubIndent}👉 執行上下文: 報表={Type}, 市場狀態={Status}, 分類={Taxonomy}, 日期={Date}\n",
+            _logger.LogError(ex, "{SubIndent}👉 執行上下文: 報表={Type}, 市場狀態={Status}, 分類={Taxonomy}, 日期={Date}",
                 subIndent, context.Type, context.Status, context.Taxonomy, context.Date);
-            _logger.LogError(ex, "{SubIndent}👉 當前進度: 已成功處理到第 {BatchIdx} 批次 (總共約 {Total} 筆)\n",
-                subIndent, currentBatchIndex, fileTotalCount);
+            _logger.LogError(ex, "{SubIndent}👉 當前進度: 已成功處理到第 {BatchIdx} 批次 (總共約 {Total} 筆)",
+                subIndent, currentBatchIndex + 1, fileTotalCount);
             _logger.LogError(ex, "{SubIndent}👉 異常類型: {ExType} | 訊息: {ExMessage}", 
                 subIndent, ex.GetType().Name, ex.Message);
             throw;

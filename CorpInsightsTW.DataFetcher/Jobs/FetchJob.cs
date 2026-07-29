@@ -40,12 +40,12 @@ public class FetchJob(
 
         XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         ListingStatus targetStatus   = _config.Status;
-        StatementType    targetApCode   = _config.Type;
+        StatementType targetType     = _config.Type;
 
         ct.ThrowIfCancellationRequested();
 
          _logger.LogInformation("{Indent}🎬 發動 HTTP 請求: [{Market}] {Status} {Taxonomy} - {Name}", indent, 
-            market.ToDisplay(), targetStatus.ToDisplay(), targetTaxonomy.ToDisplay(), targetApCode.ToDisplay());
+            market.ToDisplay(), targetStatus.ToDisplay(), targetTaxonomy.ToDisplay(), targetType.ToDisplay());
 
         var statusToFetch = targetStatus.ExpandForMarket(market);
 
@@ -53,9 +53,10 @@ public class FetchJob(
             ? Enum.GetValues<XbrlTaxonomy>().Where(t => t != XbrlTaxonomy.All)
             : [targetTaxonomy];
 
-        var reportsToFetch = targetApCode == StatementType.All
-            ? Enum.GetValues<StatementType>().Where(r => r != StatementType.All)
-            : [targetApCode];
+        var reportsToFetch = targetType == StatementType.All
+            ? Enum.GetValues<StatementType>()
+                .Where(r => r != StatementType.All && r != StatementType.T163SB20) // 現金流量表要手動存 html
+            : [targetType];
 
         try
         {
