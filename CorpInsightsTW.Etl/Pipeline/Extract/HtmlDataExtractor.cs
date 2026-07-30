@@ -2,6 +2,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using AngleSharp.Dom;
 using AngleSharp.Parser.Html;
+using CorpInsightsTW.Core.Extensions;
 using CorpInsightsTW.Core.Storage;
 using CorpInsightsTW.Etl.Core.Context;
 
@@ -105,7 +106,7 @@ public class HtmlDataExtractor(
     private static List<Dictionary<string, string>> ToStatementRows(
         EtlContext context, List<string> headers, IEnumerable<List<string>> dataRows)
     {
-        string exportDate = ""; // TODO: ...
+        string exportDate = context.Date.ToMinguoDateString("yyyMMdd");
         string year       = ""; // TODO: ...
         string quarter    = ""; // TODO: ...
         

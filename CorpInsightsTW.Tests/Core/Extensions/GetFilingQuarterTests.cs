@@ -1,8 +1,9 @@
+using CorpInsightsTW.Core.Extensions;
 
-namespace CorpInsightsTW.Tests.Core.Utils;
+namespace CorpInsightsTW.Tests.Core.Extensions;
 
 [TestClass]
-public sealed class GetCurrentFilingQuarterTests
+public sealed class GetFilingQuarterTests
 {
     [TestMethod]
     [DataRow(2026,  1,  1, 4)]  // 年初第一天 ➜ Q4 (前一年年度)
@@ -18,10 +19,10 @@ public sealed class GetCurrentFilingQuarterTests
     public void GetCurrentFilingQuarter_ReturnsExpectedQuarter(int year, int month, int day, int expectedQuarter)
     {
         // Arrange
-        var testDate = new DateTime(year, month, day);
+        var testDate = new DateOnly(year, month, day);
 
         // Act
-        var result = CorpInsightsTW.Core.Utils.GetCurrentFilingQuarter(testDate);
+        var result = testDate.GetFilingQuarter();
 
         // Assert
         Assert.AreEqual(expectedQuarter, result, $"日期 {testDate:yyyy-MM-dd} 的預期季度應為 Q{expectedQuarter}，但實際結果為 Q{result}");
