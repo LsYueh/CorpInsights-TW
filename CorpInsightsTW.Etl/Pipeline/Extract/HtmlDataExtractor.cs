@@ -1,7 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using AngleSharp.Dom;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Parser;
 using CorpInsightsTW.Core.Extensions;
 using CorpInsightsTW.Core.Storage;
 using CorpInsightsTW.Etl.Core.Context;
@@ -54,7 +54,7 @@ public class HtmlDataExtractor(
         if (stream.CanSeek) stream.Position = 0;
         
         var htmlParser = new HtmlParser();
-        var document = await htmlParser.ParseAsync(stream, ct);
+        var document = await htmlParser.ParseDocumentAsync(stream, ct);
 
         var tableElements = document.QuerySelectorAll("table");
 

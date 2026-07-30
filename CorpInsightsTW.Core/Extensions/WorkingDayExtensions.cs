@@ -46,19 +46,56 @@ public static class WorkingDayExtensions
         DayOfWeek.Sunday   => date.AddDays(1),
         _                  => date
     };
+
     /// <summary>
-    /// 往前尋找最近的有效工作日 (跳過六日與指定的國定假日)
+    /// [避開週末與假日] 尋找目前或「往前 (過去)」最近的有效工作日。
     /// </summary>
-    public static DateOnly ToLastWorkingDay(this DateOnly date, HashSet<DateOnly>? holidays = null)
+    /// <param name="date">起始判斷日期。</param>
+    /// <param name="holidays">國定假日/不交易日集合 (可選)。</param>
+    /// <returns>若目前為工作日且非假日則回傳原日期；否則持續往前扣一天，直到找到有效工作日。</returns>
+    /// <remarks>
+    /// 適用情境：計算截至最近一個實際開盤/營業日的資料 (如台股歷史開盤日)。<br/>
+    /// 範例 (假設 08/03 週一為國定假日)：<br/>
+    /// - 週六 (2026/08/01) -> 退回 週五 (2026/07/31)<br/>
+    /// - 週日 (2026/08/02) -> 退回 週五 (2026/07/31)<br/>
+    /// - 週一 (2026/08/03，國定假日) -> 退回 週五 (2026/07/31)
+    /// </remarks>
+    public static DateOnly ToLastWorkingDay(this DateOnly date, IReadOnlySet<DateOnly>? holidays = null)
     {
         var current = date;
-        
-        // 如果是週末或是國定假日，就一直往前扣一天
+
+        // 若為週末或指定國定假日，就持續往前扣一天
         while (!current.IsWeekday() || (holidays != null && holidays.Contains(current)))
         {
             current = current.AddDays(-1);
         }
-        
+
+        return current;
+    }
+
+    /// <summary>
+    /// [避開週末與假日] 尋找目前或「往後 (未來)」最近的有效工作日。
+    /// </summary>
+    /// <param name="date">起始判斷日期。</param>
+    /// <param name="holidays">國定假日/不交易日集合 (可選)。</param>
+    /// <returns>若目前為工作日且非假日則回傳原日期；否則持續往後加一天，直到找到有效工作日。</returns>
+    /// <remarks>
+    /// 適用情境：自動順延撥款日、履約日或任務觸發日。<br/>
+    /// 範例 (假設 08/03 週一為國定假日)：<br/>
+    /// - 週六 (2026/08/01) -> 順延至 週二 (2026/08/04)<br/>
+    /// - 週日 (2026/08/02) -> 順延至 週二 (2026/08/04)<br/>
+    /// - 週一 (2026/08/03，國定假日) -> 順延至 週二 (2026/08/04)
+    /// </remarks>
+    public static DateOnly ToNextWorkingDay(this DateOnly date, IReadOnlySet<DateOnly>? holidays = null)
+    {
+        var current = date;
+
+        // 若為週末或指定國定假日，就持續往後加一天
+        while (!current.IsWeekday() || (holidays != null && holidays.Contains(current)))
+        {
+            current = current.AddDays(1);
+        }
+
         return current;
     }
 }
