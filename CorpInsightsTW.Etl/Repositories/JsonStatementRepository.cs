@@ -4,7 +4,7 @@ using MySqlConnector;
 
 namespace CorpInsightsTW.Etl.Repositories;
 
-public abstract class T187Repository<TDto>(string connectionString) : IT187Repository<TDto> where TDto : StatementDto
+public abstract class JsonStatementRepository<TDto>(string connectionString) : IStatementRepository<TDto> where TDto : StatementDto
 {
     protected readonly string ConnectionString = connectionString;
 

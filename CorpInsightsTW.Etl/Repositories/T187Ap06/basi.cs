@@ -2,7 +2,7 @@ using CorpInsightsTW.Etl.Dtos.T187Ap06;
 
 namespace CorpInsightsTW.Etl.Repositories.T187Ap06;
 
-public class BasiRepository(string connectionString) : T187Repository<BasiDto>(connectionString)
+public class BasiRepository(string connectionString) : JsonStatementRepository<BasiDto>(connectionString)
 {
     protected override string Taxonomy => "basi";
 

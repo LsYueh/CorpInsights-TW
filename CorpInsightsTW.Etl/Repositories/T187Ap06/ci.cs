@@ -4,7 +4,7 @@ using CorpInsightsTW.Etl.Dtos.T187Ap06;
 
 namespace CorpInsightsTW.Etl.Repositories.T187Ap06;
 
-public class CiRepository(string connectionString) : T187Repository<CiDto>(connectionString)
+public class CiRepository(string connectionString) : JsonStatementRepository<CiDto>(connectionString)
 {
     protected override string Taxonomy => "ci";
 

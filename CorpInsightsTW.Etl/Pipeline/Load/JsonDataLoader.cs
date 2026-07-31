@@ -5,12 +5,12 @@ using CorpInsightsTW.Etl.Repositories;
 
 namespace CorpInsightsTW.Etl.Pipeline.Load;
 
-public class StatementDataLoader(
-    ILogger<StatementDataLoader> logger,
+public class JsonDataLoader(
+    ILogger<JsonDataLoader> logger,
     RuntimeConfig runtimeConfig,
     string connectionString) : IDataLoader
 {
-    private readonly ILogger<StatementDataLoader> _logger = logger;
+    private readonly ILogger<JsonDataLoader> _logger = logger;
     private readonly RuntimeConfig _runtimeConfig = runtimeConfig;
     private readonly string _connectionString = connectionString;
 
@@ -21,9 +21,9 @@ public class StatementDataLoader(
 
     public async Task LoadAsync(EtlContext context,
         IReadOnlyList<IStatementDto> batch, int fileTotalCount,
-        CancellationToken cancellationToken, int indentLevel = 0)
+        CancellationToken ct, int indentLevel = 0)
     {
-        cancellationToken.ThrowIfCancellationRequested();
+        ct.ThrowIfCancellationRequested();
 
         if (batch == null || batch.Count == 0) return;
 
@@ -31,7 +31,7 @@ public class StatementDataLoader(
 
         try
         {
-            await ExecAsync(context, batch, cancellationToken, indentLevel);
+            await ExecAsync(context, batch, ct, indentLevel);
 
             // 處理完成後才更新累計筆數並印出 Log
             int currentTotal = Interlocked.Add(ref _totalProcessedCount, batch.Count);
@@ -79,15 +79,20 @@ public class StatementDataLoader(
     public async Task ExecAsync(
         EtlContext context, 
         IReadOnlyList<IStatementDto> batch,
-        CancellationToken cancellationToken,
+        CancellationToken ct,
         int indentLevel = 0)
     {
-        cancellationToken.ThrowIfCancellationRequested();
+        ct.ThrowIfCancellationRequested();
 
         switch (context.Type)
         {
-            case StatementType.T187AP06: await ProcessT187Ap06BatchAsync(context, batch, cancellationToken, indentLevel); break;
-            case StatementType.T187AP07: await ProcessT187Ap07BatchAsync(context, batch, cancellationToken, indentLevel); break;
+            // JSON
+            case StatementType.T187AP06: await ProcessT187Ap06BatchAsync(context, batch, ct, indentLevel); break;
+            case StatementType.T187AP07: await ProcessT187Ap07BatchAsync(context, batch, ct, indentLevel); break;
+
+            // HTML
+            case StatementType.T163SB20: await ProcessCashFlowBatchAsync(batch, ct, indentLevel); break;
+
             default:
                 _logger.LogWarning("⚠️ 未知的 Statement Type: {Type}", context.Type);
                 break;
@@ -99,7 +104,7 @@ public class StatementDataLoader(
     private async Task ProcessT187Ap06BatchAsync(
         EtlContext context, 
         IReadOnlyList<IStatementDto> batch, 
-        CancellationToken cancellationToken,
+        CancellationToken ct,
         int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
@@ -113,12 +118,12 @@ public class StatementDataLoader(
         
         switch (context.Taxonomy)
         {
-            case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap06.BasiRepository(_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.BD  : await ExecUpsertAsync(new Repositories.T187Ap06.BdRepository  (_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.CI  : await ExecUpsertAsync(new Repositories.T187Ap06.CiRepository  (_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.FH  : await ExecUpsertAsync(new Repositories.T187Ap06.FhRepository  (_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.INS : await ExecUpsertAsync(new Repositories.T187Ap06.InsRepository (_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.MIM : await ExecUpsertAsync(new Repositories.T187Ap06.MimRepository (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap06.BasiRepository(_connectionString), batch, ct); break;
+            case XbrlTaxonomy.BD  : await ExecUpsertAsync(new Repositories.T187Ap06.BdRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.CI  : await ExecUpsertAsync(new Repositories.T187Ap06.CiRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.FH  : await ExecUpsertAsync(new Repositories.T187Ap06.FhRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.INS : await ExecUpsertAsync(new Repositories.T187Ap06.InsRepository (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.MIM : await ExecUpsertAsync(new Repositories.T187Ap06.MimRepository (_connectionString), batch, ct); break;
             default:
                 _logger.LogWarning("⚠️ [T187Ap06] 未知的 XBRL Taxonomy: {Taxonomy}", context.Taxonomy);
                 break;
@@ -128,7 +133,7 @@ public class StatementDataLoader(
     private async Task ProcessT187Ap07BatchAsync(
         EtlContext context, 
         IReadOnlyList<IStatementDto> batch, 
-        CancellationToken cancellationToken,
+        CancellationToken ct,
         int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
@@ -142,23 +147,40 @@ public class StatementDataLoader(
         
         switch (context.Taxonomy)
         {
-            case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap07.BasiRepository(_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.BD  : await ExecUpsertAsync(new Repositories.T187Ap07.BdRepository  (_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.CI  : await ExecUpsertAsync(new Repositories.T187Ap07.CiRepository  (_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.FH  : await ExecUpsertAsync(new Repositories.T187Ap07.FhRepository  (_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.INS : await ExecUpsertAsync(new Repositories.T187Ap07.InsRepository (_connectionString), batch, cancellationToken); break;
-            case XbrlTaxonomy.MIM : await ExecUpsertAsync(new Repositories.T187Ap07.MimRepository (_connectionString), batch, cancellationToken); break;
+            case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap07.BasiRepository(_connectionString), batch, ct); break;
+            case XbrlTaxonomy.BD  : await ExecUpsertAsync(new Repositories.T187Ap07.BdRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.CI  : await ExecUpsertAsync(new Repositories.T187Ap07.CiRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.FH  : await ExecUpsertAsync(new Repositories.T187Ap07.FhRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.INS : await ExecUpsertAsync(new Repositories.T187Ap07.InsRepository (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.MIM : await ExecUpsertAsync(new Repositories.T187Ap07.MimRepository (_connectionString), batch, ct); break;
             default:
                 _logger.LogWarning("⚠️ [T187Ap07] 未知的 XBRL Taxonomy: {Taxonomy}", context.Taxonomy);
                 break;
         }
     }
 
+    private async Task ProcessCashFlowBatchAsync(
+        IReadOnlyList<IStatementDto> batch, 
+        CancellationToken ct,
+        int indentLevel = 0)
+    {
+        string indent = GetIndent(indentLevel);
+
+        if (_runtimeConfig.IsDryRun)
+        {
+            _logger.LogInformation("{Indent}🧪 [DryRun] 模擬執行 [T163SB20] (筆數: {Count})，跳過實際 Upsert", 
+                indent, batch.Count);
+            return;
+        }
+        
+        await ExecUpsertAsync(new Repositories.T163Sb20.CashFlowRepository(_connectionString), batch, ct);
+    }
+
     /// <summary>
     /// IRepository 泛型通用呼叫器
     /// </summary>
     private static async Task ExecUpsertAsync<TDto>(
-        IT187Repository<TDto> repository, 
+        IStatementRepository<TDto> repository, 
         IReadOnlyList<IStatementDto> batch, 
         CancellationToken cancellationToken)
     {

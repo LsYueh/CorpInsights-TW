@@ -2,9 +2,7 @@ using CorpInsightsTW.Etl.Dtos.T163Sb20;
 
 namespace CorpInsightsTW.Etl.Repositories.T163Sb20;
 
-public class CashFlowRepository(string connectionString, string taxonomy) : T187Repository<CashFlowDto>(connectionString)
+public class CashFlowRepository(string connectionString) : HtmlStatementRepository<CashFlowDto>(connectionString)
 {
-    protected override string Taxonomy => taxonomy;
-
-    protected override string MainTableUpsertSql => @"";
+    protected override string MainTableUpsertSql => @""; // TODO: ...
 }

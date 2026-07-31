@@ -4,7 +4,7 @@ using CorpInsightsTW.Etl.Dtos.T187Ap06;
 
 namespace CorpInsightsTW.Etl.Repositories.T187Ap06;
 
-public class BdRepository(string connectionString) : T187Repository<BdDto>(connectionString)
+public class BdRepository(string connectionString) : JsonStatementRepository<BdDto>(connectionString)
 {
     protected override string Taxonomy => "bd";
 
