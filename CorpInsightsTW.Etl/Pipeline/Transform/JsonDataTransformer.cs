@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
 using CorpInsightsTW.Etl.Core.Context;
 using CorpInsightsTW.Etl.Dtos;
@@ -106,11 +107,11 @@ public class JsonDataTransformer(
         }
 
         // 比對日期
-        if (rowDate != context.Date)
+        if (!rowDate.IsMatchMarketDate(context.Date, context.Market, out DateOnly expectedDate))
         {
             _logger.LogWarning(
-                "{Indent}⚠️ [Transform] 資料日期不符！ JSON 解析: {RowDate:yyyy-MM-dd}, 預期 Context: {ExpectedDate:yyyy-MM-dd} | 已跳過",
-                indent, rowDate, context.Date);
+                "{Indent}⚠️ [Transform] 資料日期不符！ JSON 解析: {RowDate:yyyy-MM-dd}, 預期 Context ({Market}): {ExpectedDate:yyyy-MM-dd} (原始 Context: {ContextDate:yyyy-MM-dd}) | 已跳過",
+                indent, rowDate, context.Market, expectedDate, context.Date);
             return false;
         }
 
