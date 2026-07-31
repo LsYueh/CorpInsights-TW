@@ -35,6 +35,7 @@ public static class DtoFactory
         {
             StatementType.T187AP06 => MapToAp06Dto(context, row),
             StatementType.T187AP07 => MapToAp07Dto(context, row),
+            StatementType.T163SB20 => MapToCashFlowDto(row),
             _ => throw new NotSupportedException($"未知的財務報表: {context.Type}")
         };
     }
@@ -76,5 +77,13 @@ public static class DtoFactory
             XbrlTaxonomy.MIM  => DeserializeRow<T187Ap07.MimDto >(row),
             _ => throw new NotSupportedException($"未知的 T187Ap07 分類: {context.Taxonomy.ToCode()}")
         };
+    }
+
+    /// <summary>
+    /// T187Ap07 (資產負債表) 各業別的解析
+    /// </summary>
+    private static IStatementDto? MapToCashFlowDto(JsonElement row)
+    {
+        return DeserializeRow<T163Sb20.CashFlowDto>(row);
     }
 }

@@ -106,12 +106,14 @@ public class HtmlDataExtractor(
     private static List<Dictionary<string, string>> ToStatementRows(
         EtlContext context, List<string> headers, IEnumerable<List<string>> dataRows)
     {
+        var (filingYear, filingQuarter) = context.Date.GetFilingPeriod();
+        
         string exportDate = context.Date.ToMinguoDateString("yyyMMdd");
-        string year       = ""; // TODO: ...
-        string quarter    = ""; // TODO: ...
+        string minguoYear = (filingYear - 1911).ToString();
+        string quarter    = filingQuarter.ToString();
         
         return [.. dataRows.Select(dataRow => MapToStatementRow(
-            headers, dataRow, exportDate, year, quarter
+            headers, dataRow, exportDate, minguoYear, quarter
         ))];
     }
 
@@ -120,12 +122,12 @@ public class HtmlDataExtractor(
     /// </summary>
     private static Dictionary<string, string> MapToStatementRow(
         List<string> headers, List<string> dataRow,
-        string exportDate, string year, string quarter)
+        string exportDate, string minguoYear, string quarter)
     {
         var dict = new Dictionary<string, string> // 補上 Statement 要的基本欄位
         {
             ["出表日期"] = exportDate,
-            ["年度"] = year,
+            ["年度"] = minguoYear, 
             ["季別"] = quarter
         };
 
@@ -135,7 +137,11 @@ public class HtmlDataExtractor(
             string rawKey = string.IsNullOrWhiteSpace(headers[i]) ? $"Column_{i + 1}" : headers[i];
             string uniqueKey = GetUniqueKey(dict, rawKey);
 
-            dict[uniqueKey] = dataRow[i];
+            // 防呆：避免 dataRow 長度不足導致 IndexOutOfRangeException
+            string rawValue = i < dataRow.Count ? dataRow[i] : string.Empty;
+
+            // 清洗數值/字串 (處理 "--"、" - " 或全形/半形符號)
+            dict[uniqueKey] = CleanValue(rawValue);
         }
 
         return dict;
@@ -155,5 +161,22 @@ public class HtmlDataExtractor(
         }
 
         return uniqueKey;
+    }
+
+    /// <summary>
+    /// 清洗 MOPS/外部資料常見的特殊空值符號
+    /// </summary>
+    private static string CleanValue(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+
+        var trimmed = value.Trim();
+
+        // 常見代表「無資料」或「不適用」的文字
+        return trimmed switch
+        {
+            "--" or "-" or "—" or "－" or "N/A" or "NA" or "NULL" => string.Empty,
+            _ => trimmed
+        };
     }
 }
