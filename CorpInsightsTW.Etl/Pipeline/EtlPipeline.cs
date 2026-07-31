@@ -61,9 +61,15 @@ public class EtlPipeline(
             ? Enum.GetValues<XbrlTaxonomy>().Where(t => t != XbrlTaxonomy.All).ToList()
             : [targetTaxonomy];
 
-        var reportList = targetType == StatementType.All
-            ? Enum.GetValues<StatementType>().Where(r => r != StatementType.All).ToList()
-            : [targetType];
+        var reportList = targetType switch
+        {
+            StatementType.All => Enum.GetValues<StatementType>()
+                                     .Except([
+                                        StatementType.All,
+                                        StatementType.T163SB20]) // Html轉換暫時不優先處理，目前感覺用途不大，但是可以單獨執行
+                                     .ToList(),
+            _ => [targetType]
+        };
 
         var targetContexts = EtlContextBuilder
             .BuildContexts(market, reportList, statusList, taxonomyList, targetDate).ToList();
