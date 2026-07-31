@@ -107,11 +107,14 @@ public class JsonDataTransformer(
         }
 
         // 比對日期
-        if (!rowDate.IsMatchMarketDate(context.Date, context.Market, out DateOnly expectedDate))
+        if (!rowDate.IsAcceptable(
+            context.Date,
+            out DateOnly expectedDate, 
+            out DateOnly minAllowedDate))
         {
             _logger.LogWarning(
-                "{Indent}⚠️ [Transform] 資料日期不符！ JSON 解析: {RowDate:yyyy-MM-dd}, 預期 Context ({Market}): {ExpectedDate:yyyy-MM-dd} (原始 Context: {ContextDate:yyyy-MM-dd}) | 已跳過",
-                indent, rowDate, context.Market, expectedDate, context.Date);
+                "{Indent}⚠️ [Transform] 資料日期不符！ JSON 解析: {RowDate:yyyy-MM-dd}，不在允許交易日區間 [{MinAllowedDate:yyyy-MM-dd} ~ {ExpectedDate:yyyy-MM-dd}] (Context 原始日期: {ContextDate:yyyy-MM-dd}) | 已跳過",
+                indent, rowDate, minAllowedDate, expectedDate, context.Date);
             return false;
         }
 

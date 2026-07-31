@@ -108,7 +108,7 @@ public class HtmlDataExtractor(
     {
         var (filingYear, filingQuarter) = context.Date.GetFilingPeriod();
         
-        string exportDate = context.Date.GetReportDate(context.Market).ToMinguoDateString("yyyMMdd");
+        string exportDate = context.Date.ToMinguoDateString("yyyMMdd");
         string minguoYear = (filingYear - 1911).ToString();
         string quarter    = filingQuarter.ToString();
         

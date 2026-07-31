@@ -98,4 +98,34 @@ public static class WorkingDayExtensions
 
         return current;
     }
+
+    /// <summary>
+    /// 檢查是否落在基準日許可落後的工作日之內
+    /// </summary>
+    /// <param name="date">JSON 解析出來的資料日期</param>
+    /// <param name="contextDate">Context 基準日期</param>
+    /// <param name="expectedDate">Out: 推算出的標準預期基準日 (Context 最新工作日)</param>
+    /// <param name="minAllowedDate">Out: 最小容許的歷史工作日 (往過去退 N 個工作日)</param>
+    /// <param name="maxDaysLag">允許資料最多滯後 (落後) 幾天，預設 2 天 (應付 TPEX 下午才更新資料)</param>
+    /// <param name="holidays">國定假日/不交易日集合 (可選)</param>
+    public static bool IsAcceptable(
+        this DateOnly date,
+        DateOnly contextDate,
+        out DateOnly expectedDate,
+        out DateOnly minAllowedDate,
+        int maxDaysLag = 2,
+        IReadOnlySet<DateOnly>? holidays = null)
+    {
+        expectedDate = contextDate.ToLastWorkingDay(holidays);
+        minAllowedDate = expectedDate;
+        
+        for (int i = 0; i < maxDaysLag; i++)
+        {
+            // 每次往過去扣 1 天，並退到該天或之前的有效工作日
+            minAllowedDate = minAllowedDate.AddDays(-1).ToLastWorkingDay(holidays);
+        }
+
+        // 資料日期必須在 [minAllowedDate, expectedDate] 之間
+        return minAllowedDate <= date && date <= expectedDate;
+    }
 }
