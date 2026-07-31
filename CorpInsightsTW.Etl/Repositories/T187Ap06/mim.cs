@@ -4,7 +4,7 @@ using CorpInsightsTW.Etl.Dtos.T187Ap06;
 
 namespace CorpInsightsTW.Etl.Repositories.T187Ap06;
 
-public class MimRepository(string connectionString) : T187Repository<MimDto>(connectionString)
+public class MimRepository(string connectionString) : JsonStatementRepository<MimDto>(connectionString)
 {
     protected override string Taxonomy => "mim";
 

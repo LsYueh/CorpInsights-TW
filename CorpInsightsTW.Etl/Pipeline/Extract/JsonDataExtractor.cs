@@ -1,14 +1,14 @@
 using System.Text.Json;
 using CorpInsightsTW.Core.Storage;
-using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Core.Context;
 
 namespace CorpInsightsTW.Etl.Pipeline.Extract;
 
-public class JsonFileDataExtractor(
-    ILogger<JsonFileDataExtractor> logger,
+public class JsonDataExtractor(
+    ILogger<JsonDataExtractor> logger,
     LocalRawDataStorage storage) : IDataExtractor
 {
-    private readonly ILogger<JsonFileDataExtractor> _logger = logger;
+    private readonly ILogger<JsonDataExtractor> _logger = logger;
     private readonly LocalRawDataStorage _storage = storage;
 
     private static string GetIndent(int level) => new(' ', level * 4);
@@ -17,7 +17,7 @@ public class JsonFileDataExtractor(
     {
         string indent = GetIndent(indentLevel);
 
-        var storageContext = new StorageContext(context.Market, context.ApCode, context.Status, context.Taxonomy, context.Date);
+        var storageContext = new StorageContext(context.Market, context.Type, context.Status, context.Taxonomy, context.Date);
         
         string path = _storage.GetStoragePath(storageContext, indentLevel + 1);
 

@@ -1,13 +1,13 @@
 using CorpInsightsTW.Core.Enums;
 
-namespace CorpInsightsTW.Etl.Core.Common;
+namespace CorpInsightsTW.Etl.Core.Context;
 
 /// <summary>
 /// 當前 ETL 任務的詮釋資料與上下文背景
 /// </summary>
 public record EtlContext(
     StockMarket Market,
-    T187ApCode ApCode,
+    StatementType Type,
     ListingStatus Status,
     XbrlTaxonomy Taxonomy,
     DateOnly Date

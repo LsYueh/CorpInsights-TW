@@ -1,6 +1,7 @@
 using System.Text.Json;
+using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
-using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Core.Context;
 using CorpInsightsTW.Etl.Dtos;
 
 namespace CorpInsightsTW.Etl.Pipeline.Transform;
@@ -15,34 +16,34 @@ public class JsonDataTransformer(
     /// <summary>
     /// 將 JsonDocument 的陣列攤開, 切塊（Batching）輸出
     /// </summary>
-    public IEnumerable<(IReadOnlyList<IT187Dto> Batch, int TotalCount)> Transform(
+    public IEnumerable<(IReadOnlyList<IStatementDto> Batch, int TotalCount)> Transform(
         EtlContext context, JsonDocument doc, int batchSize, int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
         
         int totalCount = doc.RootElement.GetArrayLength();
 
-        var buffer = new List<IT187Dto>(batchSize);
+        var buffer = new List<IStatementDto>(batchSize);
 
         foreach (JsonElement row in doc.RootElement.EnumerateArray())
         {
             // -------------------------------------------------------------
             // 前置驗證
             // -------------------------------------------------------------
-            var header = T187DtoFactory.ExtractHeader(row);
+            var header = DtoFactory.ExtractHeader(row);
 
             if (header == null)
             {
-                _logger?.LogWarning("{Indent}⚠️ [Transform] 無法提取 Header 結構，已跳過 | AP: {ApCode}",
-                    indent, context.ApCode);
+                _logger?.LogWarning("{Indent}⚠️ [Transform] 無法提取 Header 結構，已跳過 | Type: {Type}",
+                    indent, context.Type);
                 continue;
             }
 
             // 主鍵防禦性檢查
             if (!header.IsValidKey())
             {
-                _logger?.LogWarning("{Indent}⚠️ [Transform] 無效的主鍵資料，已跳過 | AP: {ApCode} | Taxonomy: {Taxonomy}",
-                    indent, context.ApCode, context.Taxonomy);
+                _logger?.LogWarning("{Indent}⚠️ [Transform] 無效的主鍵資料，已跳過 | Type: {Type} | Taxonomy: {Taxonomy}",
+                    indent, context.Type, context.Taxonomy);
                 continue;
             }
 
@@ -55,11 +56,11 @@ public class JsonDataTransformer(
             // -------------------------------------------------------------
             // 解析成完整 DTO
             // -------------------------------------------------------------
-            IT187Dto? dto = T187DtoFactory.ToDto(context, row);
+            IStatementDto? dto = DtoFactory.ToDto(context, row);
             if (dto == null)
             {
-                _logger?.LogWarning("{Indent}⚠️ [Transform] JSON 反序列化失敗，已跳過 | AP: {ApCode}",
-                    indent, context.ApCode);
+                _logger?.LogWarning("{Indent}⚠️ [Transform] JSON 反序列化失敗，已跳過 | Type: {Type}",
+                    indent, context.Type);
                 continue;
             }
 
@@ -73,7 +74,7 @@ public class JsonDataTransformer(
                 yield return (buffer, totalCount);
                 
                 // 重新配置一個固定容量的 List，讓上一批的記憶體能順利交棒並被後續處理/釋放
-                buffer = new List<IT187Dto>(batchSize);
+                buffer = new List<IStatementDto>(batchSize);
             }
         }
         
@@ -84,7 +85,7 @@ public class JsonDataTransformer(
         }
     }
 
-    private bool IsDateValid(EtlContext context, T187HeaderDto header, int indentLevel = 0)
+    private bool IsDateValid(EtlContext context, StatementHeaderDto header, int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
         
@@ -106,11 +107,11 @@ public class JsonDataTransformer(
         }
 
         // 比對日期
-        if (rowDate != context.Date)
+        if (!rowDate.IsMatchMarketDate(context.Date, context.Market, out DateOnly expectedDate))
         {
             _logger.LogWarning(
-                "{Indent}⚠️ [Transform] 資料日期不符！ JSON 解析: {RowDate:yyyy-MM-dd}, 預期 Context: {ExpectedDate:yyyy-MM-dd} | 已跳過",
-                indent, rowDate, context.Date);
+                "{Indent}⚠️ [Transform] 資料日期不符！ JSON 解析: {RowDate:yyyy-MM-dd}, 預期 Context ({Market}): {ExpectedDate:yyyy-MM-dd} (原始 Context: {ContextDate:yyyy-MM-dd}) | 已跳過",
+                indent, rowDate, context.Market, expectedDate, context.Date);
             return false;
         }
 

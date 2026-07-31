@@ -4,7 +4,7 @@ using CorpInsightsTW.Etl.Dtos.T187Ap06;
 
 namespace CorpInsightsTW.Etl.Repositories.T187Ap06;
 
-public class FhRepository(string connectionString) : T187Repository<FhDto>(connectionString)
+public class FhRepository(string connectionString) : JsonStatementRepository<FhDto>(connectionString)
 {
     protected override string Taxonomy => "fh";
 

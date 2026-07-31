@@ -1,0 +1,193 @@
+using CorpInsightsTW.Core.Enums;
+using CorpInsightsTW.Etl.Core.Context;
+using CorpInsightsTW.Etl.Dtos;
+using CorpInsightsTW.Etl.Repositories;
+
+namespace CorpInsightsTW.Etl.Pipeline.Load;
+
+public class JsonDataLoader(
+    ILogger<JsonDataLoader> logger,
+    RuntimeConfig runtimeConfig,
+    string connectionString) : IDataLoader
+{
+    private readonly ILogger<JsonDataLoader> _logger = logger;
+    private readonly RuntimeConfig _runtimeConfig = runtimeConfig;
+    private readonly string _connectionString = connectionString;
+
+    private static string GetIndent(int level) => new(' ', level * 4);
+
+    // 追蹤跨批次累計的總筆數
+    private int _totalProcessedCount = 0;
+
+    public async Task LoadAsync(EtlContext context,
+        IReadOnlyList<IStatementDto> batch, int fileTotalCount,
+        CancellationToken ct, int indentLevel = 0)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        if (batch == null || batch.Count == 0) return;
+
+        string indent = GetIndent(indentLevel);
+
+        try
+        {
+            await ExecAsync(context, batch, ct, indentLevel);
+
+            // 處理完成後才更新累計筆數並印出 Log
+            int currentTotal = Interlocked.Add(ref _totalProcessedCount, batch.Count);
+
+            _logger.LogInformation(
+                "{Indent}💾 [T187Load] 寫入成功 | AP: {Type} | Taxonomy: {Taxonomy} | 本次批次: {BatchCount} 筆 | 進度: {CurrentTotal}/{FileTotal}",
+                indent,
+                context.Type,
+                context.Taxonomy,
+                batch.Count,
+                currentTotal,
+                fileTotalCount);
+
+            // 當處理到檔案的最後一筆時，重置計數器（方便下一個檔案進來時重新計算）
+            if (currentTotal >= fileTotalCount)
+                Interlocked.Exchange(ref _totalProcessedCount, 0);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogWarning("{Indent}⏹️ [T187Load] 批次寫入作業已取消 | AP: {Type} | Taxonomy: {Taxonomy}",
+                indent, context.Type, context.Taxonomy);
+            
+            // 發生取消時重置計數器
+            Interlocked.Exchange(ref _totalProcessedCount, 0);
+            throw; // 繼續向上拋出以終止 pipeline
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "{Indent}❌ [T187Load] 批次寫入失敗！ | AP: {Type} | Taxonomy: {Taxonomy} | 本批次筆數: {BatchCount} | 錯誤訊息: {Message}",
+                indent,
+                context.Type,
+                context.Taxonomy,
+                batch.Count,
+                ex.Message);
+
+            // 發生例外時，重置累計計數器，確保不會影響後續任務
+            Interlocked.Exchange(ref _totalProcessedCount, 0);
+
+            // 拋出例外供上層管道 (Pipeline) 捕捉或進行 Retry / Rollback 處理
+            throw;
+        }
+    }
+
+    public async Task ExecAsync(
+        EtlContext context, 
+        IReadOnlyList<IStatementDto> batch,
+        CancellationToken ct,
+        int indentLevel = 0)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        switch (context.Type)
+        {
+            // JSON
+            case StatementType.T187AP06: await ProcessT187Ap06BatchAsync(context, batch, ct, indentLevel); break;
+            case StatementType.T187AP07: await ProcessT187Ap07BatchAsync(context, batch, ct, indentLevel); break;
+
+            // HTML
+            case StatementType.T163SB20: await ProcessCashFlowBatchAsync(batch, ct, indentLevel); break;
+
+            default:
+                _logger.LogWarning("⚠️ 未知的 Statement Type: {Type}", context.Type);
+                break;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task ProcessT187Ap06BatchAsync(
+        EtlContext context, 
+        IReadOnlyList<IStatementDto> batch, 
+        CancellationToken ct,
+        int indentLevel = 0)
+    {
+        string indent = GetIndent(indentLevel);
+        
+        if (_runtimeConfig.IsDryRun)
+        {
+            _logger.LogInformation("{Indent}🧪 [DryRun] 模擬執行 [T187Ap06] (Taxonomy: {Taxonomy}, 筆數: {Count})，跳過實際 Upsert", 
+                indent, context.Taxonomy, batch.Count);
+            return;
+        }
+        
+        switch (context.Taxonomy)
+        {
+            case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap06.BasiRepository(_connectionString), batch, ct); break;
+            case XbrlTaxonomy.BD  : await ExecUpsertAsync(new Repositories.T187Ap06.BdRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.CI  : await ExecUpsertAsync(new Repositories.T187Ap06.CiRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.FH  : await ExecUpsertAsync(new Repositories.T187Ap06.FhRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.INS : await ExecUpsertAsync(new Repositories.T187Ap06.InsRepository (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.MIM : await ExecUpsertAsync(new Repositories.T187Ap06.MimRepository (_connectionString), batch, ct); break;
+            default:
+                _logger.LogWarning("⚠️ [T187Ap06] 未知的 XBRL Taxonomy: {Taxonomy}", context.Taxonomy);
+                break;
+        }
+    }
+
+    private async Task ProcessT187Ap07BatchAsync(
+        EtlContext context, 
+        IReadOnlyList<IStatementDto> batch, 
+        CancellationToken ct,
+        int indentLevel = 0)
+    {
+        string indent = GetIndent(indentLevel);
+
+        if (_runtimeConfig.IsDryRun)
+        {
+            _logger.LogInformation("{Indent}🧪 [DryRun] 模擬執行 [T187Ap07] (Taxonomy: {Taxonomy}, 筆數: {Count})，跳過實際 Upsert", 
+                indent, context.Taxonomy, batch.Count);
+            return;
+        }
+        
+        switch (context.Taxonomy)
+        {
+            case XbrlTaxonomy.BASI: await ExecUpsertAsync(new Repositories.T187Ap07.BasiRepository(_connectionString), batch, ct); break;
+            case XbrlTaxonomy.BD  : await ExecUpsertAsync(new Repositories.T187Ap07.BdRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.CI  : await ExecUpsertAsync(new Repositories.T187Ap07.CiRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.FH  : await ExecUpsertAsync(new Repositories.T187Ap07.FhRepository  (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.INS : await ExecUpsertAsync(new Repositories.T187Ap07.InsRepository (_connectionString), batch, ct); break;
+            case XbrlTaxonomy.MIM : await ExecUpsertAsync(new Repositories.T187Ap07.MimRepository (_connectionString), batch, ct); break;
+            default:
+                _logger.LogWarning("⚠️ [T187Ap07] 未知的 XBRL Taxonomy: {Taxonomy}", context.Taxonomy);
+                break;
+        }
+    }
+
+    private async Task ProcessCashFlowBatchAsync(
+        IReadOnlyList<IStatementDto> batch, 
+        CancellationToken ct,
+        int indentLevel = 0)
+    {
+        string indent = GetIndent(indentLevel);
+
+        if (_runtimeConfig.IsDryRun)
+        {
+            _logger.LogInformation("{Indent}🧪 [DryRun] 模擬執行 [T163SB20] (筆數: {Count})，跳過實際 Upsert", 
+                indent, batch.Count);
+            return;
+        }
+        
+        await ExecUpsertAsync(new Repositories.T163Sb20.CashFlowRepository(_connectionString), batch, ct);
+    }
+
+    /// <summary>
+    /// IRepository 泛型通用呼叫器
+    /// </summary>
+    private static async Task ExecUpsertAsync<TDto>(
+        IStatementRepository<TDto> repository, 
+        IReadOnlyList<IStatementDto> batch, 
+        CancellationToken cancellationToken)
+    {
+        var dtos = batch.OfType<TDto>().ToList();
+        if (dtos.Count > 0)
+        {
+            await repository.UpsertAsync(dtos, cancellationToken);
+        }
+    }
+}

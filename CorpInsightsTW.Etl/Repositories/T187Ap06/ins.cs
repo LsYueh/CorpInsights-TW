@@ -4,7 +4,7 @@ using CorpInsightsTW.Etl.Dtos.T187Ap06;
 
 namespace CorpInsightsTW.Etl.Repositories.T187Ap06;
 
-public class InsRepository(string connectionString) : T187Repository<InsDto>(connectionString)
+public class InsRepository(string connectionString) : JsonStatementRepository<InsDto>(connectionString)
 {
     protected override string Taxonomy => "ins";
 

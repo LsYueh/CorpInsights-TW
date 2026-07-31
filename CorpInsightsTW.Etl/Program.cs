@@ -88,9 +88,9 @@ public class Program
         }
 
         // 解析報表代號
-        if (!Enum.TryParse<T187ApCode>(options.ApCode, ignoreCase: true, out var apCode))
+        if (!Enum.TryParse<StatementType>(options.Type, ignoreCase: true, out var type))
         {
-            Console.WriteLine($"❌ 不合法的報表代號參數: '{options.ApCode}'");
+            Console.WriteLine($"❌ 不合法的報表代號參數: '{options.Type}'");
             return null;
         }
 
@@ -129,7 +129,7 @@ public class Program
         try
         {
             // 用 try-catch 攔截 RuntimeConfig 建構子丟出的市場/狀態不匹配例外
-            return new RuntimeConfig(market, status, taxonomy, apCode, date, options.DryRun);
+            return new RuntimeConfig(market, status, taxonomy, type, date, options.DryRun);
         }
         catch (ArgumentException ex)
         {
@@ -159,17 +159,18 @@ public class Program
             return new LocalRawDataStorage(logger, customStoragePath);
         });
 
-        builder.Services.AddTransient<IDataExtractor  , JsonFileDataExtractor>();
+        builder.Services.AddKeyedTransient<IDataExtractor, JsonDataExtractor>("json");
+        builder.Services.AddKeyedTransient<IDataExtractor, HtmlDataExtractor>("html");
         builder.Services.AddTransient<IDataTransformer, JsonDataTransformer>();
         builder.Services.AddTransient<IDataLoader>(sp =>
         {
-            var logger = sp.GetRequiredService<ILogger<T187DataLoader>>();
+            var logger = sp.GetRequiredService<ILogger<JsonDataLoader>>();
             var config = sp.GetRequiredService<IConfiguration>();
             
             string connectionString = config.GetConnectionString("DefaultConnection") 
                 ?? throw new InvalidOperationException("找不到 DefaultConnection 連線字串設定");
 
-            return new T187DataLoader(logger, runtimeConfig, connectionString);
+            return new JsonDataLoader(logger, runtimeConfig, connectionString);
         });
         builder.Services.AddTransient<EtlPipeline>();
 

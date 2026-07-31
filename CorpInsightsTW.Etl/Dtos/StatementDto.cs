@@ -3,7 +3,7 @@ using CorpInsightsTW.Etl.Core.Json;
 
 namespace CorpInsightsTW.Etl.Dtos;
 
-public abstract record T187Dto : IT187Dto
+public abstract record StatementDto : IStatementDto
 {
     [JsonPropertyNames("出表日期", "Date"), JsonRequired]
     public required string ReportDate { get; init; }

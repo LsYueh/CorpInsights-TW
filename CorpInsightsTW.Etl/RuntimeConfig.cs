@@ -8,7 +8,7 @@ public record RuntimeConfig
     public StockMarket Market { get; init; }
     public ListingStatus Status { get; init; }
     public XbrlTaxonomy Taxonomy { get; init; }
-    public T187ApCode ApCode { get; init; }
+    public StatementType Type { get; init; }
     public DateOnly Date { get; init; }
     public bool IsDryRun { get; init; }
 
@@ -16,7 +16,7 @@ public record RuntimeConfig
         StockMarket market,
         ListingStatus status,
         XbrlTaxonomy taxonomy,
-        T187ApCode apCode,
+        StatementType type,
         DateOnly date,
         bool isDryRun)
     {
@@ -32,7 +32,7 @@ public record RuntimeConfig
         Market   = market;
         Status   = status;
         Taxonomy = taxonomy;
-        ApCode   = apCode;
+        Type     = type;
         Date     = date;
         IsDryRun = isDryRun;
     }

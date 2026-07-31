@@ -1,6 +1,6 @@
 namespace CorpInsightsTW.Etl.Dtos;
 
-public interface IT187Dto
+public interface IStatementDto
 {
     /// <summary>
     /// 掛牌狀態: 'L' (上市公司), 'X' (公開發行公司)

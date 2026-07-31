@@ -40,12 +40,12 @@ public class FetchJob(
 
         XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         ListingStatus targetStatus   = _config.Status;
-        T187ApCode    targetApCode   = _config.ApCode;
+        StatementType targetType     = _config.Type;
 
         ct.ThrowIfCancellationRequested();
 
          _logger.LogInformation("{Indent}🎬 發動 HTTP 請求: [{Market}] {Status} {Taxonomy} - {Name}", indent, 
-            market.ToDisplay(), targetStatus.ToDisplay(), targetTaxonomy.ToDisplay(), targetApCode.ToDisplay());
+            market.ToDisplay(), targetStatus.ToDisplay(), targetTaxonomy.ToDisplay(), targetType.ToDisplay());
 
         var statusToFetch = targetStatus.ExpandForMarket(market);
 
@@ -53,9 +53,10 @@ public class FetchJob(
             ? Enum.GetValues<XbrlTaxonomy>().Where(t => t != XbrlTaxonomy.All)
             : [targetTaxonomy];
 
-        var reportsToFetch = targetApCode == T187ApCode.All
-            ? Enum.GetValues<T187ApCode>().Where(r => r != T187ApCode.All)
-            : [targetApCode];
+        var reportsToFetch = targetType == StatementType.All
+            ? Enum.GetValues<StatementType>()
+                .Where(r => r != StatementType.All && r != StatementType.T163SB20) // 現金流量表要手動存 html
+            : [targetType];
 
         try
         {
@@ -87,18 +88,18 @@ public class FetchJob(
 
     private async Task FetchReportsGroupAsync(
         StockMarket market,
-        XbrlTaxonomy taxonomy, ListingStatus status, IEnumerable<T187ApCode> apCodes,
+        XbrlTaxonomy taxonomy, ListingStatus status, IEnumerable<StatementType> types,
         CancellationToken ct, int indentLevel = 0)
     {
         string indent = GetIndent(indentLevel);
         
         _logger.LogInformation("{Indent}⚡ HTTP 請求: [{Market}] {Status} - {Taxonomy}", indent, market.ToCode(), status.ToDisplay(), taxonomy.ToDisplay());
 
-        foreach (var apCode in apCodes)
+        foreach (var type in types)
         {
             ct.ThrowIfCancellationRequested();
 
-            var context = new FetchContext(market, apCode, status, taxonomy);
+            var context = new FetchContext(market, type, status, taxonomy);
             await _openApiService.FetchDataAsync(context, ct, indentLevel + 1);
         }
     }

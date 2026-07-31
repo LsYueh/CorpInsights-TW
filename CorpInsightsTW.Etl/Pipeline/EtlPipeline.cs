@@ -1,7 +1,7 @@
 using System.Text.Json;
 using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
-using CorpInsightsTW.Etl.Core.Common;
+using CorpInsightsTW.Etl.Core.Context;
 using CorpInsightsTW.Etl.Pipeline.Extract;
 using CorpInsightsTW.Etl.Pipeline.Load;
 using CorpInsightsTW.Etl.Pipeline.Transform;
@@ -11,14 +11,16 @@ namespace CorpInsightsTW.Etl.Pipeline;
 public class EtlPipeline(
     ILogger<EtlPipeline> logger,
     RuntimeConfig config,
-    IDataExtractor extractor,
+    [FromKeyedServices("json")] IDataExtractor jsonExtractor,
+    [FromKeyedServices("html")] IDataExtractor htmlExtractor,
     IDataTransformer transformer,
     IDataLoader loader)
 {
     private readonly ILogger<EtlPipeline> _logger = logger;
     private readonly RuntimeConfig _config = config;
 
-    private readonly IDataExtractor _extractor = extractor;
+    private readonly IDataExtractor _jsonExtractor = jsonExtractor;
+    private readonly IDataExtractor _htmlExtractor = htmlExtractor;
     private readonly IDataTransformer _transformer = transformer;
     private readonly IDataLoader _loader = loader;
 
@@ -46,7 +48,7 @@ public class EtlPipeline(
     {
         string indent = GetIndent(indentLevel);
 
-        T187ApCode    targetApCode   = _config.ApCode;
+        StatementType targetType     = _config.Type;
         ListingStatus targetStatus   = _config.Status;
         XbrlTaxonomy  targetTaxonomy = _config.Taxonomy;
         DateOnly      targetDate     = _config.Date;
@@ -59,17 +61,12 @@ public class EtlPipeline(
             ? Enum.GetValues<XbrlTaxonomy>().Where(t => t != XbrlTaxonomy.All).ToList()
             : [targetTaxonomy];
 
-        var reportList = targetApCode == T187ApCode.All
-            ? Enum.GetValues<T187ApCode>().Where(r => r != T187ApCode.All).ToList()
-            : [targetApCode];
+        var reportList = targetType == StatementType.All
+            ? Enum.GetValues<StatementType>().Where(r => r != StatementType.All).ToList()
+            : [targetType];
 
-        // 扁平化所有組合
-        var targetContexts = (
-            from taxonomy in taxonomyList
-            from status in statusList
-            from apCode in reportList
-            select new EtlContext(market, apCode, status, taxonomy, targetDate)
-        ).ToList();
+        var targetContexts = EtlContextBuilder
+            .BuildContexts(market, reportList, statusList, taxonomyList, targetDate).ToList();
 
         _logger.LogInformation("{Indent}🏁 [Pipeline] ({Market}) 開始執行批次排程...", indent, market.ToCode());
 
@@ -91,8 +88,16 @@ public class EtlPipeline(
         string indent = GetIndent(indentLevel);
         string subIndent = GetIndent(indentLevel + 1); // 子項目專用縮排
 
-        string tag = $"{context.ApCode.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
-        string title = $"{context.Status.ToDisplay()} {context.ApCode.ToDisplay()} - {context.Taxonomy.ToDisplay()}";
+        string tag = $"{context.Type.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}";
+        
+        string title = context.Type switch
+        {
+            StatementType.T187AP06 or 
+            StatementType.T187AP07 => $"{context.Status.ToDisplay()} {context.Type.ToDisplay()} - {context.Taxonomy.ToDisplay()}",
+            StatementType.T163SB20 => $"{context.Status.ToDisplay()} {context.Type.ToDisplay()}",
+            _ => throw new NotSupportedException($"不支援的報表代號: {context.Type}"),
+        };
+
         string message = $"[{context.Date:yyyyMMdd}] {tag} ({title})";
 
         _logger.LogInformation("{Indent}🏁 [Pipeline] ({Market}) 目標: {Message}", indent, context.Market.ToCode(), message);
@@ -104,10 +109,17 @@ public class EtlPipeline(
         {
             // 📥 1. Extract
             _logger.LogDebug("{Indent}📥 [Pipeline] 開始擷取 (Extract)...", indent);
-            using var rawDoc = await _extractor.ExtractAsync(context, ct, indentLevel + 1);
+            using var rawDoc = context.Type switch
+            {
+                StatementType.T187AP06 or 
+                StatementType.T187AP07 => await _jsonExtractor.ExtractAsync(context, ct, indentLevel + 1),
+                StatementType.T163SB20 => await _htmlExtractor.ExtractAsync(context, ct, indentLevel + 1),
+                _ => throw new NotSupportedException($"不支援的報表代號: {context.Type}"),
+            };
+
             if (rawDoc == null)
             {
-                _logger.LogWarning("{Indent}⏹️ [Pipeline] {Message} 擷取階段未取得資料，管線提前中止。", indent, message);
+                _logger.LogWarning("{Indent}⚠️ [Pipeline] {Message} 擷取階段未取得資料，管線提前中止。", indent, message);
                 return;
             }
 
@@ -143,12 +155,12 @@ public class EtlPipeline(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Indent}❌ [Pipeline] {Tag} 處理時發生未預期異常！\n",
+            _logger.LogError(ex, "{Indent}❌ [Pipeline] {Tag} 處理時發生未預期異常！",
                 indent, tag);
-            _logger.LogError(ex, "{SubIndent}👉 執行上下文: 報表={ApCode}, 市場狀態={Status}, 分類={Taxonomy}, 日期={Date}\n",
-                subIndent, context.ApCode, context.Status, context.Taxonomy, context.Date);
-            _logger.LogError(ex, "{SubIndent}👉 當前進度: 已成功處理到第 {BatchIdx} 批次 (總共約 {Total} 筆)\n",
-                subIndent, currentBatchIndex, fileTotalCount);
+            _logger.LogError(ex, "{SubIndent}👉 執行上下文: 報表={Type}, 市場狀態={Status}, 分類={Taxonomy}, 日期={Date}",
+                subIndent, context.Type, context.Status, context.Taxonomy, context.Date);
+            _logger.LogError(ex, "{SubIndent}👉 當前進度: 已成功處理到第 {BatchIdx} 批次 (總共約 {Total} 筆)",
+                subIndent, currentBatchIndex + 1, fileTotalCount);
             _logger.LogError(ex, "{SubIndent}👉 異常類型: {ExType} | 訊息: {ExMessage}", 
                 subIndent, ex.GetType().Name, ex.Message);
             throw;

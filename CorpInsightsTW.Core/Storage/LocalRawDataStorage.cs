@@ -1,3 +1,4 @@
+using CorpInsightsTW.Core.Enums;
 using CorpInsightsTW.Core.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -71,7 +72,13 @@ public class LocalRawDataStorage(
     {
         string dateStr   = context.Date.ToString("yyyyMMdd");
         string subFolder = $"{context.Market.ToCode().ToLower()}";
-        string fileName  = $"{context.ApCode.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}.json";
+
+        string fileName = context.Type switch {
+            StatementType.T187AP06 or 
+            StatementType.T187AP07 => $"{context.Type.ToCode()}_{context.Status.ToCode()}_{context.Taxonomy.ToCode()}.json",
+            StatementType.T163SB20 => $"{context.Type.ToCode()}_{context.Status.ToCode()}.htm",
+            _ => throw new NotSupportedException($"不支援的報表代號: {context.Type}"),
+        };
 
         string[] rootPath = !string.IsNullOrWhiteSpace(basePath)
             ? [Path.GetFullPath(basePath)]            // 產出: /var/my_custom_path/20260713/twse/t187ap07_L_ci.json
