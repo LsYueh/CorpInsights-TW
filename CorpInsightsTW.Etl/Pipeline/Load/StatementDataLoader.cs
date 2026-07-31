@@ -5,12 +5,12 @@ using CorpInsightsTW.Etl.Repositories;
 
 namespace CorpInsightsTW.Etl.Pipeline.Load;
 
-public class T187DataLoader(
-    ILogger<T187DataLoader> logger,
+public class StatementDataLoader(
+    ILogger<StatementDataLoader> logger,
     RuntimeConfig runtimeConfig,
     string connectionString) : IDataLoader
 {
-    private readonly ILogger<T187DataLoader> _logger = logger;
+    private readonly ILogger<StatementDataLoader> _logger = logger;
     private readonly RuntimeConfig _runtimeConfig = runtimeConfig;
     private readonly string _connectionString = connectionString;
 
@@ -139,7 +139,6 @@ public class T187DataLoader(
                 indent, context.Taxonomy, batch.Count);
             return;
         }
-        
         
         switch (context.Taxonomy)
         {
