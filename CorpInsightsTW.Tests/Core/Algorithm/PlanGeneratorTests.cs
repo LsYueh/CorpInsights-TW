@@ -29,13 +29,13 @@ public class PlanGeneratorTests
     [TestMethod]
     public void Gen_TTM_CrossOneYear_ReturnsCorrectNodes()
     {
-        // 測試情境：2026 Q2 查近四季 TTM (N=4) => +2026 Q2, +2025 Q4, -2025 Q2
-        var plan = PlanGenerator.Gen(2026, 2, 4);
+        // 測試情境：2026 Q1 查近四季 TTM (N=4) => +2026 Q1, +2025 Q4, -2025 Q1
+        var plan = PlanGenerator.Gen(2026, 1, 4);
 
         Assert.HasCount(3, plan);
-        Assert.Contains(new DataNode(2026, 2, Operation.Add), plan);
+        Assert.Contains(new DataNode(2026, 1, Operation.Add), plan);
         Assert.Contains(new DataNode(2025, 4, Operation.Add), plan);
-        Assert.Contains(new DataNode(2025, 2, Operation.Subtract), plan);
+        Assert.Contains(new DataNode(2025, 1, Operation.Subtract), plan);
     }
 
     [TestMethod]
@@ -58,5 +58,23 @@ public class PlanGeneratorTests
         // 驗證起始年度的頭尾
         Assert.Contains(new DataNode(2022, 4, Operation.Add), plan);
         Assert.Contains(new DataNode(2022, 2, Operation.Subtract), plan);
+    }
+
+    [TestMethod]
+    public void Gen_15Quarters_CrossMultipleYears_ReturnsCorrectNodes()
+    {
+        // 測試情境：2026 Q3 查近 15 季 (N=15) 
+        // 預期：+2026 Q3, +2025 Q4, +2024 Q4, +2023 Q4
+        var plan = PlanGenerator.Gen(2026, 3, 15);
+
+        Assert.HasCount(4, plan);
+        
+        // 驗證今年的頭
+        Assert.Contains(new DataNode(2026, 3, Operation.Add), plan);
+        
+        // 驗證中間完整的三個年度
+        Assert.Contains(new DataNode(2025, 4, Operation.Add), plan);
+        Assert.Contains(new DataNode(2024, 4, Operation.Add), plan);
+        Assert.Contains(new DataNode(2023, 4, Operation.Add), plan);
     }
 }

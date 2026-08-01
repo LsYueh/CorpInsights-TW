@@ -13,7 +13,7 @@ public record DataNode(int Year, int Quarter, Operation Op);
 public class PlanGenerator
 {
     /// <summary>
-    /// 產生 N 季累計淨利的「端點相加減」查詢計畫
+    /// 產生 N 季累計數值的「加減」運算計畫，用於計算區間內的累計數值
     /// </summary>
     public static List<DataNode> Gen(int currentYear, int currentQuarter, int N)
     {
