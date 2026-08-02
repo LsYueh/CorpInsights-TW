@@ -7,9 +7,11 @@ using CorpInsightsTW.Etl.Dtos;
 namespace CorpInsightsTW.Etl.Pipeline.Transform;
 
 public class JsonDataTransformer(
-    ILogger<JsonDataTransformer> logger) : IDataTransformer
+    ILogger<JsonDataTransformer> logger,
+    RuntimeConfig runtimeConfig) : IDataTransformer
 {
     private readonly ILogger<JsonDataTransformer> _logger = logger;
+    private readonly RuntimeConfig _runtimeConfig = runtimeConfig;
 
     private static string GetIndent(int level) => new(' ', level * 4);
     
@@ -107,10 +109,11 @@ public class JsonDataTransformer(
         }
 
         // 比對日期
-        if (!rowDate.IsAcceptable(
-            context.Date,
-            out DateOnly expectedDate, 
-            out DateOnly minAllowedDate))
+        bool isAcceptable = _runtimeConfig.SkipDateCheck
+            ? rowDate.IsCalendarAcceptable(context.Date, out DateOnly expectedDate, out DateOnly minAllowedDate)
+            : rowDate.IsWorkingDayAcceptable(context.Date, out expectedDate, out minAllowedDate);
+
+        if (!isAcceptable)
         {
             _logger.LogWarning(
                 "{Indent}⚠️ [Transform] 資料日期不符！ JSON 解析: {RowDate:yyyy-MM-dd}，不在允許交易日區間 [{MinAllowedDate:yyyy-MM-dd} ~ {ExpectedDate:yyyy-MM-dd}] (Context 原始日期: {ContextDate:yyyy-MM-dd}) | 已跳過",
