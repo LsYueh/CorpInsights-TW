@@ -10,7 +10,8 @@ public record RuntimeConfig
     public XbrlTaxonomy Taxonomy { get; init; }
     public StatementType Type { get; init; }
     public DateOnly Date { get; init; }
-    public bool IsDryRun { get; init; }
+    public bool IsDryRun { get; init; } 
+    public bool SkipDateCheck { get; init; }
 
     public RuntimeConfig(
         StockMarket market,
@@ -18,7 +19,8 @@ public record RuntimeConfig
         XbrlTaxonomy taxonomy,
         StatementType type,
         DateOnly date,
-        bool isDryRun)
+        bool isDryRun = true, // 資料安全至上，但是防不住白痴
+        bool skipDateCheck = false)
     {
         if (market == StockMarket.TWSE && status is ListingStatus.O or ListingStatus.U)
         {
@@ -34,7 +36,9 @@ public record RuntimeConfig
         Taxonomy = taxonomy;
         Type     = type;
         Date     = date;
-        IsDryRun = isDryRun;
+
+        IsDryRun      = isDryRun;
+        SkipDateCheck = skipDateCheck;
     }
 
     // 當前生效的 Code (使用 Extension Method 轉出)

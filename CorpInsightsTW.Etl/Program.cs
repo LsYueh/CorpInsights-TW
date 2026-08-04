@@ -129,7 +129,7 @@ public class Program
         try
         {
             // 用 try-catch 攔截 RuntimeConfig 建構子丟出的市場/狀態不匹配例外
-            return new RuntimeConfig(market, status, taxonomy, type, date, options.DryRun);
+            return new RuntimeConfig(market, status, taxonomy, type, date, options.DryRun, options.SkipDateCheck);
         }
         catch (ArgumentException ex)
         {
